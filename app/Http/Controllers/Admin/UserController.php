@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Permissions;
 use App\Roles;
+use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -54,7 +55,26 @@ class UserController extends Controller implements HasMiddleware
             return back()->withErrors(['roles' => 'You cannot remove the superuser role from yourself.']);
         }
 
-        $user->syncRoles($data['roles'] ?? []);
+        $before = $user->roles->pluck('name')->all();
+        $after = $data['roles'] ?? [];
+        $user->syncRoles($after);
+
+        sort($before);
+        $afterSorted = $after;
+        sort($afterSorted);
+
+        if ($before !== $afterSorted) {
+            app(Telemetry::class)->record(
+                Telemetry::USER_ROLES_UPDATED,
+                subject: $user,
+                context: [
+                    'target_user_id' => $user->id,
+                    'target_email' => $user->email,
+                    'before' => $before,
+                    'after' => $afterSorted,
+                ],
+            );
+        }
 
         return redirect()
             ->route('admin.users.index')

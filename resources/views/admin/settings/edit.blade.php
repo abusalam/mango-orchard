@@ -49,6 +49,28 @@
             @error('captcha_autosolve') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
         </fieldset>
 
+        <fieldset class="pt-4 border-t border-stone-100">
+            <legend class="text-lg font-semibold text-stone-900">Developer convenience</legend>
+            <p class="mt-1 text-sm text-stone-600">Helpers that make manual testing faster. Should never be on in production.</p>
+
+            <label class="mt-4 flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
+                <input type="hidden" name="form_autofill" value="0">
+                <input type="checkbox" name="form_autofill" id="form_autofill" value="1"
+                       @checked($formAutofill)
+                       class="mt-1 rounded text-orange-500 focus:ring-orange-400"
+                       data-testid="autofill-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900">Prefill empty form fields with faker data</span>
+                    <span class="block text-xs text-stone-500 mt-0.5">
+                        On page load, populates empty text/email/textarea/select inputs with realistic-looking sample data based on field names.
+                        Passwords, hidden fields, checkboxes and captcha inputs are never touched.
+                        <strong class="text-rose-700">Do not enable in production.</strong>
+                    </span>
+                </span>
+            </label>
+            @error('form_autofill') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+        </fieldset>
+
         <div class="flex items-center gap-3 pt-4 border-t border-stone-100">
             <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                 Save settings

@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOnboardingPreferencesRequest;
 use App\Http\Requests\StoreOnboardingProfileRequest;
 use App\Models\MangoVariety;
+use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -41,7 +42,14 @@ class OnboardingController extends Controller implements HasMiddleware
 
     public function storeProfile(StoreOnboardingProfileRequest $request): RedirectResponse
     {
-        $request->user()->update($request->validated());
+        $user = $request->user();
+        $user->update($request->validated());
+
+        app(Telemetry::class)->record(
+            Telemetry::ONBOARDING_PROFILE_SAVED,
+            subject: $user,
+            context: ['region' => $user->region, 'expertise' => $user->expertise],
+        );
 
         return redirect()->route('onboarding.preferences');
     }
@@ -56,10 +64,23 @@ class OnboardingController extends Controller implements HasMiddleware
 
     public function storePreferences(StoreOnboardingPreferencesRequest $request): RedirectResponse
     {
-        $request->user()->update([
+        $user = $request->user();
+        $user->update([
             ...$request->validated(),
             'onboarding_completed_at' => now(),
         ]);
+
+        $telemetry = app(Telemetry::class);
+        $telemetry->record(
+            Telemetry::ONBOARDING_PREFERENCES_SAVED,
+            subject: $user,
+            context: [
+                'favorite_variety_id' => $user->favorite_variety_id,
+                'notify_seasonal' => $user->notify_seasonal,
+                'subscribe_newsletter' => $user->subscribe_newsletter,
+            ],
+        );
+        $telemetry->record(Telemetry::ONBOARDING_COMPLETED, subject: $user);
 
         return redirect()
             ->route('dashboard')

@@ -36,14 +36,10 @@ it('renders every featured mango variety card', function (string $variety) {
     visit('/')->assertSee($variety);
 })->with(BROWSER_VARIETIES);
 
-it('exposes the in-page navigation', function () {
+it('exposes the primary nav links (All varieties + Marketplace)', function () {
     visit('/')
-        ->assertSeeLink('Varieties')
-        ->assertSeeLink('Season Guide')
-        ->assertSeeLink('About')
-        ->assertAttribute('header nav a[href="#varieties"]', 'href', '#varieties')
-        ->assertAttribute('header nav a[href="#season"]', 'href', '#season')
-        ->assertAttribute('header nav a[href="#about"]', 'href', '#about');
+        ->assertSeeLink('All varieties')
+        ->assertSeeLink('Marketplace');
 });
 
 it('jumps to the varieties section when its CTA is clicked', function () {

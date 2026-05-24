@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <x-form-autofill-meta />
 
         <title>{{ $title ?? 'Mango Orchard' }}</title>
 
@@ -13,6 +14,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-amber-50 text-stone-900 antialiased min-h-screen flex flex-col">
+        <x-impersonation-banner />
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 border-b border-amber-200/60" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
@@ -23,6 +25,7 @@
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700">
                     <a href="{{ route('home') }}" class="hover:text-orange-700 transition-colors">Home</a>
                     <a href="{{ route('varieties.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('varieties.*') ? 'text-orange-700' : '' }}">All varieties</a>
+                    <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('listings.*') ? 'text-orange-700' : '' }}">Marketplace</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -35,12 +38,8 @@
                                 <button type="submit" class="hover:text-orange-700 transition-colors">Log out</button>
                             </form>
                         @else
-                            <a href="{{ route('dashboard') }}" class="hover:text-orange-700 transition-colors">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
-                                <a href="{{ route('admin.home') }}" class="hover:text-orange-700 transition-colors">Admin</a>
-                            @endcanany
-                            @can(\App\Permissions::VARIETIES_MANAGE)
-                                <a href="{{ route('varieties.create') }}" class="px-3 py-1 rounded-full bg-stone-900 text-amber-50 hover:bg-stone-800 transition-colors text-xs">New variety</a>
+                            @can(\App\Permissions::LISTINGS_MANAGE)
+                                <a href="{{ route('my.listings.create') }}" class="px-3 py-1 rounded-full bg-amber-500 text-stone-900 hover:bg-amber-400 transition-colors text-xs font-medium">List your harvest</a>
                             @endcan
                             <div class="relative" x-data="{ menu: false }" @click.away="menu = false">
                                 <button @click="menu = !menu" type="button" class="flex items-center gap-2 hover:text-orange-700 transition-colors">
@@ -48,7 +47,19 @@
                                     <x-user-role-badge :user="auth()->user()" />
                                     <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </button>
-                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700">
+                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700 py-1">
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Dashboard</a>
+                                    <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
+                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE])
+                                        <div class="my-1 border-t border-stone-100"></div>
+                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
+                                            <a href="{{ route('admin.home') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Admin</a>
+                                        @endcanany
+                                        @can(\App\Permissions::VARIETIES_MANAGE)
+                                            <a href="{{ route('varieties.create') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">New variety</a>
+                                        @endcan
+                                    @endcanany
+                                    <div class="my-1 border-t border-stone-100"></div>
                                     <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Profile</a>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -70,6 +81,7 @@
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-col gap-1 text-sm text-stone-700">
                     <a href="{{ route('home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Home</a>
                     <a href="{{ route('varieties.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">All varieties</a>
+                    <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">Marketplace</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 my-2"></div>
@@ -81,11 +93,15 @@
                             <a href="{{ route('onboarding.start') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">Finish onboarding</a>
                         @else
                             <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
+                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
                                 <a href="{{ route('admin.home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Admin</a>
                             @endcanany
                             @can(\App\Permissions::VARIETIES_MANAGE)
                                 <a href="{{ route('varieties.create') }}" class="px-3 py-2 rounded hover:bg-amber-100">New variety</a>
+                            @endcan
+                            <a href="{{ route('my.listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">My listings</a>
+                            @can(\App\Permissions::LISTINGS_MANAGE)
+                                <a href="{{ route('my.listings.create') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">List your harvest</a>
                             @endcan
                             <div class="px-3 py-2 flex items-center gap-2 text-stone-500 text-xs">
                                 Signed in as <span class="font-medium text-stone-800">{{ auth()->user()->name }}</span>

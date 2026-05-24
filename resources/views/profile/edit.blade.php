@@ -15,6 +15,18 @@
 
             <div class="p-4 sm:p-8 bg-white border border-stone-200 rounded-2xl">
                 <div class="max-w-xl">
+                    @include('profile.partials.update-preferences-form')
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-8 bg-white border border-stone-200 rounded-2xl">
+                <div class="max-w-2xl">
+                    @include('profile.partials.request-role-form')
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-8 bg-white border border-stone-200 rounded-2xl">
+                <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>

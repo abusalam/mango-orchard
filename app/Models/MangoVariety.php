@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Observers\MangoVarietyTelemetryObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+#[ObservedBy([MangoVarietyTelemetryObserver::class])]
 class MangoVariety extends Model
 {
     /** @use HasFactory<\Database\Factories\MangoVarietyFactory> */

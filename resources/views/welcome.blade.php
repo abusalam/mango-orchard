@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="A field guide to the world's most beloved mango varieties — origins, seasons, and flavor notes from Alphonso to Nam Dok Mai.">
+        <x-form-autofill-meta />
 
         <title>{{ config('app.name', 'Mango Orchard') }} — A field guide to mango varieties</title>
 
@@ -13,6 +14,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-amber-50 text-stone-900 antialiased">
+        <x-impersonation-banner />
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 border-b border-amber-200/60" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="#top" class="flex items-center gap-2 font-semibold tracking-tight">
@@ -21,10 +23,8 @@
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700">
-                    <a href="#varieties" class="hover:text-orange-700 transition-colors">Varieties</a>
-                    <a href="#season" class="hover:text-orange-700 transition-colors">Season Guide</a>
-                    <a href="#about" class="hover:text-orange-700 transition-colors">About</a>
                     <a href="{{ route('varieties.index') }}" class="hover:text-orange-700 transition-colors">All varieties</a>
+                    <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors">Marketplace</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -37,12 +37,8 @@
                                 <button type="submit" class="hover:text-orange-700 transition-colors">Log out</button>
                             </form>
                         @else
-                            <a href="{{ route('dashboard') }}" class="hover:text-orange-700 transition-colors">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
-                                <a href="{{ route('admin.home') }}" class="hover:text-orange-700 transition-colors">Admin</a>
-                            @endcanany
-                            @can(\App\Permissions::VARIETIES_MANAGE)
-                                <a href="{{ route('varieties.create') }}" class="px-3 py-1 rounded-full bg-stone-900 text-amber-50 hover:bg-stone-800 transition-colors text-xs">New variety</a>
+                            @can(\App\Permissions::LISTINGS_MANAGE)
+                                <a href="{{ route('my.listings.create') }}" class="px-3 py-1 rounded-full bg-amber-500 text-stone-900 hover:bg-amber-400 transition-colors text-xs font-medium">List your harvest</a>
                             @endcan
                             <div class="relative" x-data="{ menu: false }" @click.away="menu = false">
                                 <button @click="menu = !menu" type="button" class="flex items-center gap-2 hover:text-orange-700 transition-colors">
@@ -50,7 +46,19 @@
                                     <x-user-role-badge :user="auth()->user()" />
                                     <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                                 </button>
-                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-44 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700">
+                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700 py-1">
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Dashboard</a>
+                                    <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
+                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE])
+                                        <div class="my-1 border-t border-stone-100"></div>
+                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
+                                            <a href="{{ route('admin.home') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Admin</a>
+                                        @endcanany
+                                        @can(\App\Permissions::VARIETIES_MANAGE)
+                                            <a href="{{ route('varieties.create') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">New variety</a>
+                                        @endcan
+                                    @endcanany
+                                    <div class="my-1 border-t border-stone-100"></div>
                                     <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Profile</a>
                                     <form method="POST" action="{{ route('logout') }}">
                                         @csrf
@@ -70,10 +78,8 @@
 
             <div x-show="mobileOpen" x-cloak class="lg:hidden border-t border-amber-200/60 bg-amber-50/95" data-testid="mobile-menu">
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-col gap-1 text-sm text-stone-700">
-                    <a href="#varieties" @click="mobileOpen = false" class="px-3 py-2 rounded hover:bg-amber-100">Varieties</a>
-                    <a href="#season" @click="mobileOpen = false" class="px-3 py-2 rounded hover:bg-amber-100">Season Guide</a>
-                    <a href="#about" @click="mobileOpen = false" class="px-3 py-2 rounded hover:bg-amber-100">About</a>
                     <a href="{{ route('varieties.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">All varieties</a>
+                    <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">Marketplace</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 my-2"></div>
@@ -84,8 +90,12 @@
                         @if (! auth()->user()->hasCompletedOnboarding())
                             <a href="{{ route('onboarding.start') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">Finish onboarding</a>
                         @else
+                            @can(\App\Permissions::LISTINGS_MANAGE)
+                                <a href="{{ route('my.listings.create') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">List your harvest</a>
+                            @endcan
                             <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
+                            <a href="{{ route('my.listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">My listings</a>
+                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
                                 <a href="{{ route('admin.home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Admin</a>
                             @endcanany
                             @can(\App\Permissions::VARIETIES_MANAGE)
@@ -107,15 +117,52 @@
         </header>
 
         <main id="top">
-            <section class="relative overflow-hidden">
-                <div aria-hidden="true" class="absolute inset-0 -z-10">
-                    <div class="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber-300/40 blur-3xl"></div>
-                    <div class="absolute top-20 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-300/30 blur-3xl"></div>
-                    <div class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-lime-300/30 blur-3xl"></div>
-                </div>
+            @php
+                // Drop a JPG/PNG/WebP at public/images/hero-orchard-photo.<ext> to use a real photo.
+                // WebP is preferred (smallest), then JPG, then PNG.
+                $heroPhotoCandidates = ['hero-orchard-photo.webp', 'hero-orchard-photo.jpg', 'hero-orchard-photo.png'];
+                $heroPhoto = null;
+                foreach ($heroPhotoCandidates as $candidate) {
+                    if (file_exists(public_path("images/{$candidate}"))) {
+                        $heroPhoto = asset("images/{$candidate}");
+                        break;
+                    }
+                }
+            @endphp
 
-                <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
-                    <div class="grid lg:grid-cols-2 gap-12 items-center">
+            <section class="relative overflow-hidden">
+                @if ($heroPhoto)
+                    {{-- Full-bleed photo backdrop. Cream gradient overlays on the left, top
+                         and bottom blend the image seamlessly into the page; text overlays
+                         the left half on top. --}}
+                    <div aria-hidden="true" class="absolute inset-0 z-0">
+                        <img
+                            src="{{ $heroPhoto }}"
+                            alt=""
+                            class="w-full h-full object-cover lg:translate-x-[12%] origin-right"
+                            loading="eager"
+                            decoding="async"
+                        />
+                        {{-- Left → right cream wash. Solid on the left so the headline reads,
+                             fades out by the centre so the photo dominates the right half.
+                             Covers the slim left-edge gap created by the photo's translate. --}}
+                        <div class="absolute inset-0 bg-amber-50/80 lg:hidden"></div>
+                        <div class="hidden lg:block absolute inset-0 bg-gradient-to-r from-amber-50 from-35% via-amber-50/85 via-55% to-transparent to-80%"></div>
+                        {{-- Top + bottom fades so the photo dissolves into the page chrome. --}}
+                        <div class="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-amber-50 to-transparent"></div>
+                        <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-amber-50 via-amber-50/80 to-transparent"></div>
+                    </div>
+                @else
+                    {{-- Decorative gradient blobs while no hero photo is present. --}}
+                    <div aria-hidden="true" class="absolute inset-0 -z-10">
+                        <div class="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber-300/40 blur-3xl"></div>
+                        <div class="absolute top-20 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-300/30 blur-3xl"></div>
+                        <div class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-lime-300/30 blur-3xl"></div>
+                    </div>
+                @endif
+
+                <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
+                    <div class="@if ($heroPhoto) lg:w-1/2 @else grid lg:grid-cols-2 gap-12 items-center @endif">
                         <div>
                             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium tracking-wide uppercase">
                                 <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
@@ -124,7 +171,7 @@
                             <h1 class="mt-5 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-stone-900 leading-[1.05]">
                                 The world tastes <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">sweeter</span> in mango season.
                             </h1>
-                            <p class="mt-6 text-lg text-stone-700 max-w-xl leading-relaxed">
+                            <p class="mt-6 text-lg text-stone-800 max-w-xl leading-relaxed">
                                 From the saffron-rich Alphonso of the Konkan coast to the honey-soft Ataulfo of Chiapas, mangoes carry the geography of their orchard in every bite. Explore the varieties that define a season.
                             </p>
                             <div class="mt-8 flex flex-wrap gap-3">
@@ -138,14 +185,17 @@
                             </div>
                         </div>
 
-                        <div class="relative hidden lg:block">
-                            <div class="relative h-[28rem] w-full">
-                                <div class="absolute top-4 left-8 w-56 h-72 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-600 shadow-2xl rotate-[-12deg]"></div>
-                                <div class="absolute top-24 right-6 w-48 h-60 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-gradient-to-br from-lime-300 via-amber-400 to-orange-600 shadow-xl rotate-[18deg]"></div>
-                                <div class="absolute bottom-2 left-24 w-44 h-56 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-gradient-to-br from-amber-200 via-orange-300 to-rose-400 shadow-xl rotate-[6deg]"></div>
-                                <div class="absolute top-2 right-24 w-10 h-32 rounded-full bg-gradient-to-b from-green-700 to-green-900 rotate-12 origin-top"></div>
+                        @unless ($heroPhoto)
+                            <div class="relative hidden lg:block">
+                                <img
+                                    src="{{ asset('images/hero-orchard-canopy.svg') }}"
+                                    alt="A mango tree branch heavy with ripe yellow and red mangoes against a warm sky"
+                                    class="w-full h-auto max-h-[28rem] object-contain drop-shadow-2xl"
+                                    loading="eager"
+                                    decoding="async"
+                                />
                             </div>
-                        </div>
+                        @endunless
                     </div>
 
                     <div class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 border-t border-amber-200/70 pt-10">

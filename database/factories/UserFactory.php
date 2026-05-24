@@ -58,4 +58,14 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::EDITOR));
     }
+
+    public function grower(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::GROWER));
+    }
+
+    public function impersonator(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::IMPERSONATOR));
+    }
 }

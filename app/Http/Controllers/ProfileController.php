@@ -3,11 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Requests\UpdatePreferencesRequest;
+use App\Models\MangoVariety;
+use App\Models\RoleApplication;
+use App\Models\User;
+use App\Roles;
+use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class ProfileController extends Controller
 {
@@ -16,9 +23,58 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+
+        $applicableRoles = Role::query()
+            ->whereNotIn('name', Roles::nonApplicable())
+            ->orderBy('name')
+            ->get()
+            ->reject(fn (Role $role) => $user->hasRole($role->name))
+            ->values();
+
+        $applicationsByRoleId = $user->roleApplications()
+            ->with('role')
+            ->latest('created_at')
+            ->get()
+            ->groupBy('role_id');
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'varieties' => MangoVariety::query()->orderBy('name')->get(),
+            'expertiseLevels' => User::EXPERTISE_LEVELS,
+            'applicableRoles' => $applicableRoles,
+            'roleApplicationsByRoleId' => $applicationsByRoleId,
+            'roleApplicationStatuses' => [
+                'pending' => RoleApplication::STATUS_PENDING,
+                'approved' => RoleApplication::STATUS_APPROVED,
+                'rejected' => RoleApplication::STATUS_REJECTED,
+            ],
         ]);
+    }
+
+    /**
+     * Update the user's onboarding-style preferences (region, expertise,
+     * favorite variety, notification opt-ins). Available to every onboarded
+     * user — does not change roles, password, or onboarding-complete state.
+     */
+    public function updatePreferences(UpdatePreferencesRequest $request): RedirectResponse
+    {
+        $user = $request->user();
+        $user->update($request->validated());
+
+        app(Telemetry::class)->record(
+            Telemetry::PREFERENCES_UPDATED,
+            subject: $user,
+            context: [
+                'region' => $user->region,
+                'expertise' => $user->expertise,
+                'favorite_variety_id' => $user->favorite_variety_id,
+                'notify_seasonal' => $user->notify_seasonal,
+                'subscribe_newsletter' => $user->subscribe_newsletter,
+            ],
+        );
+
+        return Redirect::route('profile.edit')->with('status', 'preferences-updated');
     }
 
     /**

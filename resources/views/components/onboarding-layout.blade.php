@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <x-form-autofill-meta />
 
         <title>{{ $title }} — Mango Orchard</title>
 
@@ -15,6 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-amber-50 text-stone-900 antialiased min-h-screen flex flex-col">
+        <x-impersonation-banner />
         <header class="border-b border-amber-200/60 bg-amber-50/80 backdrop-blur">
             <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">

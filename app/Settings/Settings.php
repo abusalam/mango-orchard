@@ -11,6 +11,7 @@ class Settings
 {
     public const string CAPTCHA_ENABLED = 'captcha_enabled';
     public const string CAPTCHA_AUTOSOLVE = 'captcha_autosolve';
+    public const string FORM_AUTOFILL = 'form_autofill';
 
     private const string CACHE_KEY = 'app_settings:all';
 
@@ -18,6 +19,7 @@ class Settings
     public const array DEFAULTS = [
         self::CAPTCHA_ENABLED => false,
         self::CAPTCHA_AUTOSOLVE => false,
+        self::FORM_AUTOFILL => false,
     ];
 
     public function all(): array
@@ -72,6 +74,11 @@ class Settings
     public function captchaAutosolve(): bool
     {
         return $this->captchaEnabled() && (bool) $this->get(self::CAPTCHA_AUTOSOLVE, false);
+    }
+
+    public function formAutofill(): bool
+    {
+        return (bool) $this->get(self::FORM_AUTOFILL, false);
     }
 
     private function encode(mixed $value): string

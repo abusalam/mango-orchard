@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Permissions;
 use App\Roles;
+use App\Telemetry\Telemetry;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -17,17 +18,27 @@ class RolePermissionSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        foreach (array_keys(Permissions::ALL) as $name) {
-            Permission::findOrCreate($name, 'web');
-        }
+        // Suppress telemetry just for this seeder — it's infrastructural
+        // bootstrap, not user activity worth recording.
+        Telemetry::withoutRecording(function (): void {
+            foreach (array_keys(Permissions::ALL) as $name) {
+                Permission::findOrCreate($name, 'web');
+            }
 
-        $superuser = Role::findOrCreate(Roles::SUPERUSER, 'web');
-        $superuser->syncPermissions(array_keys(Permissions::ALL));
+            $superuser = Role::findOrCreate(Roles::SUPERUSER, 'web');
+            $superuser->syncPermissions(array_keys(Permissions::ALL));
 
-        $editor = Role::findOrCreate(Roles::EDITOR, 'web');
-        $editor->syncPermissions([Permissions::VARIETIES_MANAGE]);
+            $editor = Role::findOrCreate(Roles::EDITOR, 'web');
+            $editor->syncPermissions([Permissions::VARIETIES_MANAGE]);
 
-        Role::findOrCreate(Roles::VIEWER, 'web');
+            $grower = Role::findOrCreate(Roles::GROWER, 'web');
+            $grower->syncPermissions([Permissions::LISTINGS_MANAGE]);
+
+            $impersonator = Role::findOrCreate(Roles::IMPERSONATOR, 'web');
+            $impersonator->syncPermissions([Permissions::USERS_IMPERSONATE]);
+
+            Role::findOrCreate(Roles::VIEWER, 'web');
+        });
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();
     }

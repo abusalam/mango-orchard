@@ -4,6 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <x-form-autofill-meta />
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -14,6 +15,7 @@
     </head>
     <body class="font-sans antialiased text-stone-900">
         <div class="min-h-screen bg-amber-50">
+            <x-impersonation-banner />
             @include('layouts.navigation')
 
             @isset($header)

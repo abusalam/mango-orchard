@@ -19,7 +19,7 @@
                     <x-nav-link :href="route('varieties.index')" :active="request()->routeIs('varieties.*')">
                         {{ __('Varieties') }}
                     </x-nav-link>
-                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
+                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
                         <x-nav-link :href="route('admin.home')" :active="request()->routeIs('admin.*')">
                             {{ __('Admin') }}
                         </x-nav-link>
@@ -82,7 +82,7 @@
             <x-responsive-nav-link :href="route('varieties.index')" :active="request()->routeIs('varieties.*')">
                 {{ __('Varieties') }}
             </x-responsive-nav-link>
-            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE])
+            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
                 <x-responsive-nav-link :href="route('admin.home')" :active="request()->routeIs('admin.*')">
                     {{ __('Admin') }}
                 </x-responsive-nav-link>

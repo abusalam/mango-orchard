@@ -50,11 +50,10 @@ it('renders the picking-guide tips', function () {
         ->assertSeeText('Skip the fridge');
 });
 
-it('links the in-page navigation anchors', function () {
+it('links the hero CTAs to the in-page sections', function () {
     $this->get('/')
         ->assertSee('href="#varieties"', false)
-        ->assertSee('href="#season"', false)
-        ->assertSee('href="#about"', false);
+        ->assertSee('href="#season"', false);
 });
 
 it('shows a Get started link to guests', function () {

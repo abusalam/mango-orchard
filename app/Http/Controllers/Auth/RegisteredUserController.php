@@ -6,6 +6,7 @@ use App\Captcha\Captcha;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Settings\Settings;
+use App\Telemetry\Telemetry;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,6 +35,11 @@ class RegisteredUserController extends Controller
         ]);
 
         if (app(Settings::class)->captchaEnabled() && ! app(Captcha::class)->verify($request->input(Captcha::FIELD))) {
+            app(Telemetry::class)->record(
+                Telemetry::AUTH_CAPTCHA_FAILED,
+                context: ['flow' => 'register', 'email' => $request->input('email')],
+            );
+
             throw ValidationException::withMessages([
                 Captcha::FIELD => __('That captcha answer is incorrect.'),
             ]);

@@ -38,6 +38,8 @@ it('surfaces the superuser badge on the welcome nav after the first registration
     visit('/')
         ->assertSee('Boss From Birth')
         ->assertSee(Roles::SUPERUSER)
+        // Admin lives inside the user dropdown — open it to reveal the link.
+        ->click('Boss From Birth')
         ->assertSee('Admin');
 });
 
@@ -89,7 +91,8 @@ it('lets a superuser open the admin users section through the welcome nav', func
         ->assertPathIs('/dashboard');
 
     visit('/')
-        ->assertSee('Admin')
+        // Open the user dropdown to reach Admin.
+        ->click('Boss Lady')
         ->click('Admin')
         ->assertPathIs('/admin/users')
         ->assertSee('Boss Lady')
@@ -144,6 +147,7 @@ it('creates a new role with selected permissions via the UI', function () {
 
 it('hides the admin nav link from users without admin permissions', function () {
     User::factory()->editor()->create([
+        'name' => 'Editor Person',
         'email' => 'editor-only@example.com',
         'password' => bcrypt('editor-only-pw'),
     ]);
@@ -155,7 +159,10 @@ it('hides the admin nav link from users without admin permissions', function () 
 
     visit('/')
         ->assertDontSeeIn('header', 'Admin')
-        ->assertSee('New variety');
+        // Open the dropdown to reveal user-only actions; editor sees "New variety" but not "Admin".
+        ->click('Editor Person')
+        ->assertSee('New variety')
+        ->assertDontSeeIn('header', 'Admin');
 });
 
 it('returns 403 when an editor tries to open the admin area', function () {

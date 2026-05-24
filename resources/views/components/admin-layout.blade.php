@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <x-form-autofill-meta />
 
         <title>{{ $title }} — Mango Orchard Admin</title>
 
@@ -15,6 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-stone-50 text-stone-900 antialiased min-h-screen flex flex-col">
+        <x-impersonation-banner />
         <header class="border-b border-stone-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
@@ -49,6 +51,20 @@
                                'bg-stone-900 text-amber-50' => $active === 'users',
                                'text-stone-700 hover:bg-stone-100' => $active !== 'users',
                            ])>Users</a>
+                        <a href="{{ route('admin.role-applications.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'role-applications',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'role-applications',
+                           ])>Role applications</a>
+                    @endcan
+                    @can(\App\Permissions::USERS_IMPERSONATE)
+                        <a href="{{ route('admin.impersonate.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'impersonate',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'impersonate',
+                           ])>Impersonation</a>
                     @endcan
                     @can(\App\Permissions::ROLES_MANAGE)
                         <a href="{{ route('admin.roles.index') }}"
@@ -65,6 +81,14 @@
                                'bg-stone-900 text-amber-50' => $active === 'settings',
                                'text-stone-700 hover:bg-stone-100' => $active !== 'settings',
                            ])>Settings</a>
+                    @endcan
+                    @can(\App\Permissions::TELEMETRY_VIEW)
+                        <a href="{{ route('admin.telemetry.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'telemetry',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'telemetry',
+                           ])>Activity</a>
                     @endcan
                 </nav>
             </aside>

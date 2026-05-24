@@ -5,3 +5,22 @@
 [x-cloak] {
     display: none !important;
 }
+
+/* Soft fade-on-all-four-sides mask. Two linear gradients (one horizontal, one
+ * vertical) composited with `intersect` (`source-in` on WebKit) — only pixels
+ * opaque in BOTH gradients survive, so every edge fades to transparent and the
+ * image dissolves seamlessly into the page background. */
+.mask-fade-edges {
+    -webkit-mask-image:
+        linear-gradient(to right,  transparent 0%, black 18%, black 82%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+            mask-image:
+        linear-gradient(to right,  transparent 0%, black 18%, black 82%, transparent 100%),
+        linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%);
+            mask-composite: intersect;
+            mask-size: 100% 100%;
+            mask-repeat: no-repeat;
+}

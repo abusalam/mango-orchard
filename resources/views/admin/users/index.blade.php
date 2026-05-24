@@ -36,7 +36,18 @@
                             </div>
                         </td>
                         <td class="px-5 py-4 text-right">
-                            <a href="{{ route('admin.users.edit', $user) }}" class="text-orange-700 hover:text-orange-900 font-medium">Edit</a>
+                            <div class="inline-flex items-center gap-3 justify-end">
+                                @can(\App\Permissions::USERS_IMPERSONATE)
+                                    @php($canImpersonate = $user->id !== auth()->id() && (! $user->hasRole(\App\Roles::SUPERUSER) || auth()->user()->hasRole(\App\Roles::SUPERUSER)))
+                                    @if ($canImpersonate)
+                                        <form method="POST" action="{{ route('admin.impersonate.user', $user) }}" class="inline">
+                                            @csrf
+                                            <button type="submit" class="text-stone-600 hover:text-stone-900 font-medium" data-testid="impersonate-button">Impersonate</button>
+                                        </form>
+                                    @endif
+                                @endcan
+                                <a href="{{ route('admin.users.edit', $user) }}" class="text-orange-700 hover:text-orange-900 font-medium">Edit</a>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

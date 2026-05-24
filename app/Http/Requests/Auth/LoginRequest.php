@@ -4,6 +4,7 @@ namespace App\Http\Requests\Auth;
 
 use App\Captcha\Captcha;
 use App\Settings\Settings;
+use App\Telemetry\Telemetry;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -63,6 +64,11 @@ class LoginRequest extends FormRequest
         }
 
         if (! app(Captcha::class)->verify($this->input(Captcha::FIELD))) {
+            app(Telemetry::class)->record(
+                Telemetry::AUTH_CAPTCHA_FAILED,
+                context: ['flow' => 'login', 'email' => $this->input('email')],
+            );
+
             throw ValidationException::withMessages([
                 Captcha::FIELD => __('That captcha answer is incorrect.'),
             ]);

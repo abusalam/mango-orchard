@@ -52,6 +52,16 @@ class User extends Authenticatable
         return $this->belongsTo(MangoVariety::class, 'favorite_variety_id');
     }
 
+    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Listing::class);
+    }
+
+    public function roleApplications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(RoleApplication::class);
+    }
+
     public function hasCompletedOnboarding(): bool
     {
         return $this->onboarding_completed_at !== null;

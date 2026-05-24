@@ -24,6 +24,7 @@ services:
         depends_on:
             - pgsql
             - redis
+            - mailpit
     pgsql:
         image: 'postgres:18-alpine'
         ports:
@@ -64,6 +65,27 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    mailpit:
+        image: 'axllent/mailpit:latest'
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+        environment:
+            MP_SMTP_AUTH_ACCEPT_ANY: 1
+            MP_SMTP_AUTH_ALLOW_INSECURE: 1
+            MP_MAX_MESSAGES: 500
+        volumes:
+            - 'sail-mailpit:/data'
+        networks:
+            - sail
+        healthcheck:
+            test:
+                - CMD
+                - wget
+                - '-qO-'
+                - 'http://localhost:8025/readyz'
+            retries: 3
+            timeout: 5s
 networks:
     sail:
         driver: bridge
@@ -71,4 +93,6 @@ volumes:
     sail-redis:
         driver: local
     sail-pgsql:
+        driver: local
+    sail-mailpit:
         driver: local
