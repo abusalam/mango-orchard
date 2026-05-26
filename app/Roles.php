@@ -18,6 +18,8 @@ final class Roles
 
     public const string CONVENER = 'convener';
 
+    public const string ADVISOR = 'advisor';
+
     public const array ALL = [
         self::SUPERUSER,
         self::CURATOR,
@@ -25,6 +27,7 @@ final class Roles
         self::GROWER,
         self::IMPERSONATOR,
         self::CONVENER,
+        self::ADVISOR,
     ];
 
     /**
@@ -50,6 +53,6 @@ final class Roles
      */
     public static function delegatable(): array
     {
-        return [self::GROWER, self::CURATOR, self::CONVENER];
+        return [self::GROWER, self::CURATOR, self::CONVENER, self::ADVISOR];
     }
 }

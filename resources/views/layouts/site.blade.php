@@ -27,6 +27,7 @@
                     <a href="{{ route('varieties.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('varieties.*') ? 'text-orange-700' : '' }}">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('listings.*') ? 'text-orange-700' : '' }}">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('events.*') ? 'text-orange-700' : '' }}">Training</a>
+                    <a href="{{ route('advisories.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('advisories.*') ? 'text-orange-700' : '' }}">Advisories</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -51,9 +52,9 @@
                                 <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700 py-1">
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Dashboard</a>
                                     <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
-                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE, \App\Permissions::EVENTS_MANAGE])
+                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                         <div class="my-1 border-t border-stone-100"></div>
-                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE])
+                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                             <a href="{{ route('admin.home') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Admin</a>
                                         @endcanany
                                         @can(\App\Permissions::VARIETIES_MANAGE)
@@ -87,6 +88,7 @@
                     <a href="{{ route('varieties.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">Training</a>
+                    <a href="{{ route('advisories.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">Advisories</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 my-2"></div>
@@ -98,7 +100,7 @@
                             <a href="{{ route('onboarding.start') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">Finish onboarding</a>
                         @else
                             <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE])
+                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                 <a href="{{ route('admin.home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Admin</a>
                             @endcanany
                             @can(\App\Permissions::VARIETIES_MANAGE)

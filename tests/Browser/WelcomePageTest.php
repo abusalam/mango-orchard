@@ -7,18 +7,18 @@ use Database\Seeders\MangoVarietySeeder;
 beforeEach(fn () => $this->seed(MangoVarietySeeder::class));
 
 const BROWSER_VARIETIES = [
-    'Alphonso',
-    'Kesar',
-    'Ataulfo',
-    'Tommy Atkins',
-    'Haden',
-    'Keitt',
-    'Kent',
-    'Carabao',
-    'Chaunsa',
+    'Himsagar',
     'Langra',
-    'Dasheri',
-    'Nam Dok Mai',
+    'Fazli',
+    'Lakshmanbhog',
+    'Gopalbhog',
+    'Kishan Bhog',
+    'Amrapali',
+    'Mallika',
+    'Bombai',
+    'Ashwina',
+    'Mohanbhog',
+    'Neelam',
 ];
 
 it('boots the home page with the expected branding and hero copy', function () {
@@ -53,9 +53,9 @@ it('renders the season calendar with rows for each variety', function () {
         ->assertSee('When each variety peaks')
         ->assertVisible('#season table')
         ->assertSeeIn('#season table thead', 'Variety')
-        ->assertSeeIn('#season table tbody', 'Alphonso')
-        ->assertSeeIn('#season table tbody', 'Chaunsa')
-        ->assertSeeIn('#season table tbody', 'Nam Dok Mai');
+        ->assertSeeIn('#season table tbody', 'Himsagar')
+        ->assertSeeIn('#season table tbody', 'Fazli')
+        ->assertSeeIn('#season table tbody', 'Ashwina');
 });
 
 it('renders the picking-guide tips', function () {
@@ -72,7 +72,7 @@ it('hides the decorative hero cluster on a phone-sized viewport', function () {
         ->on()->iPhone15Pro()
         ->assertSee('Mango Orchard')
         ->assertSee('Browse varieties')
-        ->assertSee('Alphonso');
+        ->assertSee('Himsagar');
 });
 
 it('shows the decorative hero cluster on a desktop viewport', function () {

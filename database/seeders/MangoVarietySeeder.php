@@ -7,23 +7,30 @@ namespace Database\Seeders;
 use App\Models\MangoVariety;
 use Illuminate\Database\Seeder;
 
+/**
+ * Twelve varieties native to or widely grown in Malda district, West Bengal —
+ * the country's most famous mango belt. Several (Himsagar, Fazli, Lakshmanbhog,
+ * Langra) hold GI tags and are the backbone of the district's spring/summer
+ * trade. Hybrids (Amrapali, Mallika) and southern late-bearers (Neelam)
+ * round out the orchard year from May through September.
+ */
 class MangoVarietySeeder extends Seeder
 {
     public function run(): void
     {
         $varieties = [
-            ['Alphonso',        'Ratnagiri, India',     'Apr – Jun', 4, 6, 'Saffron flesh, dense and creamy with a perfumed honey-apricot sweetness. Often called the king of mangoes.', ['Premium', 'Aromatic', 'Low fiber'], 'sunrise'],
-            ['Kesar',           'Gujarat, India',       'May – Jul', 5, 7, 'Bright saffron pulp with floral honey notes and a clean, citrus-lifted finish. The pride of Junagadh.',     ['Aromatic', 'Pulp'],                'amber'],
-            ['Ataulfo',         'Chiapas, Mexico',      'Mar – Jul', 3, 7, 'Buttery, custard-soft flesh tasting of honey and ripe pineapple. Almost no fiber.',                        ['Buttery', 'Fiberless'],            'honey'],
-            ['Tommy Atkins',    'Florida, USA',         'Mar – Jul', 3, 7, 'Firm and mildly sweet with a hint of tartness. The supermarket workhorse — long shelf life, vivid blush.', ['Common', 'Firm'],                  'lime'],
-            ['Haden',           'Florida, USA',         'Mar – Apr', 3, 4, 'Aromatic, full-flavored sweet-tart balance with a slight peach note. The parent of many modern hybrids.',  ['Heritage', 'Sweet-tart'],          'rose'],
-            ['Keitt',           'Florida / Mexico',     'Aug – Oct', 8, 10, 'Late-season, juicy, lemon-bright sweetness. Stays green even when ripe — squeeze to check.',                ['Late-season', 'Juicy'],            'emerald'],
-            ['Kent',            'Mexico / Ecuador',     'Jun – Aug', 6, 8, 'Sweet, richly aromatic, almost dripping when ripe. Minimal fiber — ideal for slicing and smoothies.',      ['Juicy', 'Versatile'],              'kent'],
-            ['Carabao',         'Philippines',          'Apr – Jun', 4, 6, 'Slender and golden with an intense, tangy-sweet tropical punch. The national fruit of the Philippines.',  ['Tangy', 'National fruit'],         'carabao'],
-            ['Chaunsa',         'Multan, Pakistan',     'Jun – Sep', 6, 9, 'Intensely fragrant, dripping with sugar-honey juice and almost no fiber. Eaten by sucking, not slicing.',  ['Premium', 'Juicy'],                'amber'],
-            ['Langra',          'Varanasi, India',      'Jul – Aug', 7, 8, 'Stays green-skinned when ripe. Spicy-sweet, lemony, with a unique turpentine-citrus aroma some adore.',    ['Heirloom', 'Aromatic'],            'green'],
-            ['Dasheri',         'Malihabad, India',     'Jun – Jul', 6, 7, 'Long, slender, mellow-sweet with a soft melon-like aroma. The backbone of North Indian mango summers.',    ['Mellow', 'Eat-out-of-hand'],       'dasheri'],
-            ['Nam Dok Mai',     'Thailand',             'Apr – Jun', 4, 6, 'Slim, golden, silky-smooth flesh with pure honey sweetness. The classic for sticky rice with mango.',      ['Silky', 'Dessert'],                'honey'],
+            ['Himsagar',     'English Bazar, Malda',     'Late May – Jun', 5, 6,  'GI-tagged "king of Malda". Saffron-orange flesh, fiber-free, juice that drips down the wrist. The benchmark every mango in the district is measured against.', ['GI-tagged', 'Premium', 'Fiberless'], 'amber'],
+            ['Langra',       'Old Malda, West Bengal',   'Jul – Aug',      7, 8,  'Stays grass-green even when ripe — squeeze gently to test. Spicy-sweet pulp with a turpentine top note that mango aficionados prize. GI-tagged Malda heirloom.',  ['GI-tagged', 'Heirloom', 'Aromatic'], 'green'],
+            ['Fazli',        'Kaliachak, Malda',          'Jul – Aug',      7, 8,  'Giant late-season fruit, often over a kilo each. Tangy-sweet, mostly destined for pickles, chutneys and aam papad. The district\'s third GI-tagged variety.',     ['GI-tagged', 'Late-season', 'Pickling'], 'kent'],
+            ['Lakshmanbhog', 'English Bazar, Malda',     'Late May – Jun', 5, 6,  'Long, elegant, honey-sweet with a touch of citrus. Slim-stoned and dessert-friendly. Recently added to West Bengal\'s GI register alongside Himsagar and Fazli.',  ['GI-tagged', 'Dessert'],              'sunrise'],
+            ['Gopalbhog',    'Habibpur, Malda',           'May – Jun',      5, 6,  'One of the earliest varieties out of the Malda orchards. Smaller, intensely fragrant, almost confectionery-sweet — the season-opener locals wait for.',          ['Early-season', 'Aromatic'],           'honey'],
+            ['Kishan Bhog',  'Bamangola, Malda',          'Jun',            6, 6,  'Round, rose-blushed skin and dense honey-tart pulp. A favourite at home tables across North Bengal, sliced and salted as a quick mid-day snack.',                    ['Mid-season', 'Juicy'],                'rose'],
+            ['Amrapali',     'Malda (IARI hybrid)',       'Jul – Aug',      7, 8,  'Dwarf hybrid (Dasheri × Neelam) bred at IARI for high-density planting. Now widespread across Malda smallholders — reliable yields, deep red-orange flesh.',            ['Hybrid', 'High-yield'],              'amber'],
+            ['Mallika',      'Malda (IARI hybrid)',       'Jul – Aug',      7, 8,  'IARI hybrid (Neelam × Dasheri) prized for thick, fiber-free pulp and a long shelf life. The go-to choice for pulp processors and exporters in the district.',         ['Hybrid', 'Export-grade'],            'kent'],
+            ['Bombai',       'Manikchak, Malda',          'May',            5, 5,  'A very early variety with a hint of green even at peak. Tangy-forward, less sweet than Himsagar, used both fresh and for green-mango drinks called aam pora sharbat.', ['Early-season', 'Tangy'],             'lime'],
+            ['Ashwina',      'Ratua, Malda',              'Aug – Sep',      8, 9,  'The very last variety of the Malda season — fibrous, sharp, never eaten raw. The whole August harvest goes into pickles, chutneys and dried-mango papad.',           ['Late-season', 'Pickling'],           'dasheri'],
+            ['Mohanbhog',    'Chanchal, Malda',           'Jun – Jul',      6, 7,  'Slender, golden, with a delicate floral aroma. A connoisseur\'s variety — small volumes, sold locally rather than packed for export.',                                ['Mid-season', 'Heirloom'],            'carabao'],
+            ['Neelam',       'Malda (southern hybrid)',   'Jul – Aug',      7, 8,  'Late-bearing southern variety widely interplanted across Malda for its dependable crop even in off-years. Small fruit, deep red blush, mellow-sweet.',                    ['Late-season', 'Reliable'],           'sunrise'],
         ];
 
         foreach ($varieties as [$name, $origin, $season, $start, $end, $flavor, $tags, $theme]) {

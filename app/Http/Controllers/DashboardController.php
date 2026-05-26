@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Models\Advisory;
 use App\Models\Event;
 use App\Models\Listing;
 use App\Models\MangoVariety;
@@ -35,10 +36,41 @@ class DashboardController extends Controller implements HasMiddleware
             'personal' => $this->personalStats($user),
             'orchard' => $this->orchardStats($user),
             'telemetryInsights' => $this->telemetryInsights($user),
+            'advisories' => $this->activeAdvisoriesFor($user),
             'recentActivity' => $user->can(Permissions::TELEMETRY_VIEW)
                 ? TelemetryEvent::with('user')->latest('occurred_at')->limit(8)->get()
                 : null,
         ]);
+    }
+
+    /**
+     * Active advisories most relevant to the viewer:
+     *   - Growers see advisories matching their listings' varieties first,
+     *     then general (no-variety-pivot) advisories;
+     *   - Everyone else sees all active advisories ordered by severity.
+     * Top 5 only — the public /advisories page has the full list.
+     */
+    private function activeAdvisoriesFor(User $user): \Illuminate\Support\Collection
+    {
+        $varietyIds = $user->can(Permissions::LISTINGS_MANAGE)
+            ? $user->listings()->pluck('mango_variety_id')->unique()->all()
+            : [];
+
+        return Advisory::query()
+            ->with(['issuer', 'varieties'])
+            ->active()
+            ->when($varietyIds !== [], function ($q) use ($varietyIds) {
+                $q->where(function ($w) use ($varietyIds) {
+                    // Matches the grower's varieties OR is a general advisory
+                    // (no variety pivot rows → applies to everything).
+                    $w->whereHas('varieties', fn ($v) => $v->whereIn('mango_varieties.id', $varietyIds))
+                      ->orWhereDoesntHave('varieties');
+                });
+            })
+            ->orderByRaw("CASE severity WHEN 'urgent' THEN 3 WHEN 'warning' THEN 2 ELSE 1 END DESC")
+            ->latest('issued_at')
+            ->limit(5)
+            ->get();
     }
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
 use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\ImpersonationController as AdminImpersonationController;
 use App\Http\Controllers\Admin\RoleApplicationController as AdminRoleApplicationController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TelemetryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AdvisoryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\ListingController;
@@ -40,6 +42,10 @@ Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('lis
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
 Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
 
+// Public advisories (seasonal / best-practice / pest alerts).
+Route::get('/advisories', [AdvisoryController::class, 'index'])->name('advisories.index');
+Route::get('/advisories/{advisory}', [AdvisoryController::class, 'show'])->name('advisories.show');
+
 Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -68,6 +74,7 @@ Route::middleware('auth')->group(function () {
                 Permissions::TELEMETRY_VIEW => 'admin.telemetry.index',
                 Permissions::USERS_IMPERSONATE => 'admin.impersonate.index',
                 Permissions::EVENTS_MANAGE => 'admin.events.index',
+                Permissions::ADVISORIES_MANAGE => 'admin.advisories.index',
             ];
 
             foreach ($destinations as $permission => $route) {
@@ -102,6 +109,10 @@ Route::middleware('auth')->group(function () {
 
         Route::resource('events', AdminEventController::class)
             ->parameters(['events' => 'event'])
+            ->except(['show']);
+
+        Route::resource('advisories', AdminAdvisoryController::class)
+            ->parameters(['advisories' => 'advisory'])
             ->except(['show']);
     });
 

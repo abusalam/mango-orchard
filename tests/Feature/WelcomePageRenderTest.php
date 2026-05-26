@@ -7,18 +7,18 @@ use App\Roles;
 use Database\Seeders\MangoVarietySeeder;
 
 const VARIETIES = [
-    'Alphonso',
-    'Kesar',
-    'Ataulfo',
-    'Tommy Atkins',
-    'Haden',
-    'Keitt',
-    'Kent',
-    'Carabao',
-    'Chaunsa',
+    'Himsagar',
     'Langra',
-    'Dasheri',
-    'Nam Dok Mai',
+    'Fazli',
+    'Lakshmanbhog',
+    'Gopalbhog',
+    'Kishan Bhog',
+    'Amrapali',
+    'Mallika',
+    'Bombai',
+    'Ashwina',
+    'Mohanbhog',
+    'Neelam',
 ];
 
 beforeEach(fn () => $this->seed(MangoVarietySeeder::class));

@@ -77,6 +77,21 @@
                 </section>
             @endif
 
+            {{-- ╭─ Section 1b — Active advisories (everyone sees, grower-relevant) ── --}}
+            @if ($advisories->isNotEmpty())
+                <section data-testid="dashboard-advisories" class="space-y-3">
+                    <div class="flex items-end justify-between">
+                        <h3 class="text-xs font-semibold tracking-wide uppercase text-stone-500">Active advisories</h3>
+                        <a href="{{ route('advisories.index') }}" class="text-xs text-orange-700 hover:text-orange-900 font-medium">All advisories →</a>
+                    </div>
+                    <div class="space-y-3">
+                        @foreach ($advisories as $advisory)
+                            <x-advisory-card :advisory="$advisory" :compact="true" />
+                        @endforeach
+                    </div>
+                </section>
+            @endif
+
             {{-- ╭─ Section 2 — Your activity ───────────────────────────────── --}}
             <section data-testid="dashboard-personal" class="space-y-3">
                 <h3 class="text-xs font-semibold tracking-wide uppercase text-stone-500">Your activity</h3>

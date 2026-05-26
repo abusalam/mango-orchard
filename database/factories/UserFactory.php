@@ -74,4 +74,9 @@ class UserFactory extends Factory
     {
         return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::CONVENER));
     }
+
+    public function advisor(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::ADVISOR));
+    }
 }

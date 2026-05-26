@@ -81,6 +81,12 @@ class Telemetry
 
     public const string EVENT_DELETED = 'event.deleted';
 
+    public const string ADVISORY_CREATED = 'advisory.created';
+
+    public const string ADVISORY_UPDATED = 'advisory.updated';
+
+    public const string ADVISORY_DELETED = 'advisory.deleted';
+
     /**
      * Record a telemetry event. Auto-populates user, ip and user agent from
      * the current request/auth context; callers only need to pass the event

@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="A field guide to the world's most beloved mango varieties — origins, seasons, and flavor notes from Alphonso to Nam Dok Mai.">
+        <meta name="description" content="A field guide to the mango varieties of Malda district — origins, seasons, and tasting notes from Himsagar through Ashwina.">
         <x-form-autofill-meta />
 
         <title>{{ config('app.name', 'Mango Orchard') }} — A field guide to mango varieties</title>
@@ -49,9 +49,9 @@
                                 <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700 py-1">
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Dashboard</a>
                                     <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
-                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE])
+                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                         <div class="my-1 border-t border-stone-100"></div>
-                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
+                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                             <a href="{{ route('admin.home') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Admin</a>
                                         @endcanany
                                         @can(\App\Permissions::VARIETIES_MANAGE)
@@ -95,7 +95,7 @@
                             @endcan
                             <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Dashboard</a>
                             <a href="{{ route('my.listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">My listings</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE])
+                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
                                 <a href="{{ route('admin.home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Admin</a>
                             @endcanany
                             @can(\App\Permissions::VARIETIES_MANAGE)
@@ -301,12 +301,12 @@
                     <div class="grid lg:grid-cols-3 gap-10">
                         <div class="lg:col-span-1">
                             <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900">How to pick a ripe one</h2>
-                            <p class="mt-4 text-stone-600">Color is the worst guide — a Keitt or Langra stays green even when perfectly ripe. Trust your other senses.</p>
+                            <p class="mt-4 text-stone-600">Color is the worst guide — a Bombai or Langra stays green even when perfectly ripe. Trust your other senses.</p>
                         </div>
                         <div class="lg:col-span-2 grid sm:grid-cols-2 gap-5">
                             @foreach ([
                                 ['Squeeze gently', 'A ripe mango yields slightly to pressure, the way a ripe avocado or peach does. Hard means a few more days on the counter.'],
-                                ['Smell the stem end', 'Bring it to your nose. The strongest mangoes — Alphonso, Chaunsa, Carabao — announce themselves before you taste them.'],
+                                ['Smell the stem end', 'Bring it to your nose. The strongest mangoes — Himsagar, Lakshmanbhog, Gopalbhog — announce themselves before you taste them.'],
                                 ['Look at the shoulders', 'The flesh around the stem should be plump and slightly rounded outward, not sunken. Sunken means it was picked too early.'],
                                 ['Skip the fridge', 'Ripen at room temperature. Refrigerate only after fully ripe, and eat within two or three days for best flavor.'],
                             ] as $tip)

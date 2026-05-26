@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
 
         $this->call(MangoVarietySeeder::class);
         $this->call(EventSeeder::class);
+        $this->call(AdvisorySeeder::class);
     }
 }

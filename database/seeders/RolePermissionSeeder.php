@@ -40,6 +40,9 @@ class RolePermissionSeeder extends Seeder
             $convener = Role::findOrCreate(Roles::CONVENER, 'web');
             $convener->syncPermissions([Permissions::EVENTS_MANAGE]);
 
+            $advisor = Role::findOrCreate(Roles::ADVISOR, 'web');
+            $advisor->syncPermissions([Permissions::ADVISORIES_MANAGE]);
+
             Role::findOrCreate(Roles::VIEWER, 'web');
         });
 

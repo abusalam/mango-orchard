@@ -54,5 +54,31 @@
                 @endcan
             </div>
         </div>
+
+        {{-- Advisories targeting THIS variety (or any general advisory).
+             Active-only filter; ordered urgent → warning → info. --}}
+        @php
+            $advisories = \App\Models\Advisory::query()
+                ->with(['issuer', 'varieties'])
+                ->active()
+                ->where(function ($q) use ($variety) {
+                    $q->whereHas('varieties', fn ($v) => $v->where('mango_varieties.id', $variety->id))
+                      ->orWhereDoesntHave('varieties');
+                })
+                ->orderByRaw("CASE severity WHEN 'urgent' THEN 3 WHEN 'warning' THEN 2 ELSE 1 END DESC")
+                ->latest('issued_at')
+                ->limit(5)
+                ->get();
+        @endphp
+        @if ($advisories->isNotEmpty())
+            <div class="mt-10" data-testid="variety-advisories">
+                <h2 class="text-lg font-semibold tracking-tight text-stone-900 mb-3">Advisories for {{ $variety->name }}</h2>
+                <div class="space-y-3">
+                    @foreach ($advisories as $advisory)
+                        <x-advisory-card :advisory="$advisory" :compact="true" />
+                    @endforeach
+                </div>
+            </div>
+        @endif
     </section>
 </x-site-layout>

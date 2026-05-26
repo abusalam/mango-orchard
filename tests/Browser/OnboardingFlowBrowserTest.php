@@ -26,7 +26,7 @@ it('walks a brand-new user end-to-end from register through both onboarding step
         ->press('Continue')
         ->assertPathIs('/onboarding/preferences')
         ->assertSee('A few preferences')
-        ->select('favorite_variety_id', (string) MangoVariety::firstWhere('name', 'Alphonso')->id)
+        ->select('favorite_variety_id', (string) MangoVariety::firstWhere('name', 'Himsagar')->id)
         ->check('notify_seasonal')
         ->press('Finish setup')
         ->assertPathIs('/dashboard')
