@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\RoleApplicationFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,11 +13,13 @@ use Spatie\Permission\Models\Role;
 
 class RoleApplication extends Model
 {
-    /** @use HasFactory<\Database\Factories\RoleApplicationFactory> */
+    /** @use HasFactory<RoleApplicationFactory> */
     use HasFactory;
 
     public const string STATUS_PENDING = 'pending';
+
     public const string STATUS_APPROVED = 'approved';
+
     public const string STATUS_REJECTED = 'rejected';
 
     protected $fillable = [

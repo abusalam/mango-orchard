@@ -33,5 +33,7 @@ class EnsureOnboardingComplete
         'varieties.show',
         'listings.index',
         'listings.show',
+        'events.index',
+        'events.show',
     ];
 }

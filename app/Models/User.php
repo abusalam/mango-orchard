@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
@@ -52,12 +53,12 @@ class User extends Authenticatable
         return $this->belongsTo(MangoVariety::class, 'favorite_variety_id');
     }
 
-    public function listings(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function listings(): HasMany
     {
         return $this->hasMany(Listing::class);
     }
 
-    public function roleApplications(): \Illuminate\Database\Eloquent\Relations\HasMany
+    public function roleApplications(): HasMany
     {
         return $this->hasMany(RoleApplication::class);
     }

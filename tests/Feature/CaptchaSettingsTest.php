@@ -28,6 +28,7 @@ function freshCaptchaAnswer(): string
 {
     $result = app(MewsCaptcha::class)->create('default', api: true);
     $cached = Cache::get('captcha_'.md5($result['key']));
+
     return is_array($cached) ? implode('', $cached) : (string) $cached;
 }
 
@@ -228,13 +229,13 @@ it('payload prefill is null when autosolve is off, populated when on', function 
 });
 
 it('blocks the admin settings page from users without settings.manage', function () {
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->get(route('admin.settings.edit'))
         ->assertForbidden();
 });
 
 it('blocks settings updates from users without settings.manage', function () {
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->put(route('admin.settings.update'), ['captcha_enabled' => '1'])
         ->assertForbidden();
 
@@ -284,12 +285,12 @@ it('lets a superuser toggle both off through the form', function () {
         ->and(app(Settings::class)->captchaAutosolve())->toBeFalse();
 });
 
-it('shows the Settings sidebar link to superusers but not editors', function () {
+it('shows the Settings sidebar link to superusers but not curators', function () {
     $this->actingAs(User::factory()->superuser()->create())
         ->get(route('admin.users.index'))
         ->assertSee('Settings');
 
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->get(route('varieties.index'))
         ->assertDontSee(route('admin.settings.edit'), false);
 });

@@ -38,13 +38,13 @@ it('bounces a guest from the create page to the login page', function () {
 
 it('lets an authenticated user create a variety end-to-end through the form', function () {
     User::factory()->superuser()->create([
-        'email' => 'editor@example.com',
-        'password' => bcrypt('editor-password'),
+        'email' => 'curator@example.com',
+        'password' => bcrypt('curator-password'),
     ]);
 
     visit('/login')
-        ->type('email', 'editor@example.com')
-        ->type('password', 'editor-password')
+        ->type('email', 'curator@example.com')
+        ->type('password', 'curator-password')
         ->press('Log in')
         ->assertPathIs('/dashboard');
 
@@ -95,8 +95,8 @@ it('shows server-side validation errors for a duplicate name', function () {
 
 it('lets an authenticated user edit a variety end-to-end', function () {
     User::factory()->superuser()->create([
-        'email' => 'editor2@example.com',
-        'password' => bcrypt('editor2-password'),
+        'email' => 'curator2@example.com',
+        'password' => bcrypt('curator2-password'),
     ]);
 
     $variety = MangoVariety::factory()->create([
@@ -106,8 +106,8 @@ it('lets an authenticated user edit a variety end-to-end', function () {
     ]);
 
     visit('/login')
-        ->type('email', 'editor2@example.com')
-        ->type('password', 'editor2-password')
+        ->type('email', 'curator2@example.com')
+        ->type('password', 'curator2-password')
         ->press('Log in');
 
     visit(route('varieties.edit', $variety))

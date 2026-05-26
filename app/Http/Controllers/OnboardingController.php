@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOnboardingPreferencesRequest;
 use App\Http\Requests\StoreOnboardingProfileRequest;
 use App\Models\MangoVariety;
+use App\Models\User;
 use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class OnboardingController extends Controller implements HasMiddleware
     {
         return view('onboarding.profile', [
             'user' => $request->user(),
-            'expertiseLevels' => \App\Models\User::EXPERTISE_LEVELS,
+            'expertiseLevels' => User::EXPERTISE_LEVELS,
         ]);
     }
 

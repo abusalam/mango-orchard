@@ -75,6 +75,6 @@ it('does not show an Apply for the impersonator role on the profile page', funct
     visit('/profile')
         ->assertSee('Request a role')
         ->assertSee('grower')
-        ->assertSee('editor')
+        ->assertSee('curator')
         ->assertDontSeeIn('main', 'impersonator');
 });

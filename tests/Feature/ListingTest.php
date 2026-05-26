@@ -6,6 +6,7 @@ use App\Models\Listing;
 use App\Models\MangoVariety;
 use App\Models\TelemetryEvent;
 use App\Models\User;
+use App\Roles;
 use App\Telemetry\Telemetry;
 
 function validListingAttributes(array $overrides = []): array
@@ -308,7 +309,7 @@ it('still lets a former grower edit their own existing listings even without the
     // Simulate: user had grower role, created a listing, then lost the role.
     $owner = User::factory()->grower()->create();
     $listing = Listing::factory()->create(['user_id' => $owner->id]);
-    $owner->removeRole(\App\Roles::GROWER);
+    $owner->removeRole(Roles::GROWER);
 
     // Update is ownership-based, not permission-based — so this still works.
     $this->actingAs($owner)

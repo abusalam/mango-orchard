@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Models\User;
+use App\Roles;
 use Database\Seeders\MangoVarietySeeder;
 
 const VARIETIES = [
@@ -65,7 +67,7 @@ it('shows a Get started link to guests', function () {
 });
 
 it('shows the Finish onboarding link to authed users who have not finished', function () {
-    $user = \App\Models\User::factory()->unonboarded()->create();
+    $user = User::factory()->unonboarded()->create();
 
     $this->actingAs($user)->get('/')
         ->assertOk()
@@ -76,7 +78,7 @@ it('shows the Finish onboarding link to authed users who have not finished', fun
 });
 
 it('shows the New variety link to fully onboarded users with manage permission', function () {
-    $user = \App\Models\User::factory()->superuser()->create();
+    $user = User::factory()->superuser()->create();
 
     $this->actingAs($user)->get('/')
         ->assertOk()
@@ -86,7 +88,7 @@ it('shows the New variety link to fully onboarded users with manage permission',
 });
 
 it('hides the New variety link from onboarded users without manage permission', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
 
     $this->actingAs($user)->get('/')
         ->assertOk()
@@ -95,7 +97,7 @@ it('hides the New variety link from onboarded users without manage permission', 
 });
 
 it('surfaces Dashboard, Profile, and Log out for any onboarded user', function () {
-    $user = \App\Models\User::factory()->create(['name' => 'Logged In User']);
+    $user = User::factory()->create(['name' => 'Logged In User']);
 
     $response = $this->actingAs($user)->get('/');
 
@@ -109,25 +111,25 @@ it('surfaces Dashboard, Profile, and Log out for any onboarded user', function (
 });
 
 it('shows the superuser role badge next to a superuser name', function () {
-    $user = \App\Models\User::factory()->superuser()->create(['name' => 'Boss Person']);
+    $user = User::factory()->superuser()->create(['name' => 'Boss Person']);
 
     $this->actingAs($user)->get('/')
         ->assertSee('Boss Person')
         ->assertSee('data-testid="user-role-badge"', false)
-        ->assertSee(\App\Roles::SUPERUSER);
+        ->assertSee(Roles::SUPERUSER);
 });
 
-it('shows the editor role badge next to an editor name', function () {
-    $user = \App\Models\User::factory()->editor()->create(['name' => 'Editor Person']);
+it('shows the curator role badge next to an curator name', function () {
+    $user = User::factory()->curator()->create(['name' => 'Curator Person']);
 
     $this->actingAs($user)->get('/')
-        ->assertSee('Editor Person')
+        ->assertSee('Curator Person')
         ->assertSee('data-testid="user-role-badge"', false)
-        ->assertSee(\App\Roles::EDITOR);
+        ->assertSee(Roles::CURATOR);
 });
 
 it('renders no role badge for a user with no roles', function () {
-    $user = \App\Models\User::factory()->create(['name' => 'Plain Person']);
+    $user = User::factory()->create(['name' => 'Plain Person']);
 
     $this->actingAs($user)->get('/')
         ->assertSee('Plain Person')

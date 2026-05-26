@@ -1,7 +1,7 @@
 @props(['user'])
 
 @php
-    $priorityOrder = [\App\Roles::SUPERUSER, \App\Roles::EDITOR, \App\Roles::VIEWER];
+    $priorityOrder = [\App\Roles::SUPERUSER, \App\Roles::CURATOR, \App\Roles::VIEWER];
     $primaryRole = $user->roles
         ->sortBy(function ($role) use ($priorityOrder) {
             $index = array_search($role->name, $priorityOrder, true);

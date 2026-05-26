@@ -35,10 +35,17 @@
                                     @csrf
                                     <button type="submit" class="inline-flex items-center px-4 py-2 rounded-full bg-emerald-700 text-amber-50 font-medium hover:bg-emerald-800 transition-colors text-xs">Approve</button>
                                 </form>
-                                <form method="POST" action="{{ route('admin.role-applications.reject', $application) }}" onsubmit="return confirm('Reject this application?');">
-                                    @csrf
-                                    <button type="submit" class="inline-flex items-center px-4 py-2 rounded-full border border-rose-300 text-rose-700 font-medium hover:bg-rose-50 transition-colors text-xs">Reject</button>
-                                </form>
+                                @php($rejectTitle = "Reject {$application->user->name}'s application?")
+                                @php($rejectMessage = "They will lose their pending request for the {$application->role->name} role. They can re-apply later.")
+                                <x-confirm-form
+                                    :action="route('admin.role-applications.reject', $application)"
+                                    method="POST"
+                                    :title="$rejectTitle"
+                                    :message="$rejectMessage"
+                                    confirm-label="Reject application"
+                                >
+                                    <button type="button" class="inline-flex items-center px-4 py-2 rounded-full border border-rose-300 text-rose-700 font-medium hover:bg-rose-50 transition-colors text-xs">Reject</button>
+                                </x-confirm-form>
                             </div>
                         </div>
                     </article>

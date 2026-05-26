@@ -9,7 +9,7 @@ use App\Models\User;
 use App\Roles;
 use App\Settings\Settings;
 use App\Telemetry\Telemetry;
-use Illuminate\Support\Facades\Cache;
+use Database\Seeders\RolePermissionSeeder;
 use Mews\Captcha\Captcha as MewsCaptcha;
 use Spatie\Permission\Models\Role;
 
@@ -23,6 +23,7 @@ function lastEvent(?string $name = null): ?TelemetryEvent
     if ($name !== null) {
         $q->where('event', $name);
     }
+
     return $q->orderByDesc('id')->first();
 }
 
@@ -37,7 +38,7 @@ it('records auth.registered when a user registers', function () {
     $event = lastEvent(Telemetry::AUTH_REGISTERED);
     expect($event)->not->toBeNull()
         ->and($event->user_id)->toBe(User::firstWhere('email', 'tele@example.com')->id)
-        ->and($event->subject_type)->toBe((new User())->getMorphClass())
+        ->and($event->subject_type)->toBe((new User)->getMorphClass())
         ->and($event->ip_address)->not->toBeNull();
 });
 
@@ -155,7 +156,7 @@ it('records variety.created via the observer', function () {
     $event = lastEvent(Telemetry::VARIETY_CREATED);
     expect($event)->not->toBeNull()
         ->and($event->context['name'])->toBe('Telemetry Mango')
-        ->and($event->subject_type)->toBe((new MangoVariety())->getMorphClass())
+        ->and($event->subject_type)->toBe((new MangoVariety)->getMorphClass())
         ->and($event->user_id)->toBe($superuser->id);
 });
 
@@ -197,7 +198,7 @@ it('does NOT record role.created during the RolePermissionSeeder bootstrap', fun
     $beforeCount = TelemetryEvent::where('event', Telemetry::ROLE_CREATED)->count();
 
     // beforeEach already ran the seeder once; running again is a no-op.
-    $this->seed(\Database\Seeders\RolePermissionSeeder::class);
+    $this->seed(RolePermissionSeeder::class);
 
     expect(TelemetryEvent::where('event', Telemetry::ROLE_CREATED)->count())->toBe($beforeCount);
 });
@@ -207,25 +208,25 @@ it('records user.roles.updated when an admin changes someone\'s roles', function
     $target = User::factory()->create(['email' => 'target@example.com']);
 
     $this->actingAs($admin)
-        ->put(route('admin.users.update', $target), ['roles' => [Roles::EDITOR]])
+        ->put(route('admin.users.update', $target), ['roles' => [Roles::CURATOR]])
         ->assertRedirect();
 
     $event = lastEvent(Telemetry::USER_ROLES_UPDATED);
     expect($event)->not->toBeNull()
         ->and($event->user_id)->toBe($admin->id)
         ->and($event->context['target_email'])->toBe('target@example.com')
-        ->and($event->context['after'])->toBe([Roles::EDITOR])
+        ->and($event->context['after'])->toBe([Roles::CURATOR])
         ->and($event->context['before'])->toBe([]);
 });
 
 it('does not record user.roles.updated when the submitted roles are unchanged', function () {
     $admin = User::factory()->superuser()->create();
-    $target = User::factory()->editor()->create();
+    $target = User::factory()->curator()->create();
 
     $countBefore = TelemetryEvent::where('event', Telemetry::USER_ROLES_UPDATED)->count();
 
     $this->actingAs($admin)
-        ->put(route('admin.users.update', $target), ['roles' => [Roles::EDITOR]]);
+        ->put(route('admin.users.update', $target), ['roles' => [Roles::CURATOR]]);
 
     expect(TelemetryEvent::where('event', Telemetry::USER_ROLES_UPDATED)->count())->toBe($countBefore);
 });
@@ -259,7 +260,7 @@ it('captures the changed keys in the settings.updated context', function () {
 });
 
 it('blocks the activity page from users without telemetry.view', function () {
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->get(route('admin.telemetry.index'))
         ->assertForbidden();
 });

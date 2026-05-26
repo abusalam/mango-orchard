@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Observers\ListingTelemetryObserver;
+use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,11 +15,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[ObservedBy([ListingTelemetryObserver::class])]
 class Listing extends Model
 {
-    /** @use HasFactory<\Database\Factories\ListingFactory> */
+    /** @use HasFactory<ListingFactory> */
     use HasFactory;
 
     public const string STATUS_DRAFT = 'draft';
+
     public const string STATUS_PUBLISHED = 'published';
+
     public const string STATUS_SOLD_OUT = 'sold_out';
 
     public const array STATUSES = [

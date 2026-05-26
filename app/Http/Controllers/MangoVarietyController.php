@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreMangoVarietyRequest;
 use App\Http\Requests\UpdateMangoVarietyRequest;
 use App\Models\MangoVariety;
+use App\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -18,7 +19,7 @@ class MangoVarietyController extends Controller implements HasMiddleware
     {
         return [
             new Middleware('auth', except: ['index', 'show']),
-            new Middleware('permission:'.\App\Permissions::VARIETIES_MANAGE, except: ['index', 'show']),
+            new Middleware('permission:'.Permissions::VARIETIES_MANAGE, except: ['index', 'show']),
         ];
     }
 

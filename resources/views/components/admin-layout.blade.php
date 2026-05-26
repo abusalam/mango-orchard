@@ -57,6 +57,12 @@
                                'bg-stone-900 text-amber-50' => $active === 'role-applications',
                                'text-stone-700 hover:bg-stone-100' => $active !== 'role-applications',
                            ])>Role applications</a>
+                        <a href="{{ route('admin.role-delegations.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'role-delegations',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'role-delegations',
+                           ])>Role delegations</a>
                     @endcan
                     @can(\App\Permissions::USERS_IMPERSONATE)
                         <a href="{{ route('admin.impersonate.index') }}"

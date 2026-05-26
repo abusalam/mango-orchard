@@ -1,4 +1,4 @@
-<section>
+<section data-testid="profile-role-applications">
     <header>
         <h2 class="text-lg font-medium text-stone-900">
             {{ __('Request a role') }}
@@ -59,11 +59,17 @@
                                     — <em>{{ Str::limit($pending->message, 140) }}</em>
                                 @endif
                             </p>
-                            <form method="POST" action="{{ route('role-applications.destroy', $pending) }}" onsubmit="return confirm('Cancel this application?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="text-xs text-rose-700 hover:text-rose-900 font-medium">{{ __('Cancel application') }}</button>
-                            </form>
+                            <x-confirm-form
+                                :action="route('role-applications.destroy', $pending)"
+                                method="DELETE"
+                                title="Cancel this role application?"
+                                :message="'Your request for the '.$role->name.' role will be removed. You can re-apply later.'"
+                                confirm-label="Cancel application"
+                                cancel-label="Keep it"
+                                variant="warning"
+                            >
+                                <button type="button" class="text-xs text-rose-700 hover:text-rose-900 font-medium">{{ __('Cancel application') }}</button>
+                            </x-confirm-form>
                         </div>
                     @else
                         <form method="POST" action="{{ route('role-applications.store') }}" class="mt-4 space-y-3">

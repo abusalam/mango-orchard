@@ -6,6 +6,7 @@ use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePreferencesRequest;
 use App\Models\MangoVariety;
 use App\Models\RoleApplication;
+use App\Models\RoleDelegation;
 use App\Models\User;
 use App\Roles;
 use App\Telemetry\Telemetry;
@@ -38,6 +39,26 @@ class ProfileController extends Controller
             ->get()
             ->groupBy('role_id');
 
+        // Roles the user holds that they're also allowed to delegate.
+        $delegatableRolesHeld = Role::query()
+            ->whereIn('name', Roles::delegatable())
+            ->orderBy('name')
+            ->get()
+            ->filter(fn (Role $role) => $user->hasRole($role->name))
+            ->values();
+
+        $delegationsGranted = RoleDelegation::with(['recipient', 'role'])
+            ->where('delegated_by', $user->id)
+            ->active()
+            ->latest('delegated_at')
+            ->get();
+
+        $delegationsReceived = RoleDelegation::with(['delegator', 'role'])
+            ->where('user_id', $user->id)
+            ->active()
+            ->latest('delegated_at')
+            ->get();
+
         return view('profile.edit', [
             'user' => $user,
             'varieties' => MangoVariety::query()->orderBy('name')->get(),
@@ -49,6 +70,9 @@ class ProfileController extends Controller
                 'approved' => RoleApplication::STATUS_APPROVED,
                 'rejected' => RoleApplication::STATUS_REJECTED,
             ],
+            'delegatableRolesHeld' => $delegatableRolesHeld,
+            'delegationsGranted' => $delegationsGranted,
+            'delegationsReceived' => $delegationsReceived,
         ]);
     }
 

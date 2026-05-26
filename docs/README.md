@@ -98,7 +98,7 @@ sail artisan migrate:fresh --seed                 # nuke + migrate + seed in one
 ```
 
 `DatabaseSeeder` currently seeds:
-- `RolePermissionSeeder` — the 3 baseline roles (`superuser`, `editor`, `viewer`) and 5 permissions
+- `RolePermissionSeeder` — the baseline roles (`superuser`, `curator`, `viewer`, `grower`, `impersonator`, `event-manager`) and their permissions
 - `MangoVarietySeeder` — the 12 featured mango varieties on the homepage
 
 There is no seeded admin user. The **first** person to register through `/register` automatically receives the `superuser` role (see [`AssignSuperuserToFirstUser`](../app/Listeners/AssignSuperuserToFirstUser.php)).
@@ -243,6 +243,45 @@ Remove the `Playwright::headed()` line before committing — CI expects headless
 ### Test screenshots
 
 When a Browser test fails it drops a screenshot into [`tests/Browser/Screenshots/`](../tests/Browser/Screenshots) named after the test. Open the PNG to see exactly what the browser was looking at when the assertion failed. The directory is git-ignored.
+
+### Stress testing
+
+Three flavours of stress testing are wired up via composer scripts so they share the same `sail composer …` entry point. None of these run on the default `sail bin pest` invocation — they all need to be asked for explicitly.
+
+#### `sail composer test:parallel` — parallel execution
+
+Runs Unit + Feature suites across multiple worker processes, each on its own per-process test database (Laravel handles the `testing_2`, `testing_3` etc. creation automatically). Roughly halves wall-clock time vs. sequential, and surfaces shared-state / race-condition bugs that hide in single-process runs.
+
+```bash
+sail composer test:parallel                       # all Unit + Feature in parallel
+sail bin pest --parallel --filter='Listing'       # filter while parallel
+```
+
+Browser tests are excluded by design — they share an in-process Laravel HTTP server and a Playwright connection, so they don't parallelise cleanly. Run those serially via `sail bin pest --testsuite=Browser`.
+
+#### `sail composer stress:loop` — repeat-runner for flake hunting
+
+Re-runs the suite (or a filtered subset) N times in a loop, bails at the first failure with a clear "iteration X failed" banner. The runner lives at [`scripts/pest-stress.sh`](../scripts/pest-stress.sh).
+
+```bash
+sail composer stress:loop -- 10                                # 10 runs of full suite
+sail composer stress:loop -- 30 --testsuite=Browser            # 30 runs of one suite
+sail composer stress:loop -- 50 --filter='Impersonation'       # 50 runs of one file
+```
+
+Surfaces intermittent failures (timing-sensitive browser tests, shared-state bugs, captcha cache leaks) that pass once but fail one-in-N times.
+
+#### `sail composer stress` — HTTP load testing (Stressless)
+
+Fires real HTTP traffic at the running app through [k6](https://github.com/grafana/k6) (auto-downloaded on first run by the [`pestphp/pest-plugin-stressless`](https://github.com/pestphp/pest-plugin-stressless) plugin). Tests live in [`tests/Stress/`](../tests/Stress) and target the in-container Apache on port 80 by default.
+
+```bash
+sail composer stress                                   # run the full Stress suite
+sail composer stress -- --filter='marketplace'         # one scenario
+STRESS_BASE_URL=https://staging.example.com sail composer stress   # remote target
+```
+
+The bundled [`HotPathsStressTest`](../tests/Stress/HotPathsStressTest.php) checks that the landing page, marketplace, and variety catalogue stay under 500ms median latency at 10 concurrent users for 5 seconds. **Don't include this in CI on every PR** — it's slow (~30s) and the k6 binary is ~70MB.
 
 ---
 

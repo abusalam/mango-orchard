@@ -1,11 +1,15 @@
 <?php
 
+use App\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\ImpersonationController as AdminImpersonationController;
 use App\Http\Controllers\Admin\RoleApplicationController as AdminRoleApplicationController;
+use App\Http\Controllers\Admin\RoleDelegationController as AdminRoleDelegationController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TelemetryController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\MangoVarietyController;
@@ -13,6 +17,7 @@ use App\Http\Controllers\My\ListingController as MyListingController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleApplicationController;
+use App\Http\Controllers\RoleDelegationController;
 use App\Models\MangoVariety;
 use App\Permissions;
 use Illuminate\Support\Facades\Auth;
@@ -31,9 +36,11 @@ Route::resource('varieties', MangoVarietyController::class)
 Route::get('/listings', [ListingController::class, 'index'])->name('listings.index');
 Route::get('/listings/{listing}', [ListingController::class, 'show'])->name('listings.show');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Public events (training/education for orchard owners).
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('events.show');
+
+Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -45,6 +52,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/role-applications', [RoleApplicationController::class, 'store'])->name('role-applications.store');
     Route::delete('/role-applications/{application}', [RoleApplicationController::class, 'destroy'])->name('role-applications.destroy');
 
+    // Peer-to-peer role delegation. The delegator must hold the role; the
+    // policy on `destroy` permits revoke by delegator, recipient, or admin.
+    Route::post('/role-delegations', [RoleDelegationController::class, 'store'])->name('role-delegations.store');
+    Route::delete('/role-delegations/{delegation}', [RoleDelegationController::class, 'destroy'])->name('role-delegations.destroy');
+
     Route::prefix('admin')->name('admin.')->group(function () {
         // Send each admin to the first section they actually have permission for,
         // so the "Admin" nav link never lands on a 403.
@@ -55,6 +67,7 @@ Route::middleware('auth')->group(function () {
                 Permissions::SETTINGS_MANAGE => 'admin.settings.edit',
                 Permissions::TELEMETRY_VIEW => 'admin.telemetry.index',
                 Permissions::USERS_IMPERSONATE => 'admin.impersonate.index',
+                Permissions::EVENTS_MANAGE => 'admin.events.index',
             ];
 
             foreach ($destinations as $permission => $route) {
@@ -81,9 +94,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/role-applications/{application}/approve', [AdminRoleApplicationController::class, 'approve'])->name('role-applications.approve');
         Route::post('/role-applications/{application}/reject', [AdminRoleApplicationController::class, 'reject'])->name('role-applications.reject');
 
+        Route::get('/role-delegations', [AdminRoleDelegationController::class, 'index'])->name('role-delegations.index');
+
         Route::get('/impersonate', [AdminImpersonationController::class, 'index'])->name('impersonate.index');
         Route::post('/impersonate/users/{user}', [AdminImpersonationController::class, 'impersonateUser'])->name('impersonate.user');
         Route::post('/impersonate/roles/{role}', [AdminImpersonationController::class, 'impersonateRole'])->name('impersonate.role');
+
+        Route::resource('events', AdminEventController::class)
+            ->parameters(['events' => 'event'])
+            ->except(['show']);
     });
 
     // Stop-impersonation lives outside the admin permission group because the

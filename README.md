@@ -16,7 +16,7 @@ A small Laravel application that doubles as a field guide to the world's mango v
 
 - 🌱 **Public mango showcase** — 12 curated varieties with origins, season calendar, and tasting notes.
 - 🔐 **Auth + multi-step onboarding** (region → expertise → preferences) gated by middleware until complete.
-- 👥 **Roles & permissions** — `superuser`, `editor`, `viewer` baseline; admin UI for managing users and roles.
+- 👥 **Roles & permissions** — `superuser`, `curator`, `viewer` baseline (plus `grower`, `impersonator`, `event-manager`); admin UI for managing users and roles.
 - 🥭 **Variety CRUD** gated by the `varieties.manage` permission.
 - 🧺 **Grower marketplace** — users with the `grower` role (or any superuser) can list mangoes they grow (farm name, location, availability window, price, contact). Public browse at `/listings`, owner-only CRUD at `/my/listings`. Listing creation is gated by the `listings.manage` permission; ownership is enforced by `ListingPolicy`.
 - 🤖 **Captcha** on login/registration via `mews/captcha`, toggleable from the admin Settings page, with an **autosolve** dev mode that prefills the real answer.

@@ -146,12 +146,12 @@ it('impersonates the first user holding a given role', function () {
 
 it('refuses to impersonate-by-role when no other user holds that role', function () {
     $impersonator = User::factory()->impersonator()->create();
-    $editorRole = Role::findByName(Roles::EDITOR);
-    // No editors exist.
+    $curatorRole = Role::findByName(Roles::CURATOR);
+    // No curators exist.
 
     $this->actingAs($impersonator)
         ->from('/admin/impersonate')
-        ->post("/admin/impersonate/roles/{$editorRole->id}")
+        ->post("/admin/impersonate/roles/{$curatorRole->id}")
         ->assertSessionHasErrors('impersonate');
 });
 
@@ -267,4 +267,156 @@ it('renders an Impersonate button next to other users on /admin/users for superu
         ->get('/admin/users')
         ->assertOk()
         ->assertSee('data-testid="impersonate-button"', escape: false);
+});
+
+// ============== Audit trail: impersonator stamped on every event ==============
+
+it('stamps impersonator_id + impersonator_email on telemetry recorded during impersonation', function () {
+    $actor = User::factory()->impersonator()->create([
+        'name' => 'Stamp Stan',
+        'email' => 'stan-impersonator@example.com',
+    ]);
+    $target = User::factory()->grower()->create(['email' => 'target-grow@example.com']);
+
+    $this->actingAs($actor)
+        ->post("/admin/impersonate/users/{$target->id}");
+
+    // While impersonating, the target's session is authenticated. Trigger a
+    // listing creation — which Listing's observer telemetry-records — and
+    // verify the audit trail captures who's REALLY at the controls.
+    $variety = \App\Models\MangoVariety::factory()->create();
+    $this->post(route('my.listings.store'), [
+        'mango_variety_id' => $variety->id,
+        'farm_name' => 'Test Farm',
+        'location' => 'Test Location',
+        'availability_start_month' => 4,
+        'availability_end_month' => 6,
+        'price_per_kg' => '450.00',
+        'quantity_available_kg' => 500,
+        'contact_email' => 'farm@example.com',
+        'status' => \App\Models\Listing::STATUS_DRAFT,
+    ]);
+
+    $listingEvent = TelemetryEvent::where('event', Telemetry::LISTING_CREATED)
+        ->latest('id')
+        ->first();
+
+    expect($listingEvent)->not->toBeNull();
+    // Apparent actor is still the target (preserves the spatie / Auth view).
+    expect($listingEvent->user_id)->toBe($target->id);
+    // ...but the truth lives in context.
+    expect($listingEvent->context['impersonator_id'])->toBe($actor->id);
+    expect($listingEvent->context['impersonator_email'])->toBe('stan-impersonator@example.com');
+});
+
+it('does not add impersonator keys to events recorded outside an impersonation', function () {
+    $user = User::factory()->create();
+
+    app(Telemetry::class)->record('test.outside-impersonation', userId: $user->id);
+
+    $event = TelemetryEvent::where('event', 'test.outside-impersonation')->firstOrFail();
+    expect($event->context)->toBeNull();
+});
+
+it('does not add impersonator keys to the IMPERSONATION_STOPPED event itself', function () {
+    $actor = User::factory()->impersonator()->create();
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)->post("/admin/impersonate/users/{$target->id}");
+    $this->post('/impersonate/stop');
+
+    $stopEvent = TelemetryEvent::where('event', Telemetry::IMPERSONATION_STOPPED)
+        ->latest('id')
+        ->firstOrFail();
+
+    // By the time STOPPED fires the session has been cleared, so the
+    // auto-injection sees no active impersonation — context contains only
+    // the fields the controller explicitly wrote.
+    expect($stopEvent->context)->not->toHaveKey('impersonator_id');
+    expect($stopEvent->context)->not->toHaveKey('impersonator_email');
+});
+
+it('renders an impersonated tag on /admin/telemetry rows for impersonated actions', function () {
+    $admin = User::factory()->superuser()->create();
+    $actor = User::factory()->create(['email' => 'real-actor@example.com']);
+    $target = User::factory()->create(['name' => 'Targeted Tessa']);
+
+    TelemetryEvent::create([
+        'event' => Telemetry::LISTING_CREATED,
+        'user_id' => $target->id,
+        'occurred_at' => now()->subHour(),
+        'context' => [
+            'impersonator_id' => $actor->id,
+            'impersonator_email' => $actor->email,
+        ],
+    ]);
+    // A second event with NO impersonator — only the first row should get a tag.
+    TelemetryEvent::create([
+        'event' => Telemetry::LISTING_CREATED,
+        'user_id' => $target->id,
+        'occurred_at' => now()->subMinutes(30),
+    ]);
+
+    $response = $this->actingAs($admin)->get('/admin/telemetry');
+    $response->assertOk();
+
+    // Exactly one tag rendered (for the impersonated event).
+    expect(substr_count($response->getContent(), 'data-testid="telemetry-impersonated-tag"'))->toBe(1);
+    // Hover-tooltip contains the impersonator's email for audit.
+    $response->assertSee('Impersonated by real-actor@example.com');
+});
+
+it('does not render the impersonated tag for events with no impersonator context', function () {
+    $admin = User::factory()->superuser()->create();
+    TelemetryEvent::create([
+        'event' => Telemetry::AUTH_LOGIN_SUCCEEDED,
+        'user_id' => $admin->id,
+        'occurred_at' => now()->subMinutes(5),
+    ]);
+
+    $this->actingAs($admin)
+        ->get('/admin/telemetry')
+        ->assertOk()
+        ->assertDontSee('telemetry-impersonated-tag', escape: false);
+});
+
+it('renders the impersonated tag on the dashboard latest-activity feed', function () {
+    $admin = User::factory()->superuser()->create();
+    $actor = User::factory()->create(['email' => 'feed-actor@example.com']);
+    $target = User::factory()->create();
+
+    TelemetryEvent::create([
+        'event' => Telemetry::LISTING_UPDATED,
+        'user_id' => $target->id,
+        'occurred_at' => now()->subMinutes(2),
+        'context' => [
+            'impersonator_id' => $actor->id,
+            'impersonator_email' => $actor->email,
+        ],
+    ]);
+
+    $response = $this->actingAs($admin)->get('/dashboard');
+    $response->assertOk()
+        ->assertSee('Latest activity')
+        ->assertSee('telemetry-impersonated-tag', escape: false)
+        ->assertSee('Impersonated by feed-actor@example.com');
+});
+
+it('correctly attributes a role-application submission made under impersonation', function () {
+    $actor = User::factory()->impersonator()->create(['email' => 'actor-imp@example.com']);
+    $target = User::factory()->create();
+
+    $this->actingAs($actor)->post("/admin/impersonate/users/{$target->id}");
+
+    $growerRole = Role::findByName(Roles::GROWER);
+    $this->post('/role-applications', ['role_id' => $growerRole->id])
+        ->assertSessionHasNoErrors();
+
+    $event = TelemetryEvent::where('event', Telemetry::ROLE_APPLICATION_SUBMITTED)
+        ->latest('id')
+        ->firstOrFail();
+
+    expect($event->user_id)->toBe($target->id);
+    expect($event->context['impersonator_id'])->toBe($actor->id);
+    expect($event->context['impersonator_email'])->toBe('actor-imp@example.com');
 });

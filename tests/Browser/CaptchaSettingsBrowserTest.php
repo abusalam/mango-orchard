@@ -140,15 +140,15 @@ it('grays out the autosolve toggle on the settings page when captcha is off', fu
         ->assertVisible('label:has([data-testid="autosolve-toggle"]).opacity-50');
 });
 
-it('hides the Settings sidebar link from editors', function () {
-    User::factory()->editor()->create([
-        'email' => 'editor-nosettings@example.com',
-        'password' => bcrypt('editor-only-12'),
+it('hides the Settings sidebar link from curators', function () {
+    User::factory()->curator()->create([
+        'email' => 'curator-nosettings@example.com',
+        'password' => bcrypt('curator-only-12'),
     ]);
 
     visit('/login')
-        ->type('email', 'editor-nosettings@example.com')
-        ->type('password', 'editor-only-12')
+        ->type('email', 'curator-nosettings@example.com')
+        ->type('password', 'curator-only-12')
         ->press('Log in');
 
     visit('/varieties')->assertDontSeeIn('main', 'Settings');

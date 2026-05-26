@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use App\Roles;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -51,21 +52,26 @@ class UserFactory extends Factory
 
     public function superuser(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::SUPERUSER));
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::SUPERUSER));
     }
 
-    public function editor(): static
+    public function curator(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::EDITOR));
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::CURATOR));
     }
 
     public function grower(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::GROWER));
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::GROWER));
     }
 
     public function impersonator(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(\App\Roles::IMPERSONATOR));
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::IMPERSONATOR));
+    }
+
+    public function convener(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::CONVENER));
     }
 }

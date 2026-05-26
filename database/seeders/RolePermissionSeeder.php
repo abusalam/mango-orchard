@@ -28,14 +28,17 @@ class RolePermissionSeeder extends Seeder
             $superuser = Role::findOrCreate(Roles::SUPERUSER, 'web');
             $superuser->syncPermissions(array_keys(Permissions::ALL));
 
-            $editor = Role::findOrCreate(Roles::EDITOR, 'web');
-            $editor->syncPermissions([Permissions::VARIETIES_MANAGE]);
+            $curator = Role::findOrCreate(Roles::CURATOR, 'web');
+            $curator->syncPermissions([Permissions::VARIETIES_MANAGE]);
 
             $grower = Role::findOrCreate(Roles::GROWER, 'web');
             $grower->syncPermissions([Permissions::LISTINGS_MANAGE]);
 
             $impersonator = Role::findOrCreate(Roles::IMPERSONATOR, 'web');
             $impersonator->syncPermissions([Permissions::USERS_IMPERSONATE]);
+
+            $convener = Role::findOrCreate(Roles::CONVENER, 'web');
+            $convener->syncPermissions([Permissions::EVENTS_MANAGE]);
 
             Role::findOrCreate(Roles::VIEWER, 'web');
         });

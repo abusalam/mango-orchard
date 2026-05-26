@@ -36,7 +36,7 @@ class RoleController extends Controller implements HasMiddleware
     public function create(): View
     {
         return view('admin.roles.create', [
-            'role' => new Role(),
+            'role' => new Role,
             'permissions' => Permission::orderBy('name')->get(),
             'permissionLabels' => Permissions::ALL,
         ]);

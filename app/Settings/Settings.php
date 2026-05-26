@@ -10,7 +10,9 @@ use Illuminate\Support\Facades\DB;
 class Settings
 {
     public const string CAPTCHA_ENABLED = 'captcha_enabled';
+
     public const string CAPTCHA_AUTOSOLVE = 'captcha_autosolve';
+
     public const string FORM_AUTOFILL = 'form_autofill';
 
     private const string CACHE_KEY = 'app_settings:all';

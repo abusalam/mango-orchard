@@ -7,8 +7,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TelemetryEvent;
 use App\Permissions;
+use App\Telemetry\Telemetry;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
@@ -52,7 +52,7 @@ class TelemetryController extends Controller implements HasMiddleware
     {
         $fromRows = TelemetryEvent::query()->distinct()->pluck('event')->all();
 
-        $fromConstants = collect((new \ReflectionClass(\App\Telemetry\Telemetry::class))->getConstants())
+        $fromConstants = collect((new \ReflectionClass(Telemetry::class))->getConstants())
             ->filter(fn ($v) => is_string($v))
             ->values()
             ->all();

@@ -1,7 +1,15 @@
 <?php
 
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Pest\Browser\Playwright\Playwright;
 use Tests\TestCase;
+
+// Bump Playwright's default 5s assertion timeout. Full-suite browser runs
+// share a single in-process dev server, and individual page loads can spike
+// past 5s under load — surfacing as `Timeout 5000ms exceeded` on assertions
+// that pass comfortably when the same test runs in isolation.
+Playwright::setTimeout(15_000);
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +24,12 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => $this->seed(\Database\Seeders\RolePermissionSeeder::class))
+    ->beforeEach(fn () => $this->seed(RolePermissionSeeder::class))
     ->in('Feature');
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => $this->seed(\Database\Seeders\RolePermissionSeeder::class))
+    ->beforeEach(fn () => $this->seed(RolePermissionSeeder::class))
     ->in('Browser');
 
 /*

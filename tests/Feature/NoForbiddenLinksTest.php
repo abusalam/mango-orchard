@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\Permissions;
-use App\Roles;
 use Spatie\Permission\Models\Role;
 
 /**
@@ -12,7 +11,6 @@ use Spatie\Permission\Models\Role;
  * to a 403. For each persona, fetch every page that might render nav/dropdown
  * links, scrape the hrefs, and follow each one — anything 403'ing fails.
  */
-
 function pagesToScrape(): array
 {
     return ['/', '/varieties', '/listings', '/dashboard', '/my/listings', '/admin'];
@@ -46,7 +44,7 @@ function personas(): array
         'guest' => [],
         'plain-auth' => [],
         'grower' => [Permissions::LISTINGS_MANAGE],
-        'editor' => [Permissions::VARIETIES_MANAGE],
+        'curator' => [Permissions::VARIETIES_MANAGE],
         'settings-only-admin' => [Permissions::SETTINGS_MANAGE],
         'telemetry-only-admin' => [Permissions::TELEMETRY_VIEW],
         'roles-only-admin' => [Permissions::ROLES_MANAGE],

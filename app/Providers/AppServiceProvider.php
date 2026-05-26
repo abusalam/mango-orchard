@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Listeners\AssignSuperuserToFirstUser;
 use App\Listeners\RecordAuthTelemetry;
 use App\Observers\RoleTelemetryObserver;
+use App\Services\Impersonation;
 use App\Settings\Settings;
 use App\Telemetry\Telemetry;
 use Illuminate\Auth\Events\Failed;
@@ -23,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Settings::class);
         $this->app->singleton(Telemetry::class);
-        $this->app->singleton(\App\Services\Impersonation::class);
+        $this->app->singleton(Impersonation::class);
     }
 
     public function boot(): void
@@ -41,9 +42,9 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view): void {
             $view->with('formAutofillEnabled', app(Settings::class)->formAutofill());
 
-            $impersonation = app(\App\Services\Impersonation::class);
+            $impersonation = app(Impersonation::class);
             if ($impersonation->isActive() && ($target = auth()->user()) !== null && ($actor = $impersonation->originalUser()) !== null) {
-                $reason = (string) session(\App\Services\Impersonation::SESSION_REASON_KEY, 'user');
+                $reason = (string) session(Impersonation::SESSION_REASON_KEY, 'user');
                 $reasonLabel = str_starts_with($reason, 'role:')
                     ? 'role: '.substr($reason, 5)
                     : null;

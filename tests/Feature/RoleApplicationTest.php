@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\RoleApplication;
 use App\Models\TelemetryEvent;
 use App\Models\User;
+use App\Permissions;
 use App\Roles;
 use App\Telemetry\Telemetry;
 use Spatie\Permission\Models\Role;
@@ -19,7 +20,7 @@ it('shows the request-role section on the profile page with each non-superuser r
         ->assertOk()
         ->assertSee('Request a role')
         ->assertSee(Roles::GROWER)
-        ->assertSee(Roles::EDITOR)
+        ->assertSee(Roles::CURATOR)
         ->assertSee(Roles::VIEWER)
         ->assertDontSee('superuser');
 });
@@ -28,12 +29,19 @@ it('hides roles the user already holds from the apply-for list', function () {
     $user = User::factory()->grower()->create();
 
     $response = $this->actingAs($user)->get('/profile');
+    $response->assertOk();
 
-    // Each visible apply form carries a hidden role_id input — the grower role's
-    // id should not appear there since the user already holds it.
+    // Extract just the role-applications section (delimited by its data-testid
+    // marker) so we don't trip on hidden role_id inputs from sibling sections
+    // like the role-delegations partial.
     $growerId = Role::findByName(Roles::GROWER)->id;
-    $response->assertOk()
-        ->assertDontSee('value="'.$growerId.'"', escape: false);
+    $body = $response->getContent();
+    expect(preg_match(
+        '/data-testid="profile-role-applications".*?<\/section>/s',
+        $body,
+        $m,
+    ))->toBe(1);
+    expect($m[0])->not->toContain('value="'.$growerId.'"');
 });
 
 it('allows an authenticated user to apply for a role', function () {
@@ -134,7 +142,7 @@ it('forbids cancelling another user\'s pending application', function () {
 
 it('records telemetry when an application is submitted', function () {
     $user = User::factory()->create();
-    $role = Role::findByName(Roles::EDITOR);
+    $role = Role::findByName(Roles::CURATOR);
 
     $this->actingAs($user)->post('/role-applications', ['role_id' => $role->id]);
 
@@ -192,7 +200,7 @@ it('approves an application and assigns the requested role', function () {
 it('rejects an application without assigning the role', function () {
     $admin = User::factory()->superuser()->create();
     $applicant = User::factory()->create();
-    $role = Role::findByName(Roles::EDITOR);
+    $role = Role::findByName(Roles::CURATOR);
     $app = RoleApplication::factory()->create([
         'user_id' => $applicant->id,
         'role_id' => $role->id,
@@ -239,7 +247,7 @@ it('records telemetry when an application is approved or rejected', function () 
     $app1 = RoleApplication::factory()->create(['user_id' => $applicant->id]);
     $app2 = RoleApplication::factory()->create([
         'user_id' => $applicant->id,
-        'role_id' => Role::findByName(Roles::EDITOR)->id,
+        'role_id' => Role::findByName(Roles::CURATOR)->id,
     ]);
 
     $this->actingAs($admin)->post("/admin/role-applications/{$app1->id}/approve");
@@ -261,7 +269,7 @@ it('shows the role applications link in the admin sidebar to users-manage users'
 
 it('hides the role applications link from admins who lack users-manage', function () {
     $role = Role::findOrCreate('settings-only', 'web');
-    $role->syncPermissions([\App\Permissions::SETTINGS_MANAGE]);
+    $role->syncPermissions([Permissions::SETTINGS_MANAGE]);
     $user = User::factory()->create();
     $user->assignRole($role);
 

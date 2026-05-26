@@ -39,11 +39,15 @@
                             @unless ($isSuper)
                                 <div class="flex justify-end gap-2 text-sm">
                                     <a href="{{ route('admin.roles.edit', $role) }}" class="text-orange-700 hover:text-orange-900 font-medium">Edit</a>
-                                    <form method="POST" action="{{ route('admin.roles.destroy', $role) }}" onsubmit="return confirm('Delete role {{ $role->name }}?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="text-rose-700 hover:text-rose-900 font-medium">Delete</button>
-                                    </form>
+                                    <x-confirm-form
+                                        :action="route('admin.roles.destroy', $role)"
+                                        method="DELETE"
+                                        :title="'Delete role '.$role->name.'?'"
+                                        message="Anyone currently assigned this role will lose its permissions immediately."
+                                        confirm-label="Delete role"
+                                    >
+                                        <button type="button" class="text-rose-700 hover:text-rose-900 font-medium">Delete</button>
+                                    </x-confirm-form>
                                 </div>
                             @endunless
                         </td>

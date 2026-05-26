@@ -194,20 +194,28 @@ function autofillForm(form) {
 }
 
 function run() {
-    if (!isEnabled()) return;
-    let total = 0;
-    document.querySelectorAll('form').forEach(form => {
-        total += autofillForm(form);
-    });
-    if (total > 0) {
-        console.info(`[autofill] prefilled ${total} field${total === 1 ? '' : 's'}`);
+    try {
+        if (!isEnabled()) return;
+        let total = 0;
+        document.querySelectorAll('form').forEach(form => {
+            total += autofillForm(form);
+        });
+        if (total > 0) {
+            console.info(`[autofill] prefilled ${total} field${total === 1 ? '' : 's'}`);
+        }
+    } finally {
+        // Deterministic signal for browser tests — "we've had our shot at
+        // filling the page", whether or not autofill was enabled. Tests can
+        // poll `window.__autofill.done` instead of racing `value()` queries
+        // against DOMContentLoaded.
+        window.__autofill.done = true;
     }
 }
+
+window.__autofill = { run, autofillForm, isEnabled, done: false };
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', run);
 } else {
     run();
 }
-
-window.__autofill = { run, autofillForm, isEnabled };

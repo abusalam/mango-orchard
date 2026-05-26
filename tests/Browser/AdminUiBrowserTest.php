@@ -100,7 +100,7 @@ it('lets a superuser open the admin users section through the welcome nav', func
         ->assertSee(Roles::SUPERUSER);
 });
 
-it('assigns the editor role to a user end-to-end through the UI', function () {
+it('assigns the curator role to a user end-to-end through the UI', function () {
     $superuser = User::factory()->superuser()->create([
         'email' => 'admin1@example.com',
         'password' => bcrypt('admin1-pw-1234'),
@@ -114,12 +114,12 @@ it('assigns the editor role to a user end-to-end through the UI', function () {
 
     visit(route('admin.users.edit', $target))
         ->assertSee('Promote Me')
-        ->check('roles[]', Roles::EDITOR)
+        ->check('roles[]', Roles::CURATOR)
         ->press('Save roles')
         ->assertPathIs('/admin/users')
-        ->assertSee("Updated roles for Promote Me.");
+        ->assertSee('Updated roles for Promote Me.');
 
-    expect($target->fresh()->hasRole(Roles::EDITOR))->toBeTrue();
+    expect($target->fresh()->hasRole(Roles::CURATOR))->toBeTrue();
 });
 
 it('creates a new role with selected permissions via the UI', function () {
@@ -146,34 +146,34 @@ it('creates a new role with selected permissions via the UI', function () {
 });
 
 it('hides the admin nav link from users without admin permissions', function () {
-    User::factory()->editor()->create([
-        'name' => 'Editor Person',
-        'email' => 'editor-only@example.com',
-        'password' => bcrypt('editor-only-pw'),
+    User::factory()->curator()->create([
+        'name' => 'Curator Person',
+        'email' => 'curator-only@example.com',
+        'password' => bcrypt('curator-only-pw'),
     ]);
 
     visit('/login')
-        ->type('email', 'editor-only@example.com')
-        ->type('password', 'editor-only-pw')
+        ->type('email', 'curator-only@example.com')
+        ->type('password', 'curator-only-pw')
         ->press('Log in');
 
     visit('/')
         ->assertDontSeeIn('header', 'Admin')
-        // Open the dropdown to reveal user-only actions; editor sees "New variety" but not "Admin".
-        ->click('Editor Person')
+        // Open the dropdown to reveal user-only actions; curator sees "New variety" but not "Admin".
+        ->click('Curator Person')
         ->assertSee('New variety')
         ->assertDontSeeIn('header', 'Admin');
 });
 
-it('returns 403 when an editor tries to open the admin area', function () {
-    User::factory()->editor()->create([
-        'email' => 'editor-403@example.com',
-        'password' => bcrypt('editor-403-pw'),
+it('returns 403 when an curator tries to open the admin area', function () {
+    User::factory()->curator()->create([
+        'email' => 'curator-403@example.com',
+        'password' => bcrypt('curator-403-pw'),
     ]);
 
     visit('/login')
-        ->type('email', 'editor-403@example.com')
-        ->type('password', 'editor-403-pw')
+        ->type('email', 'curator-403@example.com')
+        ->type('password', 'curator-403-pw')
         ->press('Log in');
 
     visit('/admin/users')->assertSee('403');

@@ -46,6 +46,7 @@
                             @else
                                 <span class="text-stone-400 italic">guest</span>
                             @endif
+                            <x-impersonated-tag :event="$event" />
                         </td>
                         <td class="px-5 py-3 text-stone-700 font-mono text-xs">
                             @if ($event->subject_type)

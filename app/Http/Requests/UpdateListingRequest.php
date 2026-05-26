@@ -14,6 +14,7 @@ class UpdateListingRequest extends FormRequest
     {
         /** @var Listing|null $listing */
         $listing = $this->route('listing');
+
         return $listing !== null && ($this->user()?->can('update', $listing) ?? false);
     }
 

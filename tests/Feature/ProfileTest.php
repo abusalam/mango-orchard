@@ -197,3 +197,25 @@ test('guests cannot reach the preferences update endpoint', function () {
         'expertise' => 'beginner',
     ])->assertRedirect('/login');
 });
+
+test('profile sidebar wires up hash-based active-link tracking', function () {
+    $user = User::factory()->create();
+
+    $response = $this->actingAs($user)->get('/profile');
+    $response->assertOk();
+    $body = $response->getContent();
+
+    // Aside reads window.location.hash on init and listens for changes.
+    expect($body)->toContain("x-data=\"{ active: window.location.hash.slice(1) }\"");
+    expect($body)->toContain('x-on:hashchange.window="active = window.location.hash.slice(1)"');
+
+    // Each sidebar link has an x-bind:class that flips on the section name,
+    // and an aria-current binding for accessibility.
+    foreach (['profile-information', 'preferences', 'role-applications', 'role-delegations', 'password'] as $section) {
+        expect($body)->toContain("active === '{$section}' ? 'bg-orange-50 text-orange-900' : 'text-stone-700 hover:bg-stone-100'");
+        expect($body)->toContain("active === '{$section}' ? 'true' : null");
+    }
+
+    // Danger zone uses the rose palette instead of orange to stay distinct.
+    expect($body)->toContain("active === 'danger-zone' ? 'bg-rose-100 text-rose-900' : 'text-rose-700 hover:bg-rose-50'");
+});

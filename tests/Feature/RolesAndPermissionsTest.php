@@ -92,7 +92,7 @@ it('blocks authed users without varieties.manage from variety writes', function 
 });
 
 it('lets a user with varieties.manage write through the controller', function () {
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->get(route('varieties.create'))
         ->assertOk();
 });
@@ -123,7 +123,7 @@ it('lets a superuser open the edit-user page', function () {
         ->get(route('admin.users.edit', $target))
         ->assertOk()
         ->assertSee('Target Person')
-        ->assertSee(Roles::EDITOR)
+        ->assertSee(Roles::CURATOR)
         ->assertSee(Roles::VIEWER);
 });
 
@@ -132,17 +132,17 @@ it('assigns roles to a user through the admin form', function () {
     $target = User::factory()->create();
 
     $this->actingAs($superuser)
-        ->put(route('admin.users.update', $target), ['roles' => [Roles::EDITOR]])
+        ->put(route('admin.users.update', $target), ['roles' => [Roles::CURATOR]])
         ->assertRedirect(route('admin.users.index'));
 
-    expect($target->refresh()->hasRole(Roles::EDITOR))->toBeTrue();
+    expect($target->refresh()->hasRole(Roles::CURATOR))->toBeTrue();
 });
 
 it('removes all roles when none are submitted', function () {
     $superuser = User::factory()->superuser()->create();
-    $target = User::factory()->editor()->create();
+    $target = User::factory()->curator()->create();
 
-    expect($target->hasRole(Roles::EDITOR))->toBeTrue();
+    expect($target->hasRole(Roles::CURATOR))->toBeTrue();
 
     $this->actingAs($superuser)
         ->put(route('admin.users.update', $target), [])
@@ -156,7 +156,7 @@ it('prevents a superuser from removing the superuser role from themselves', func
 
     $this->actingAs($superuser)
         ->from(route('admin.users.edit', $superuser))
-        ->put(route('admin.users.update', $superuser), ['roles' => [Roles::EDITOR]])
+        ->put(route('admin.users.update', $superuser), ['roles' => [Roles::CURATOR]])
         ->assertSessionHasErrors('roles');
 
     expect($superuser->refresh()->hasRole(Roles::SUPERUSER))->toBeTrue();
@@ -211,16 +211,16 @@ it('rejects an unknown permission on role store', function () {
 
 it('updates a non-protected role and resyncs permissions', function () {
     $superuser = User::factory()->superuser()->create();
-    $editor = Role::findByName(Roles::EDITOR);
+    $curator = Role::findByName(Roles::CURATOR);
 
     $this->actingAs($superuser)
-        ->put(route('admin.roles.update', $editor), [
-            'name' => 'editor',
+        ->put(route('admin.roles.update', $curator), [
+            'name' => 'curator',
             'permissions' => [],
         ])
         ->assertRedirect();
 
-    expect($editor->fresh()->permissions->toArray())->toBe([]);
+    expect($curator->fresh()->permissions->toArray())->toBe([]);
 });
 
 it('refuses to update the superuser role', function () {
@@ -272,7 +272,7 @@ it('refuses to delete the superuser role', function () {
 });
 
 it('blocks the admin/roles section from users without roles.manage', function () {
-    $this->actingAs(User::factory()->editor()->create())
+    $this->actingAs(User::factory()->curator()->create())
         ->get(route('admin.roles.index'))
         ->assertForbidden();
 });

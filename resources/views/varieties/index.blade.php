@@ -39,11 +39,15 @@
                         @can(\App\Permissions::VARIETIES_MANAGE)
                             <div class="px-5 pb-5 flex gap-2 text-xs">
                                 <a href="{{ route('varieties.edit', $variety) }}" class="px-2.5 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors">Edit</a>
-                                <form method="POST" action="{{ route('varieties.destroy', $variety) }}" onsubmit="return confirm('Remove {{ $variety->name }}?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 hover:border-rose-400 transition-colors">Delete</button>
-                                </form>
+                                <x-confirm-form
+                                    :action="route('varieties.destroy', $variety)"
+                                    method="DELETE"
+                                    :title="'Remove '.$variety->name.'?'"
+                                    message="This variety will be removed from the public catalogue."
+                                    confirm-label="Remove variety"
+                                >
+                                    <button type="button" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 hover:border-rose-400 transition-colors">Delete</button>
+                                </x-confirm-form>
                             </div>
                         @endcan
                     </article>

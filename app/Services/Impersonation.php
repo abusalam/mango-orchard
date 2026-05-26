@@ -19,6 +19,7 @@ use RuntimeException;
 class Impersonation
 {
     public const string SESSION_KEY = 'impersonator_id';
+
     public const string SESSION_REASON_KEY = 'impersonator_reason';
 
     public function isActive(): bool
@@ -37,8 +38,8 @@ class Impersonation
 
     /**
      * @param  'user'|'role'  $reason  Why the impersonation was started — picked
-     *                                  directly by id, or chosen as "any user of
-     *                                  role X". Surfaced in the banner.
+     *                                 directly by id, or chosen as "any user of
+     *                                 role X". Surfaced in the banner.
      */
     public function start(User $target, string $reason = 'user'): void
     {

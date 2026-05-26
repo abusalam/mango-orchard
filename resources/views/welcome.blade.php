@@ -172,7 +172,7 @@
                                 The world tastes <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">sweeter</span> in mango season.
                             </h1>
                             <p class="mt-6 text-lg text-stone-800 max-w-xl leading-relaxed">
-                                From the saffron-rich Alphonso of the Konkan coast to the honey-soft Ataulfo of Chiapas, mangoes carry the geography of their orchard in every bite. Explore the varieties that define a season.
+                                In the sunlit Malda orchard, a rhythmic dance of nature and labor unfolds as workers methodically harvest heavy, golden mangoes for the upcoming market rush. These fragrant fruits carry the distinct geography of their grove in every bite, inviting you to explore the rich varieties that define the season.
                             </p>
                             <div class="mt-8 flex flex-wrap gap-3">
                                 <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors">

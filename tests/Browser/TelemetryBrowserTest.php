@@ -66,15 +66,15 @@ it('lets a superuser open the activity feed and see recorded events', function (
         ->assertVisible('[data-testid="telemetry-row"]:first-of-type');
 });
 
-it('hides the Activity sidebar link from editors and blocks the page', function () {
-    User::factory()->editor()->create([
-        'email' => 'editor-noact@example.com',
-        'password' => bcrypt('editor-noact-1'),
+it('hides the Activity sidebar link from curators and blocks the page', function () {
+    User::factory()->curator()->create([
+        'email' => 'curator-noact@example.com',
+        'password' => bcrypt('curator-noact-1'),
     ]);
 
     visit('/login')
-        ->type('email', 'editor-noact@example.com')
-        ->type('password', 'editor-noact-1')
+        ->type('email', 'curator-noact@example.com')
+        ->type('password', 'curator-noact-1')
         ->press('Log in');
 
     visit('/varieties')->assertDontSeeIn('main', 'Activity');

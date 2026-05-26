@@ -45,11 +45,16 @@
                                 @if ($listing->status !== \App\Models\Listing::STATUS_DRAFT)
                                     <a href="{{ route('listings.show', $listing) }}" target="_blank" rel="noopener" class="px-2.5 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors">View public →</a>
                                 @endif
-                                <form method="POST" action="{{ route('my.listings.destroy', $listing) }}" onsubmit="return confirm('Remove this listing?');" class="ml-auto">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 hover:border-rose-400 transition-colors">Delete</button>
-                                </form>
+                                <x-confirm-form
+                                    :action="route('my.listings.destroy', $listing)"
+                                    method="DELETE"
+                                    title="Remove this listing?"
+                                    :message="'It will disappear from your dashboard and from the public marketplace immediately. This cannot be undone.'"
+                                    confirm-label="Delete listing"
+                                    class="inline ml-auto"
+                                >
+                                    <button type="button" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 hover:border-rose-400 transition-colors">Delete</button>
+                                </x-confirm-form>
                             </div>
                         </div>
                     </article>
