@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\Storage;
 
 #[ObservedBy([AdvisoryTelemetryObserver::class])]
 class Advisory extends Model
@@ -49,6 +50,7 @@ class Advisory extends Model
     protected $fillable = [
         'title',
         'body',
+        'image_path',
         'category',
         'severity',
         'issued_by',
@@ -98,5 +100,23 @@ class Advisory extends Model
     public function isExpired(): bool
     {
         return $this->expires_at !== null && $this->expires_at->isPast();
+    }
+
+    /** Public URL for the uploaded image, or null if none. */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
+    }
+
+    /** Delete the underlying file when the advisory is deleted. */
+    protected static function booted(): void
+    {
+        static::deleting(function (self $advisory): void {
+            if ($advisory->image_path && Storage::disk('public')->exists($advisory->image_path)) {
+                Storage::disk('public')->delete($advisory->image_path);
+            }
+        });
     }
 }

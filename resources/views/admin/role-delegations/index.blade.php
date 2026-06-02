@@ -25,7 +25,7 @@
                     </thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($active as $delegation)
-                            <tr data-testid="active-delegation-row">
+                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors" data-testid="active-delegation-row">
                                 <td class="px-5 py-3 text-stone-600 whitespace-nowrap" title="{{ $delegation->delegated_at }}">
                                     {{ $delegation->delegated_at->diffForHumans() }}
                                 </td>
@@ -75,7 +75,7 @@
                     </thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($revoked as $delegation)
-                            <tr>
+                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors">
                                 <td class="px-5 py-3 text-stone-600 whitespace-nowrap" title="{{ $delegation->revoked_at }}">
                                     {{ $delegation->revoked_at?->diffForHumans() }}
                                 </td>

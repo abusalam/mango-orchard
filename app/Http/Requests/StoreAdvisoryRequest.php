@@ -29,6 +29,8 @@ class StoreAdvisoryRequest extends FormRequest
             'issued_at' => ['nullable', 'date'],
             'expires_at' => ['nullable', 'date', 'after:issued_at'],
             'published' => ['nullable', 'boolean'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'remove_image' => ['nullable', 'boolean'],
         ];
     }
 
@@ -36,6 +38,7 @@ class StoreAdvisoryRequest extends FormRequest
     {
         $this->merge([
             'published' => $this->boolean('published'),
+            'remove_image' => $this->boolean('remove_image'),
             'mango_variety_ids' => $this->input('mango_variety_ids', []),
         ]);
     }

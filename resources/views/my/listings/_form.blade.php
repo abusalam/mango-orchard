@@ -110,6 +110,28 @@
         </div>
     </div>
 
+    <div>
+        <label for="image" class="block text-sm font-medium text-stone-800">Harvest photo <span class="text-stone-400 font-normal">(optional, max 5 MB)</span></label>
+        @if ($listing->image_path)
+            <div class="mt-2 flex items-start gap-4">
+                <img src="{{ $listing->image_url }}" alt="Current photo of {{ $listing->farm_name }}"
+                     class="w-32 h-20 object-cover rounded-lg border border-stone-200" data-testid="listing-current-image">
+                <label class="inline-flex items-center gap-2 text-sm text-rose-700 cursor-pointer">
+                    <input type="checkbox" name="remove_image" value="1" class="rounded text-rose-600 focus:ring-rose-400">
+                    Remove current photo
+                </label>
+            </div>
+        @endif
+        {{-- Form defaults to urlencoded; on file selection we promote the
+             enclosing form to multipart so the upload actually transmits. --}}
+        <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp"
+               onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
+               class="mt-2 block w-full text-sm text-stone-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+               data-testid="listing-image-input">
+        <p class="mt-1 text-xs text-stone-500">JPEG, PNG, or WebP. Wide landscape shots (e.g. 1600×900) look best.</p>
+        @error('image') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+    </div>
+
     <fieldset>
         <legend class="block text-sm font-medium text-stone-800">Visibility</legend>
         <div class="mt-3 space-y-2">

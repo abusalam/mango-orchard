@@ -7,8 +7,13 @@
         </nav>
 
         <div class="rounded-3xl overflow-hidden border border-stone-200 bg-white shadow-sm">
-            <div class="relative h-44 sm:h-56 overflow-hidden bg-gradient-to-br {{ $listing->variety->gradient_classes }}">
-                <div aria-hidden="true" class="absolute -bottom-12 -right-8 w-72 h-80 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+            <div class="relative h-56 sm:h-80 overflow-hidden bg-gradient-to-br {{ $listing->variety->gradient_classes }}">
+                @if ($listing->image_url)
+                    <img src="{{ $listing->image_url }}" alt="{{ $listing->farm_name }}" loading="eager"
+                         class="absolute inset-0 w-full h-full object-cover" data-testid="listing-show-image">
+                @else
+                    <div aria-hidden="true" class="absolute -bottom-12 -right-8 w-72 h-80 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                @endif
                 @if ($listing->status === \App\Models\Listing::STATUS_SOLD_OUT)
                     <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-900 border border-rose-200">Sold out</span>
                 @else

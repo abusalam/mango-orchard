@@ -16,31 +16,31 @@
                 <a href="{{ route('admin.advisories.create') }}" class="mt-4 inline-block text-orange-700 font-medium">Issue the first one →</a>
             </div>
         @else
-            <div class="overflow-x-auto rounded-2xl border border-stone-200 bg-white">
-                <table class="min-w-full text-sm">
+            <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+                <table class="w-full text-sm table-fixed">
                     <thead class="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-3 text-left">Issued</th>
-                            <th class="px-4 py-3 text-left">Title</th>
-                            <th class="px-4 py-3 text-left">Category</th>
-                            <th class="px-4 py-3 text-left">Severity</th>
-                            <th class="px-4 py-3 text-left">Targets</th>
-                            <th class="px-4 py-3 text-left">State</th>
-                            <th class="px-4 py-3"></th>
+                            <th class="px-3 py-3 text-left w-28">Issued</th>
+                            <th class="px-3 py-3 text-left">Title</th>
+                            <th class="px-3 py-3 text-left w-28 hidden sm:table-cell">Category</th>
+                            <th class="px-3 py-3 text-left w-24">Severity</th>
+                            <th class="px-3 py-3 text-left w-40 hidden md:table-cell">Targets</th>
+                            <th class="px-3 py-3 text-left w-24">State</th>
+                            <th class="px-3 py-3 w-16"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($advisories as $advisory)
-                            <tr class="hover:bg-stone-50" data-testid="admin-advisory-row">
-                                <td class="px-4 py-3 whitespace-nowrap text-stone-700">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
-                                <td class="px-4 py-3">
-                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="font-medium text-stone-900 hover:text-orange-700">{{ $advisory->title }}</a>
+                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors" data-testid="admin-advisory-row">
+                                <td class="px-3 py-3 whitespace-nowrap text-stone-700 text-xs">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
+                                <td class="px-3 py-3 min-w-0">
+                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="font-medium text-stone-900 hover:text-orange-700 break-words">{{ $advisory->title }}</a>
                                     @if ($advisory->issuer)
                                         <div class="text-xs text-stone-500">by {{ $advisory->issuer->name }}</div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-stone-700">{{ \App\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3 text-stone-700 text-xs hidden sm:table-cell">{{ \App\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
+                                <td class="px-3 py-3">
                                     <span @class([
                                         'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border',
                                         'bg-rose-200 text-rose-900 border-rose-300' => $advisory->severity === \App\Models\Advisory::SEVERITY_URGENT,
@@ -48,14 +48,14 @@
                                         'bg-stone-100 text-stone-700 border-stone-200' => $advisory->severity === \App\Models\Advisory::SEVERITY_INFO,
                                     ])>{{ \App\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
                                 </td>
-                                <td class="px-4 py-3 text-xs text-stone-700">
+                                <td class="px-3 py-3 text-xs text-stone-700 hidden md:table-cell truncate">
                                     @if ($advisory->isGeneral())
                                         <em class="text-stone-400">All</em>
                                     @else
                                         {{ $advisory->varieties->pluck('name')->take(3)->join(', ') }}{{ $advisory->varieties->count() > 3 ? ', +'.($advisory->varieties->count() - 3) : '' }}
                                     @endif
                                 </td>
-                                <td class="px-4 py-3">
+                                <td class="px-3 py-3">
                                     @if (! $advisory->published)
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 text-stone-700 border border-stone-200">Draft</span>
                                     @elseif ($advisory->isExpired())
@@ -64,7 +64,7 @@
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-900 border border-emerald-200">Published</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-right">
+                                <td class="px-3 py-3 text-right">
                                     <a href="{{ route('admin.advisories.edit', $advisory) }}" class="text-orange-700 hover:text-orange-900 font-medium text-sm">Edit</a>
                                 </td>
                             </tr>

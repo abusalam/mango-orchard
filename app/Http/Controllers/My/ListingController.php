@@ -13,6 +13,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ListingController extends Controller implements HasMiddleware
@@ -46,7 +47,18 @@ class ListingController extends Controller implements HasMiddleware
 
     public function store(StoreListingRequest $request): RedirectResponse
     {
-        $listing = auth()->user()->listings()->create($request->validated());
+        $data = $request->validated();
+
+        // Hoist the upload out of the validated array — Laravel's `image`
+        // rule keeps it as an UploadedFile, but it shouldn't go to ->create().
+        $upload = $request->file('image');
+        unset($data['image']);
+
+        if ($upload) {
+            $data['image_path'] = $upload->store('listings', 'public');
+        }
+
+        $listing = auth()->user()->listings()->create($data);
 
         return redirect()
             ->route('my.listings.index')
@@ -65,7 +77,24 @@ class ListingController extends Controller implements HasMiddleware
 
     public function update(UpdateListingRequest $request, Listing $listing): RedirectResponse
     {
-        $listing->update($request->validated());
+        $data = $request->validated();
+
+        $upload = $request->file('image');
+        $removeImage = (bool) ($data['remove_image'] ?? false);
+        unset($data['image'], $data['remove_image']);
+
+        if ($upload) {
+            // New upload replaces any prior image — drop the old file.
+            if ($listing->image_path) {
+                Storage::disk('public')->delete($listing->image_path);
+            }
+            $data['image_path'] = $upload->store('listings', 'public');
+        } elseif ($removeImage && $listing->image_path) {
+            Storage::disk('public')->delete($listing->image_path);
+            $data['image_path'] = null;
+        }
+
+        $listing->update($data);
 
         return redirect()
             ->route('my.listings.index')

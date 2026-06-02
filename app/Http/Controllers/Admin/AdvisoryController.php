@@ -12,6 +12,7 @@ use App\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class AdvisoryController extends Controller implements HasMiddleware
@@ -51,6 +52,13 @@ class AdvisoryController extends Controller implements HasMiddleware
         $varietyIds = $data['mango_variety_ids'] ?? [];
         unset($data['mango_variety_ids']);
 
+        $upload = $request->file('image');
+        unset($data['image'], $data['remove_image']);
+
+        if ($upload) {
+            $data['image_path'] = $upload->store('advisories', 'public');
+        }
+
         // If marked published and no explicit issued_at, stamp now so the
         // public-feed visibility checks pass.
         if (($data['published'] ?? false) && empty($data['issued_at'])) {
@@ -83,6 +91,20 @@ class AdvisoryController extends Controller implements HasMiddleware
         $data = $request->validated();
         $varietyIds = $data['mango_variety_ids'] ?? [];
         unset($data['mango_variety_ids']);
+
+        $upload = $request->file('image');
+        $removeImage = (bool) ($data['remove_image'] ?? false);
+        unset($data['image'], $data['remove_image']);
+
+        if ($upload) {
+            if ($advisory->image_path) {
+                Storage::disk('public')->delete($advisory->image_path);
+            }
+            $data['image_path'] = $upload->store('advisories', 'public');
+        } elseif ($removeImage && $advisory->image_path) {
+            Storage::disk('public')->delete($advisory->image_path);
+            $data['image_path'] = null;
+        }
 
         if (($data['published'] ?? false) && empty($data['issued_at']) && $advisory->issued_at === null) {
             $data['issued_at'] = now();

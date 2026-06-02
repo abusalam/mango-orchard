@@ -73,7 +73,7 @@
                     </thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($reviewed as $application)
-                            <tr data-testid="reviewed-application">
+                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors" data-testid="reviewed-application">
                                 <td class="px-5 py-3 text-stone-600 whitespace-nowrap" title="{{ $application->reviewed_at }}">
                                     {{ $application->reviewed_at?->diffForHumans() }}
                                 </td>

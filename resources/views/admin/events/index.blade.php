@@ -16,20 +16,20 @@
                 <a href="{{ route('admin.events.create') }}" class="mt-4 inline-block text-orange-700 font-medium">Post the first one →</a>
             </div>
         @else
-            <div class="overflow-x-auto rounded-2xl border border-stone-200 bg-white">
-                <table class="min-w-full text-sm">
+            <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+                <table class="w-full text-sm table-fixed">
                     <thead class="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-3 text-left">When</th>
+                            <th class="px-4 py-3 text-left w-44">When</th>
                             <th class="px-4 py-3 text-left">Title</th>
-                            <th class="px-4 py-3 text-left">Location</th>
-                            <th class="px-4 py-3 text-left">Status</th>
-                            <th class="px-4 py-3"></th>
+                            <th class="px-4 py-3 text-left w-40">Location</th>
+                            <th class="px-4 py-3 text-left w-28">Status</th>
+                            <th class="px-4 py-3 w-20"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100">
                         @foreach ($events as $event)
-                            <tr class="hover:bg-stone-50">
+                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors">
                                 <td class="px-4 py-3 whitespace-nowrap text-stone-700">{{ $event->start_at->format('M j, Y · g:i A') }}</td>
                                 <td class="px-4 py-3">
                                     <a href="{{ route('events.show', $event) }}" class="font-medium text-stone-900 hover:text-orange-700">{{ $event->title }}</a>

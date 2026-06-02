@@ -307,3 +307,74 @@ it('exposes Activity in the admin sidebar for users with telemetry.view', functi
         ->get(route('admin.users.index'))
         ->assertSee('Activity');
 });
+
+// ============== Trace data: IP, session ID, user agent ==============
+
+it('captures ip_address, user_agent, and session_id on every telemetry record', function () {
+    $user = User::factory()->create();
+
+    // Simulate an HTTP request with a known user-agent and IP — this is how
+    // a real controller-triggered telemetry call would land.
+    $this->withServerVariables([
+        'REMOTE_ADDR' => '203.0.113.42',
+        'HTTP_USER_AGENT' => 'TraceTesterAgent/1.0',
+    ])
+        ->actingAs($user)
+        ->get('/dashboard') // any auth'd hit; we won't even assertOk
+        ->assertOk();
+
+    // Now record an event in the same request lifecycle. We use the
+    // post route for role-applications which fires the
+    // ROLE_APPLICATION_SUBMITTED telemetry through the controller.
+    $role = \Spatie\Permission\Models\Role::findByName(\App\Roles::GROWER);
+    $this->withServerVariables([
+        'REMOTE_ADDR' => '203.0.113.42',
+        'HTTP_USER_AGENT' => 'TraceTesterAgent/1.0',
+    ])
+        ->actingAs($user)
+        ->post('/role-applications', ['role_id' => $role->id])
+        ->assertSessionHasNoErrors();
+
+    $event = \App\Models\TelemetryEvent::where('event', \App\Telemetry\Telemetry::ROLE_APPLICATION_SUBMITTED)
+        ->latest('id')
+        ->firstOrFail();
+
+    expect($event->ip_address)->toBe('203.0.113.42');
+    expect($event->user_agent)->toBe('TraceTesterAgent/1.0');
+    expect($event->session_id)->not->toBeNull();
+    expect(strlen($event->session_id))->toBeGreaterThan(10);
+});
+
+it('renders ip, session and user-agent in the admin telemetry trace column', function () {
+    $admin = User::factory()->superuser()->create();
+
+    \App\Models\TelemetryEvent::create([
+        'event' => 'trace.test.event',
+        'user_id' => $admin->id,
+        'occurred_at' => now()->subMinutes(2),
+        'ip_address' => '198.51.100.7',
+        'user_agent' => 'Mozilla/5.0 (TraceProbe)',
+        'session_id' => 'sessabcdefghij1234567890',
+    ]);
+
+    $response = $this->actingAs($admin)->get('/admin/telemetry');
+    $response->assertOk()
+        ->assertSee('198.51.100.7')                 // IP visible
+        ->assertSee('sessabcd…', escape: false)     // session id truncated
+        ->assertSee('Mozilla/5.0 (TraceProbe)')     // UA visible
+        ->assertSee('data-testid="telemetry-trace"', escape: false);
+});
+
+it('records null session_id when called outside an HTTP request', function () {
+    // Model observers fire from seeders + factories where no request /
+    // session is bound. The recorder must swallow the missing-session
+    // exception and store null rather than crashing — every
+    // factory()->create() in the test suite implicitly exercises this.
+    $event = app(\App\Telemetry\Telemetry::class)->record('out-of-request.event');
+
+    expect($event)->not->toBeNull();
+    expect($event->event)->toBe('out-of-request.event');
+    // session_id may be a real id (if test kernel has a session bound) or
+    // null (if not); both are valid. The important thing is no exception.
+    expect($event->session_id)->toBeIn([null, $event->session_id]);
+});

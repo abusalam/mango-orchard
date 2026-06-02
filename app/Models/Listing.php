@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 #[ObservedBy([ListingTelemetryObserver::class])]
 class Listing extends Model
@@ -42,6 +43,7 @@ class Listing extends Model
         'quantity_available_kg',
         'contact_email',
         'contact_phone',
+        'image_path',
         'status',
     ];
 
@@ -66,5 +68,23 @@ class Listing extends Model
     public function scopeVisible(Builder $query): Builder
     {
         return $query->whereIn('status', [self::STATUS_PUBLISHED, self::STATUS_SOLD_OUT]);
+    }
+
+    /** Public URL for the uploaded image, or null if none. */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
+    }
+
+    /** Delete the underlying file when the listing is deleted. */
+    protected static function booted(): void
+    {
+        static::deleting(function (self $listing): void {
+            if ($listing->image_path && Storage::disk('public')->exists($listing->image_path)) {
+                Storage::disk('public')->delete($listing->image_path);
+            }
+        });
     }
 }

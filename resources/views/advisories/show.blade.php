@@ -33,6 +33,11 @@
 
             <h1 class="text-3xl font-semibold tracking-tight text-stone-900">{{ $advisory->title }}</h1>
 
+            @if ($advisory->image_url)
+                <img src="{{ $advisory->image_url }}" alt="{{ $advisory->title }}" loading="eager"
+                     class="mt-5 w-full max-h-96 object-cover rounded-xl border border-stone-200" data-testid="advisory-show-image">
+            @endif
+
             <dl class="mt-4 grid sm:grid-cols-2 gap-2 text-xs text-stone-500 border-y border-stone-200 py-3">
                 <div>
                     <dt class="font-medium text-stone-600">Issued</dt>

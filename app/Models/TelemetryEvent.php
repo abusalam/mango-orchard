@@ -19,6 +19,7 @@ class TelemetryEvent extends Model
         'subject_id',
         'ip_address',
         'user_agent',
+        'session_id',
         'context',
         'occurred_at',
     ];

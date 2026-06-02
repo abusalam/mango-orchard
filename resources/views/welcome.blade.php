@@ -265,22 +265,22 @@
                         $months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
                     @endphp
 
-                    <div class="mt-10 overflow-x-auto rounded-2xl border border-stone-200/80 bg-white/70 backdrop-blur">
-                        <table class="w-full min-w-[640px] text-sm">
+                    <div class="mt-10 rounded-2xl border border-stone-200/80 bg-white/70 backdrop-blur overflow-hidden">
+                        <table class="w-full text-sm table-fixed">
                             <thead>
                                 <tr class="text-stone-500">
-                                    <th class="text-left font-medium p-4 w-40">Variety</th>
+                                    <th class="text-left font-medium p-2 sm:p-4 w-24 sm:w-40">Variety</th>
                                     @foreach ($months as $m)
-                                        <th class="font-medium px-1.5 py-4 text-center">{{ $m }}</th>
+                                        <th class="font-medium px-0.5 sm:px-1.5 py-2 sm:py-4 text-center text-[11px] sm:text-sm">{{ $m }}</th>
                                     @endforeach
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-stone-100">
                                 @foreach ($varieties as $variety)
                                     <tr class="hover:bg-amber-50/60 transition-colors">
-                                        <td class="p-4 font-medium text-stone-800">{{ $variety->name }}</td>
+                                        <td class="p-2 sm:p-4 font-medium text-stone-800 text-xs sm:text-sm break-words">{{ $variety->name }}</td>
                                         @for ($i = 1; $i <= 12; $i++)
-                                            <td class="px-1 py-2 text-center align-middle">
+                                            <td class="px-0.5 sm:px-1 py-2 text-center align-middle">
                                                 @if ($i >= $variety->season_start && $i <= $variety->season_end)
                                                     <span class="inline-block w-full h-2 rounded-full bg-gradient-to-r from-amber-400 to-orange-500"></span>
                                                 @else

@@ -54,7 +54,12 @@
                     <article class="group relative overflow-hidden rounded-2xl bg-white border border-stone-200/80 hover:border-stone-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <a href="{{ route('listings.show', $listing) }}" class="block">
                             <div class="relative h-40 overflow-hidden bg-gradient-to-br {{ $listing->variety->gradient_classes }}">
-                                <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                                @if ($listing->image_url)
+                                    <img src="{{ $listing->image_url }}" alt="{{ $listing->farm_name }}" loading="lazy"
+                                         class="absolute inset-0 w-full h-full object-cover" data-testid="listing-card-image">
+                                @else
+                                    <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                                @endif
                                 @if ($listing->status === \App\Models\Listing::STATUS_SOLD_OUT)
                                     <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium bg-rose-100 text-rose-900 border border-rose-200">Sold out</span>
                                 @else

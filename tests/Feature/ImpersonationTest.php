@@ -360,8 +360,11 @@ it('renders an impersonated tag on /admin/telemetry rows for impersonated action
     $response = $this->actingAs($admin)->get('/admin/telemetry');
     $response->assertOk();
 
-    // Exactly one tag rendered (for the impersonated event).
-    expect(substr_count($response->getContent(), 'data-testid="telemetry-impersonated-tag"'))->toBe(1);
+    // Two tags rendered for the impersonated event — once in the mobile
+    // card layout, once in the desktop table; only one is visible at a
+    // time per viewport via Tailwind's `sm:hidden` / `hidden sm:block`.
+    // The non-impersonated event renders no tag in either layout.
+    expect(substr_count($response->getContent(), 'data-testid="telemetry-impersonated-tag"'))->toBe(2);
     // Hover-tooltip contains the impersonator's email for audit.
     $response->assertSee('Impersonated by real-actor@example.com');
 });

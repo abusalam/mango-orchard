@@ -34,12 +34,25 @@
         @endif
     </div>
 
-    <h3 class="mt-3 text-lg font-semibold tracking-tight text-stone-900">
-        <a href="{{ route('advisories.show', $advisory) }}" class="hover:text-orange-700">{{ $advisory->title }}</a>
-    </h3>
+    <div class="mt-3 {{ $advisory->image_url ? 'sm:flex sm:gap-4' : '' }}">
+        @if ($advisory->image_url)
+            <a href="{{ route('advisories.show', $advisory) }}" class="block shrink-0 sm:order-1">
+                <img src="{{ $advisory->image_url }}" alt="{{ $advisory->title }}" loading="lazy"
+                     class="w-full sm:w-32 h-32 sm:h-24 object-cover rounded-lg border border-stone-200" data-testid="advisory-card-image">
+            </a>
+        @endif
+        <div class="mt-3 sm:mt-0 min-w-0 flex-1">
+            <h3 class="text-lg font-semibold tracking-tight text-stone-900">
+                <a href="{{ route('advisories.show', $advisory) }}" class="hover:text-orange-700">{{ $advisory->title }}</a>
+            </h3>
+
+            @unless ($compact)
+                <p class="mt-2 text-sm text-stone-700 line-clamp-3 whitespace-pre-line">{{ Str::limit($advisory->body, 280) }}</p>
+            @endunless
+        </div>
+    </div>
 
     @unless ($compact)
-        <p class="mt-2 text-sm text-stone-700 line-clamp-3 whitespace-pre-line">{{ Str::limit($advisory->body, 280) }}</p>
 
         <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-stone-500">
             @if ($advisory->issuer)

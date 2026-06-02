@@ -83,6 +83,28 @@
         </div>
     </div>
 
+    <div>
+        <label for="image" class="block text-sm font-medium text-stone-800">Illustrative photo <span class="text-stone-400 font-normal">(optional, max 5 MB)</span></label>
+        @if ($advisory->image_path)
+            <div class="mt-2 flex items-start gap-4">
+                <img src="{{ $advisory->image_url }}" alt="Current photo for {{ $advisory->title }}"
+                     class="w-32 h-20 object-cover rounded-lg border border-stone-200" data-testid="advisory-current-image">
+                <label class="inline-flex items-center gap-2 text-sm text-rose-700 cursor-pointer">
+                    <input type="checkbox" name="remove_image" value="1" class="rounded text-rose-600 focus:ring-rose-400">
+                    Remove current photo
+                </label>
+            </div>
+        @endif
+        {{-- Form defaults to urlencoded; promote to multipart only when a
+             file is actually selected so the upload transmits. --}}
+        <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp"
+               onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
+               class="mt-2 block w-full text-sm text-stone-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+               data-testid="advisory-image-input">
+        <p class="mt-1 text-xs text-stone-500">JPEG, PNG, or WebP. Helpful for pest identification or technique illustration.</p>
+        @error('image') <p class="mt-1 text-sm text-rose-600">{{ $message }}</p> @enderror
+    </div>
+
     <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
         <input type="hidden" name="published" value="0">
         <input type="checkbox" name="published" value="1" @checked(old('published', $advisory->published))

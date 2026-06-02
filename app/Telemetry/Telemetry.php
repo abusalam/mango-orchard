@@ -116,9 +116,28 @@ class Telemetry
             'subject_id' => $subject?->getKey(),
             'ip_address' => $request?->ip(),
             'user_agent' => str($request?->userAgent() ?? '')->limit(497)->toString() ?: null,
+            'session_id' => $this->currentSessionId(),
             'context' => $this->mergeImpersonatorContext($context),
             'occurred_at' => now(),
         ]);
+    }
+
+    /**
+     * Capture the current session ID for audit correlation, guarded against
+     * CLI / queue contexts where no session is bound (model observers fire
+     * from seeders too).
+     */
+    private function currentSessionId(): ?string
+    {
+        try {
+            $id = session()->getId();
+
+            // Defensive: extreme custom session IDs could exceed the 64-char
+            // column. Truncate rather than throw.
+            return $id ? str($id)->limit(60, '')->toString() : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /**

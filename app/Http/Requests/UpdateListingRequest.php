@@ -31,7 +31,14 @@ class UpdateListingRequest extends FormRequest
             'quantity_available_kg' => ['nullable', 'integer', 'min:0', 'max:1000000'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'string', 'max:40'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
+            'remove_image' => ['nullable', 'boolean'],
             'status' => ['required', Rule::in(array_keys(Listing::STATUSES))],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge(['remove_image' => $this->boolean('remove_image')]);
     }
 }

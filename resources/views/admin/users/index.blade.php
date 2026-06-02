@@ -19,7 +19,7 @@
             </thead>
             <tbody class="divide-y divide-stone-100">
                 @foreach ($users as $user)
-                    <tr>
+                    <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors">
                         <td class="px-5 py-4 font-medium text-stone-900">{{ $user->name }}</td>
                         <td class="px-5 py-4 text-stone-600">{{ $user->email }}</td>
                         <td class="px-5 py-4">

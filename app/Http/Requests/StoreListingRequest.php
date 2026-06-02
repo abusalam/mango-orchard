@@ -28,6 +28,7 @@ class StoreListingRequest extends FormRequest
             'quantity_available_kg' => ['nullable', 'integer', 'min:0', 'max:1000000'],
             'contact_email' => ['nullable', 'email', 'max:255'],
             'contact_phone' => ['nullable', 'string', 'max:40'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'status' => ['required', Rule::in(array_keys(Listing::STATUSES))],
         ];
     }
