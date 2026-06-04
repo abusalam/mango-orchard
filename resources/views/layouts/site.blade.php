@@ -146,8 +146,17 @@
                     <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 ring-1 ring-orange-700/30"></span>
                     <span class="font-semibold text-stone-100">Mango Orchard</span>
                 </div>
-                <p class="text-sm text-stone-400">A small love letter to the world's mango varieties.</p>
+                <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-stone-400">
+                    <span>A small love letter to the world's mango varieties.</span>
+                    <button
+                        type="button"
+                        onclick="document.cookie = 'cookie_consent=; path=/; max-age=0; SameSite=Lax'; location.reload();"
+                        class="text-xs underline text-stone-400 hover:text-stone-100 transition-colors text-left sm:text-center"
+                        data-testid="cookie-preferences-reset"
+                    >Cookie preferences</button>
+                </div>
             </div>
         </footer>
+        <x-cookie-banner />
     </body>
 </html>

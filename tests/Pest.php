@@ -22,14 +22,31 @@ Playwright::setTimeout(15_000);
 |
 */
 
+// Telemetry now gates analytics events behind a `cookie_consent=all` cookie.
+// Most existing tests assert "telemetry was recorded" without thinking
+// about consent — default the test suite to "accepted" so those keep
+// passing. Tests that exercise the no-consent path (CookieConsentTest)
+// override per-test with their own withUnencryptedCookies(…) or by
+// resetting `$this->unencryptedCookies` directly.
+//
+// Two surfaces need consent:
+//   1. HTTP requests built through the test client → withUnencryptedCookies
+//   2. Direct Telemetry::record() / model-observer calls (no HTTP) →
+//      bind the cookie onto the singleton request the IoC has resolved
+$bootstrapTest = function (): void {
+    $this->seed(RolePermissionSeeder::class);
+    $this->withUnencryptedCookies(['cookie_consent' => 'all']);
+    $this->app['request']->cookies->set('cookie_consent', 'all');
+};
+
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => $this->seed(RolePermissionSeeder::class))
+    ->beforeEach($bootstrapTest)
     ->in('Feature');
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
-    ->beforeEach(fn () => $this->seed(RolePermissionSeeder::class))
+    ->beforeEach($bootstrapTest)
     ->in('Browser');
 
 /*

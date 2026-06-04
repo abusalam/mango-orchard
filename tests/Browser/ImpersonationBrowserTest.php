@@ -26,11 +26,11 @@ it('walks a superuser through impersonating a user from /admin/users and back', 
         ->assertSee('Target Grower')
         ->press('Impersonate')
         ->assertPathIs('/dashboard')
-        ->assertSee('You are now impersonating Target Grower')
-        ->assertSee('Impersonating')
+        ->assertSee('You are now acting as Target Grower')
+        ->assertSee('Acting as')
         ->assertSee('Target Grower')
         ->assertSee('Super Boss')
-        ->press('Stop impersonating')
+        ->press('Return to my account')
         ->assertPathIs('/dashboard')
         ->assertSee('Back to Super Boss');
 });

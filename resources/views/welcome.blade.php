@@ -328,8 +328,15 @@
                     <span class="font-semibold text-stone-100">Mango Orchard</span>
                 </div>
                 <p class="text-sm text-stone-400">A small love letter to the world's mango varieties.</p>
+                <button
+                    type="button"
+                    onclick="document.cookie = 'cookie_consent=; path=/; max-age=0; SameSite=Lax'; location.reload();"
+                    class="text-xs underline text-stone-400 hover:text-stone-100 transition-colors"
+                    data-testid="cookie-preferences-reset"
+                >Cookie preferences</button>
                 <p class="text-sm text-stone-500">v{{ app()->version() }}</p>
             </div>
         </footer>
+        <x-cookie-banner />
     </body>
 </html>

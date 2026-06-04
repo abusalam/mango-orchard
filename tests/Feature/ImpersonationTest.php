@@ -366,7 +366,7 @@ it('renders an impersonated tag on /admin/telemetry rows for impersonated action
     // The non-impersonated event renders no tag in either layout.
     expect(substr_count($response->getContent(), 'data-testid="telemetry-impersonated-tag"'))->toBe(2);
     // Hover-tooltip contains the impersonator's email for audit.
-    $response->assertSee('Impersonated by real-actor@example.com');
+    $response->assertSee('On behalf — performed by real-actor@example.com');
 });
 
 it('does not render the impersonated tag for events with no impersonator context', function () {
@@ -402,7 +402,7 @@ it('renders the impersonated tag on the dashboard latest-activity feed', functio
     $response->assertOk()
         ->assertSee('Latest activity')
         ->assertSee('telemetry-impersonated-tag', escape: false)
-        ->assertSee('Impersonated by feed-actor@example.com');
+        ->assertSee('On behalf — performed by feed-actor@example.com');
 });
 
 it('correctly attributes a role-application submission made under impersonation', function () {

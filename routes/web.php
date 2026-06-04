@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\TelemetryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdvisoryController;
+use App\Http\Controllers\CookieConsentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\ImpersonationController;
 use App\Http\Controllers\ListingController;
@@ -30,6 +31,11 @@ Route::get('/', function () {
         'varieties' => MangoVariety::query()->orderBy('name')->get(),
     ]);
 })->name('home');
+
+// Friendly explainer shown when a visitor without consent hits a gated
+// feature. Lives outside the auth/onboarding middleware groups so it's
+// reachable from any state.
+Route::get('/cookies-required', [CookieConsentController::class, 'show'])->name('cookies.required');
 
 Route::resource('varieties', MangoVarietyController::class)
     ->parameters(['varieties' => 'variety']);

@@ -109,6 +109,15 @@ class Telemetry
 
         $request = request();
 
+        // Cookie-consent gate: when the visitor has not consented to
+        // analytics tracking, behavioural events (listing.created, role.*,
+        // settings.*, etc.) are silently dropped. Security events
+        // (`auth.*` + `impersonation.*`) are always recorded as a
+        // legitimate-interest audit trail.
+        if (! $this->isSecurityEvent($event) && ! $this->hasAnalyticsConsent($request)) {
+            return null;
+        }
+
         return TelemetryEvent::create([
             'event' => $event,
             'user_id' => $userId ?? Auth::id(),
@@ -120,6 +129,36 @@ class Telemetry
             'context' => $this->mergeImpersonatorContext($context),
             'occurred_at' => now(),
         ]);
+    }
+
+    /**
+     * Always-recorded categories (legitimate interest under GDPR):
+     *   - `auth.*` — sign-in success/failure, registration, password reset,
+     *     captcha failure (security audit, brute-force detection)
+     *   - `impersonation.*` — account takeover audit
+     */
+    private function isSecurityEvent(string $event): bool
+    {
+        return str_starts_with($event, 'auth.')
+            || str_starts_with($event, 'impersonation.');
+    }
+
+    /**
+     * Visitor has explicitly opted into analytics cookies. Absence of the
+     * cookie (first-time visitors who haven't dismissed the banner yet) is
+     * treated as "no consent" — fail-closed default.
+     *
+     * In CLI / queue context (no request bound) we treat it as consented so
+     * model observers firing from seeders / queues still record — those
+     * never involve a real visitor's data.
+     */
+    private function hasAnalyticsConsent(?\Illuminate\Http\Request $request): bool
+    {
+        if ($request === null) {
+            return true;
+        }
+
+        return $request->cookie('cookie_consent') === 'all';
     }
 
     /**

@@ -49,7 +49,7 @@ class ImpersonationController extends Controller implements HasMiddleware
 
         return redirect()
             ->route('dashboard')
-            ->with('status', "You are now impersonating {$user->name}.");
+            ->with('status', "You are now acting as {$user->name}.");
     }
 
     public function impersonateRole(Role $role, Impersonation $impersonation): RedirectResponse
@@ -73,6 +73,6 @@ class ImpersonationController extends Controller implements HasMiddleware
 
         return redirect()
             ->route('dashboard')
-            ->with('status', "You are now impersonating {$target->name} (any {$role->name}).");
+            ->with('status', "You are now acting as {$target->name} (any {$role->name}).");
     }
 }

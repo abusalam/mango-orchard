@@ -2,7 +2,7 @@
     <div class="bg-rose-700 text-rose-50" data-testid="impersonation-banner">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-sm">
             <p>
-                <strong>Impersonating</strong>
+                <strong>Acting as</strong>
                 <span class="font-medium">{{ $impersonating['target_name'] }}</span>
                 <span class="text-rose-200 text-xs">({{ $impersonating['target_email'] }})</span>
                 — back as <strong>{{ $impersonating['actor_name'] }}</strong> when done.
@@ -13,7 +13,7 @@
             <form method="POST" action="{{ route('impersonate.stop') }}">
                 @csrf
                 <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full bg-rose-50 text-rose-900 text-xs font-semibold hover:bg-white transition-colors" data-testid="impersonate-stop">
-                    Stop impersonating
+                    Return to my account
                 </button>
             </form>
         </div>
