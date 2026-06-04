@@ -15,6 +15,7 @@
     </head>
     <body class="font-sans antialiased text-stone-900">
         <div class="min-h-screen bg-amber-50">
+            <x-readonly-banner />
             <x-impersonation-banner />
             @include('layouts.navigation')
 

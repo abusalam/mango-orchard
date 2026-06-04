@@ -29,6 +29,7 @@ class SettingsController extends Controller implements HasMiddleware
             'captchaEnabled' => $settings->captchaEnabled(),
             'captchaAutosolve' => (bool) $settings->get(Settings::CAPTCHA_AUTOSOLVE, false),
             'formAutofill' => $settings->formAutofill(),
+            'readonlyMode' => $settings->readonlyMode(),
         ]);
     }
 
@@ -38,23 +39,27 @@ class SettingsController extends Controller implements HasMiddleware
             'captcha_enabled' => ['nullable', 'boolean'],
             'captcha_autosolve' => ['nullable', 'boolean'],
             'form_autofill' => ['nullable', 'boolean'],
+            'readonly_mode' => ['nullable', 'boolean'],
         ]);
 
         $previous = [
             Settings::CAPTCHA_ENABLED => $settings->captchaEnabled(),
             Settings::CAPTCHA_AUTOSOLVE => (bool) $settings->get(Settings::CAPTCHA_AUTOSOLVE, false),
             Settings::FORM_AUTOFILL => $settings->formAutofill(),
+            Settings::READONLY_MODE => $settings->readonlyMode(),
         ];
 
         $next = [
             Settings::CAPTCHA_ENABLED => (bool) ($data['captcha_enabled'] ?? false),
             Settings::CAPTCHA_AUTOSOLVE => (bool) ($data['captcha_autosolve'] ?? false),
             Settings::FORM_AUTOFILL => (bool) ($data['form_autofill'] ?? false),
+            Settings::READONLY_MODE => (bool) ($data['readonly_mode'] ?? false),
         ];
 
         $settings->set(Settings::CAPTCHA_ENABLED, $next[Settings::CAPTCHA_ENABLED]);
         $settings->set(Settings::CAPTCHA_AUTOSOLVE, $next[Settings::CAPTCHA_AUTOSOLVE]);
         $settings->set(Settings::FORM_AUTOFILL, $next[Settings::FORM_AUTOFILL]);
+        $settings->set(Settings::READONLY_MODE, $next[Settings::READONLY_MODE]);
 
         $changed = array_keys(array_filter(
             $next,

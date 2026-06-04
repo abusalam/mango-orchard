@@ -71,6 +71,26 @@
             @error('form_autofill') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
         </fieldset>
 
+        <fieldset class="pt-4 border-t border-stone-100">
+            <legend class="text-lg font-semibold text-stone-900">Site mode</legend>
+            <p class="mt-1 text-sm text-stone-600">Freeze writes site-wide &mdash; useful during migrations, incidents, or maintenance windows.</p>
+
+            <label class="mt-4 flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-rose-300 has-[:checked]:border-rose-500 has-[:checked]:bg-rose-50 transition-colors">
+                <input type="hidden" name="readonly_mode" value="0">
+                <input type="checkbox" name="readonly_mode" id="readonly_mode" value="1"
+                       @checked($readonlyMode)
+                       class="mt-1 rounded text-rose-500 focus:ring-rose-400"
+                       data-testid="readonly-mode-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900">Read-only mode</span>
+                    <span class="block text-xs text-stone-500 mt-0.5">
+                        Blocks all create / update / delete actions for non-superusers. Sign in, sign out, password reset, and impersonation-stop stay available. Superusers can still write &mdash; including toggling this setting back off.
+                    </span>
+                </span>
+            </label>
+            @error('readonly_mode') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+        </fieldset>
+
         <div class="flex items-center gap-3 pt-4 border-t border-stone-100">
             <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                 Save settings

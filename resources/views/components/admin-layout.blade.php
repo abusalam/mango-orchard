@@ -16,6 +16,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-stone-50 text-stone-900 antialiased min-h-screen flex flex-col">
+        <x-readonly-banner />
         <x-impersonation-banner />
         <header class="border-b border-stone-200 bg-white">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnforceReadonlyMode;
 use App\Http\Middleware\EnsureOnboardingComplete;
 use App\Http\Middleware\HonorCookieConsent;
 use App\Http\Middleware\RequireCookieConsent;
@@ -24,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // routes which declare `auth` via HasMiddleware (e.g. DashboardController)
         // still hit the consent gate first instead of redirecting to /login.
         $middleware->appendToGroup('web', RequireCookieConsent::class);
+        $middleware->appendToGroup('web', EnforceReadonlyMode::class);
         $middleware->appendToGroup('web', EnsureOnboardingComplete::class);
         $middleware->prependToPriorityList(
             \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,

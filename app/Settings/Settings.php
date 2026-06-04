@@ -15,6 +15,8 @@ class Settings
 
     public const string FORM_AUTOFILL = 'form_autofill';
 
+    public const string READONLY_MODE = 'readonly_mode';
+
     private const string CACHE_KEY = 'app_settings:all';
 
     /** @var array<string, mixed> */
@@ -22,6 +24,7 @@ class Settings
         self::CAPTCHA_ENABLED => false,
         self::CAPTCHA_AUTOSOLVE => false,
         self::FORM_AUTOFILL => false,
+        self::READONLY_MODE => false,
     ];
 
     public function all(): array
@@ -81,6 +84,11 @@ class Settings
     public function formAutofill(): bool
     {
         return (bool) $this->get(self::FORM_AUTOFILL, false);
+    }
+
+    public function readonlyMode(): bool
+    {
+        return (bool) $this->get(self::READONLY_MODE, false);
     }
 
     private function encode(mixed $value): string
