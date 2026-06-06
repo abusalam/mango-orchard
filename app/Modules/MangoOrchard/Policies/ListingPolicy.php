@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Policies;
+namespace App\Modules\MangoOrchard\Policies;
 
-use App\Models\Listing;
+use App\Modules\MangoOrchard\Models\Listing;
 use App\Models\User;
 use App\Permissions;
 use App\Roles;

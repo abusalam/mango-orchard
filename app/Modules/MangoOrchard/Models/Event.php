@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Modules\MangoOrchard\Models;
 
-use App\Observers\EventTelemetryObserver;
+use App\Modules\MangoOrchard\Observers\EventTelemetryObserver;
 use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,6 +17,11 @@ class Event extends Model
 {
     /** @use HasFactory<EventFactory> */
     use HasFactory;
+
+    protected static function newFactory(): \Database\Factories\EventFactory
+    {
+        return \Database\Factories\EventFactory::new();
+    }
 
     public const string STATUS_DRAFT = 'draft';
 

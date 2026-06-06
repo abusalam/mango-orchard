@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Models\Event;
-use App\Models\Listing;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\Event;
+use App\Modules\MangoOrchard\Models\Listing;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\RoleApplication;
 use App\Models\TelemetryEvent;
 use App\Models\User;

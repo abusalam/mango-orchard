@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePreferencesRequest;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\RoleApplication;
 use App\Models\RoleDelegation;
 use App\Models\User;

@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\TelemetryEvent;
 use App\Models\User;
 use App\Telemetry\Telemetry;

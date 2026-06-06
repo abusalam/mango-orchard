@@ -32,7 +32,7 @@
             <label for="category" class="block text-sm font-medium text-stone-800">Category</label>
             <select name="category" id="category" required
                     class="mt-1 block w-full rounded-lg border-stone-300 shadow-sm focus:border-orange-400 focus:ring-orange-400">
-                @foreach (\App\Models\Advisory::CATEGORIES as $value => $label)
+                @foreach (\App\Modules\MangoOrchard\Models\Advisory::CATEGORIES as $value => $label)
                     <option value="{{ $value }}" @selected(old('category', $advisory->category) === $value)>{{ $label }}</option>
                 @endforeach
             </select>
@@ -42,7 +42,7 @@
             <label for="severity" class="block text-sm font-medium text-stone-800">Severity</label>
             <select name="severity" id="severity" required
                     class="mt-1 block w-full rounded-lg border-stone-300 shadow-sm focus:border-orange-400 focus:ring-orange-400">
-                @foreach (\App\Models\Advisory::SEVERITIES as $value => $label)
+                @foreach (\App\Modules\MangoOrchard\Models\Advisory::SEVERITIES as $value => $label)
                     <option value="{{ $value }}" @selected(old('severity', $advisory->severity) === $value)>{{ $label }}</option>
                 @endforeach
             </select>

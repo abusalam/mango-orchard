@@ -1,4 +1,4 @@
-<x-site-layout :title="$variety->name.' — Mango Orchard'">
+<x-site-layout :title="$variety->name.' — Aamar Malda'">
     <section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <nav class="text-sm text-stone-500 mb-6">
             <a href="{{ route('varieties.index') }}" class="hover:text-orange-700">Varieties</a>
@@ -58,7 +58,7 @@
         {{-- Advisories targeting THIS variety (or any general advisory).
              Active-only filter; ordered urgent → warning → info. --}}
         @php
-            $advisories = \App\Models\Advisory::query()
+            $advisories = \App\Modules\MangoOrchard\Models\Advisory::query()
                 ->with(['issuer', 'varieties'])
                 ->active()
                 ->where(function ($q) use ($variety) {

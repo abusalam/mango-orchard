@@ -5,7 +5,7 @@
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
                         <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
-                        <span class="text-stone-900">Mango Orchard</span>
+                        <span class="text-stone-900">Aamar Malda</span>
                     </a>
                 </div>
 

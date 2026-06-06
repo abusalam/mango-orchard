@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "aamar-malda/app",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Aamar Malda — a multi-module Laravel platform; the Mango Orchard module (varieties, grower marketplace, advisories, training events) is the first module.",
+    "keywords": ["aamar-malda", "mango-orchard", "laravel"],
     "license": "MIT",
     "require": {
         "php": "^8.3",

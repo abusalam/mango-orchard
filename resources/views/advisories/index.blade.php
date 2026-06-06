@@ -1,4 +1,4 @@
-<x-site-layout :title="'Advisories — Mango Orchard'">
+<x-site-layout :title="'Advisories — Aamar Malda'">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <header class="mb-10">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium tracking-wide uppercase">
@@ -19,7 +19,7 @@
             <select name="category" id="category" onchange="this.form.submit()"
                     class="rounded-lg border-stone-300 text-sm focus:border-orange-400 focus:ring-orange-400">
                 <option value="">All categories</option>
-                @foreach (\App\Models\Advisory::CATEGORIES as $value => $label)
+                @foreach (\App\Modules\MangoOrchard\Models\Advisory::CATEGORIES as $value => $label)
                     <option value="{{ $value }}" @selected($filterCategory === $value)>{{ $label }}</option>
                 @endforeach
             </select>

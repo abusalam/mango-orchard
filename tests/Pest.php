@@ -11,6 +11,12 @@ use Tests\TestCase;
 // that pass comfortably when the same test runs in isolation.
 Playwright::setTimeout(15_000);
 
+// The cookie banner is suppressed in browser tests via a `HeadlessChrome`
+// User-Agent check in resources/views/components/cookie-banner.blade.php.
+// The banner JS reads `document.cookie`, which Playwright's fresh context
+// never has, and the fixed-position banner would otherwise overlay the
+// bottom of every page and intercept clicks on Save buttons.
+
 /*
 |--------------------------------------------------------------------------
 | Test Case

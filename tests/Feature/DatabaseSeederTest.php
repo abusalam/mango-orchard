@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Roles;
 use Database\Seeders\DatabaseSeeder;
 use Spatie\Permission\Models\Role;

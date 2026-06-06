@@ -95,7 +95,7 @@
         <label for="status" class="block text-sm font-medium text-stone-800">Status</label>
         <select name="status" id="status" required
                 class="mt-1 block w-full rounded-lg border-stone-300 shadow-sm focus:border-orange-400 focus:ring-orange-400">
-            @foreach (\App\Models\Event::STATUSES as $value => $label)
+            @foreach (\App\Modules\MangoOrchard\Models\Event::STATUSES as $value => $label)
                 <option value="{{ $value }}" @selected(old('status', $event->status) === $value)>{{ $label }}</option>
             @endforeach
         </select>

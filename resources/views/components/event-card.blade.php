@@ -3,17 +3,17 @@
 @php
     $isOnline = stripos($event->location, 'online') === 0;
     $statusStyles = match ($event->status) {
-        \App\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900 border border-rose-200',
-        \App\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700 border border-stone-300',
-        \App\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900 border border-amber-200',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900 border border-rose-200',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700 border border-stone-300',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900 border border-amber-200',
         default => $past
             ? 'bg-stone-200 text-stone-700 border border-stone-300'
             : 'bg-orange-100 text-orange-900 border border-orange-200',
     };
     $statusLabel = match ($event->status) {
-        \App\Models\Event::STATUS_CANCELLED => 'Cancelled',
-        \App\Models\Event::STATUS_COMPLETED => 'Completed',
-        \App\Models\Event::STATUS_DRAFT => 'Draft',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_CANCELLED => 'Cancelled',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_COMPLETED => 'Completed',
+        \App\Modules\MangoOrchard\Models\Event::STATUS_DRAFT => 'Draft',
         default => $past ? 'Past' : 'Upcoming',
     };
     // Mirror the warm sunset gradients used on variety / listing cards — full

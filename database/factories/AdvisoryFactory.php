@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Advisory;
+use App\Modules\MangoOrchard\Models\Advisory;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class AdvisoryFactory extends Factory
 {
+    protected $model = Advisory::class;
+
     public function definition(): array
     {
         return [

@@ -14,7 +14,7 @@
                 @else
                     <div aria-hidden="true" class="absolute -bottom-12 -right-8 w-72 h-80 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
                 @endif
-                @if ($listing->status === \App\Models\Listing::STATUS_SOLD_OUT)
+                @if ($listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_SOLD_OUT)
                     <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium bg-rose-100 text-rose-900 border border-rose-200">Sold out</span>
                 @else
                     <span class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium {{ $listing->variety->accent_classes }}">In season {{ $listing->variety->season }}</span>

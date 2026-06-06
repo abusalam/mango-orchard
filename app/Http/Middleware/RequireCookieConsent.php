@@ -38,9 +38,11 @@ class RequireCookieConsent
         'advisories.index',
         'advisories.show',
 
-        // The explainer page itself + the logout endpoint (logout never
-        // needs to be re-authorised behind a banner — it's an exit).
+        // The explainer page itself, the public cookie policy / preferences
+        // page, and the logout endpoint (logout never needs to be
+        // re-authorised behind a banner — it's an exit).
         'cookies.required',
+        'cookies.policy',
         'logout',
     ];
 

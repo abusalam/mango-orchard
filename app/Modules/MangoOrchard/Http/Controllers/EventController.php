@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Modules\MangoOrchard\Http\Controllers;
 
-use App\Models\Event;
+use App\Http\Controllers\Controller;
+use App\Modules\MangoOrchard\Models\Event;
 use App\Permissions;
 use Illuminate\View\View;
 

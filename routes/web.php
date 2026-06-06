@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
-use App\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\EventController as AdminEventController;
 use App\Http\Controllers\Admin\ImpersonationController as AdminImpersonationController;
 use App\Http\Controllers\Admin\RoleApplicationController as AdminRoleApplicationController;
 use App\Http\Controllers\Admin\RoleDelegationController as AdminRoleDelegationController;
@@ -10,18 +10,18 @@ use App\Http\Controllers\Admin\SettingsController;
 use App\Http\Controllers\Admin\TelemetryController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\AdvisoryController;
+use App\Modules\MangoOrchard\Http\Controllers\AdvisoryController;
 use App\Http\Controllers\CookieConsentController;
-use App\Http\Controllers\EventController;
+use App\Modules\MangoOrchard\Http\Controllers\EventController;
 use App\Http\Controllers\ImpersonationController;
-use App\Http\Controllers\ListingController;
-use App\Http\Controllers\MangoVarietyController;
-use App\Http\Controllers\My\ListingController as MyListingController;
+use App\Modules\MangoOrchard\Http\Controllers\ListingController;
+use App\Modules\MangoOrchard\Http\Controllers\MangoVarietyController;
+use App\Modules\MangoOrchard\Http\Controllers\My\ListingController as MyListingController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleApplicationController;
 use App\Http\Controllers\RoleDelegationController;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Permissions;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -36,6 +36,10 @@ Route::get('/', function () {
 // feature. Lives outside the auth/onboarding middleware groups so it's
 // reachable from any state.
 Route::get('/cookies-required', [CookieConsentController::class, 'show'])->name('cookies.required');
+
+// Public cookie policy + preferences page (modelled on
+// https://www.india.gov.in/cookies).
+Route::get('/cookies', [CookieConsentController::class, 'policy'])->name('cookies.policy');
 
 Route::resource('varieties', MangoVarietyController::class)
     ->parameters(['varieties' => 'variety']);

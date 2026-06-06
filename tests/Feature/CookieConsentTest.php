@@ -13,7 +13,7 @@ it('renders the cookie banner on every layout for visitors', function () {
     $this->get('/')
         ->assertOk()
         ->assertSee('data-testid="cookie-banner"', escape: false)
-        ->assertSee('Cookies on Mango Orchard');
+        ->assertSee('Cookies on Aamar Malda');
 
     // Guest layout (login) — also guests.
     $this->get(route('login'))
@@ -274,6 +274,78 @@ it('lets un-consented visitors hit logout (so they can sign out)', function () {
 
     $response = $this->post(route('logout'));
     expect($response->getTargetUrl() ?? '')->not->toContain('cookies-required');
+});
+
+// ============== Cookie policy page (/cookies) ==============
+
+it('serves the public cookie policy page with essential and optional sections', function () {
+    $this->unencryptedCookies = [];
+
+    $this->get(route('cookies.policy'))
+        ->assertOk()
+        ->assertSee('Cookie settings')
+        ->assertSee('Welcome to the Cookie Settings page', escape: false)
+        ->assertSee('data-testid="cookies-essential-section"', escape: false)
+        ->assertSee('data-testid="cookies-optional-section"', escape: false)
+        ->assertSee('data-testid="cookies-save-preferences"', escape: false)
+        ->assertSee('data-testid="cookies-faq"', escape: false);
+});
+
+it('lists every essential cookie by name on the policy page', function () {
+    $this->unencryptedCookies = [];
+
+    $response = $this->get(route('cookies.policy'))->assertOk();
+    $response->assertSee((string) config('session.cookie'));
+    $response->assertSee('XSRF-TOKEN');
+    $response->assertSee('cookie_consent');
+});
+
+it('shows a no-choice-yet banner when consent cookie is absent', function () {
+    $this->unencryptedCookies = [];
+
+    $this->get(route('cookies.policy'))
+        ->assertOk()
+        ->assertSee('data-testid="cookies-no-choice-yet"', escape: false)
+        ->assertSee('made a choice yet');
+});
+
+it('reflects the current choice on the policy page when consent=all', function () {
+    $this->unencryptedCookies = ['cookie_consent' => 'all'];
+
+    $this->get(route('cookies.policy'))
+        ->assertOk()
+        ->assertSee('Essential + Optional cookies')
+        ->assertDontSee('data-testid="cookies-no-choice-yet"', escape: false);
+});
+
+it('reflects the current choice on the policy page when consent=necessary', function () {
+    $this->unencryptedCookies = ['cookie_consent' => 'necessary'];
+
+    $this->get(route('cookies.policy'))
+        ->assertOk()
+        ->assertSee('Essential cookies only');
+});
+
+it('renders the FAQ section with four collapsible entries', function () {
+    $this->unencryptedCookies = [];
+
+    $response = $this->get(route('cookies.policy'))->assertOk();
+    for ($i = 0; $i < 4; $i++) {
+        $response->assertSee("data-testid=\"cookies-faq-item-{$i}\"", escape: false);
+    }
+});
+
+it('the cookies policy page is reachable without consent', function () {
+    // Belt-and-braces: confirm RequireCookieConsent allowlists this route.
+    $this->unencryptedCookies = [];
+
+    $this->get(route('cookies.policy'))->assertOk();
+});
+
+it('the footer Cookie preferences link points at /cookies', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('href="'.route('cookies.policy').'"', escape: false);
 });
 
 // ============== Direct API call ==============

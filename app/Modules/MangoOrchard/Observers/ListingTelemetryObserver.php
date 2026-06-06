@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Observers;
+namespace App\Modules\MangoOrchard\Observers;
 
-use App\Models\Listing;
+use App\Modules\MangoOrchard\Models\Listing;
 use App\Telemetry\Telemetry;
 
 class ListingTelemetryObserver

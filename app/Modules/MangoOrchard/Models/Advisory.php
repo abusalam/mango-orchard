@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Modules\MangoOrchard\Models;
 
-use App\Observers\AdvisoryTelemetryObserver;
+use App\Models\User;
+use App\Modules\MangoOrchard\Observers\AdvisoryTelemetryObserver;
 use Database\Factories\AdvisoryFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,6 +20,11 @@ class Advisory extends Model
 {
     /** @use HasFactory<AdvisoryFactory> */
     use HasFactory;
+
+    protected static function newFactory(): \Database\Factories\AdvisoryFactory
+    {
+        return \Database\Factories\AdvisoryFactory::new();
+    }
 
     public const string CATEGORY_SEASONAL = 'seasonal';
     public const string CATEGORY_BEST_PRACTICE = 'best_practice';

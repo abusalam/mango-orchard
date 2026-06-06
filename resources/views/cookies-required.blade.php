@@ -1,4 +1,4 @@
-<x-site-layout :title="'Cookies required — Mango Orchard'">
+<x-site-layout :title="'Cookies required — Aamar Malda'">
     <section class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="rounded-2xl border border-amber-200 bg-white shadow-sm p-8 sm:p-10" data-testid="cookies-required-card">
             <div class="flex items-start gap-4">

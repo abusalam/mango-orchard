@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Listing;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\Listing;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class ListingFactory extends Factory
 {
+    protected $model = Listing::class;
+
     public function definition(): array
     {
         $start = $this->faker->numberBetween(1, 10);

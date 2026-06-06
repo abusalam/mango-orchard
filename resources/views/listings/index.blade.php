@@ -1,4 +1,4 @@
-<x-site-layout :title="'Marketplace — Mango Orchard'">
+<x-site-layout :title="'Marketplace — Aamar Malda'">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <header class="mb-10">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium tracking-wide uppercase">
@@ -60,7 +60,7 @@
                                 @else
                                     <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
                                 @endif
-                                @if ($listing->status === \App\Models\Listing::STATUS_SOLD_OUT)
+                                @if ($listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_SOLD_OUT)
                                     <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium bg-rose-100 text-rose-900 border border-rose-200">Sold out</span>
                                 @else
                                     <span class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $listing->variety->accent_classes }}">{{ $listing->variety->season }}</span>

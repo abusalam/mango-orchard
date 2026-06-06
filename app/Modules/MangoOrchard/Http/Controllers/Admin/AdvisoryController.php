@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers\Admin;
+namespace App\Modules\MangoOrchard\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAdvisoryRequest;
-use App\Models\Advisory;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\Advisory;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;

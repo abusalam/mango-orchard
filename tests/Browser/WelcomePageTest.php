@@ -70,7 +70,7 @@ it('renders the picking-guide tips', function () {
 it('hides the decorative hero cluster on a phone-sized viewport', function () {
     visit('/')
         ->on()->iPhone15Pro()
-        ->assertSee('Mango Orchard')
+        ->assertSee('Aamar Malda')
         ->assertSee('Browse varieties')
         ->assertSee('Himsagar');
 });
@@ -78,7 +78,7 @@ it('hides the decorative hero cluster on a phone-sized viewport', function () {
 it('shows the decorative hero cluster on a desktop viewport', function () {
     visit('/')
         ->on()->desktop()
-        ->assertSee('Mango Orchard')
+        ->assertSee('Aamar Malda')
         ->assertSee('Browse varieties');
 });
 

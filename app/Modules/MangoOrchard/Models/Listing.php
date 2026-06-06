@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Modules\MangoOrchard\Models;
 
-use App\Observers\ListingTelemetryObserver;
+use App\Models\User;
+use App\Modules\MangoOrchard\Observers\ListingTelemetryObserver;
 use Database\Factories\ListingFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +19,11 @@ class Listing extends Model
 {
     /** @use HasFactory<ListingFactory> */
     use HasFactory;
+
+    protected static function newFactory(): \Database\Factories\ListingFactory
+    {
+        return \Database\Factories\ListingFactory::new();
+    }
 
     public const string STATUS_DRAFT = 'draft';
 

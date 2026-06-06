@@ -2,8 +2,8 @@
 
 declare(strict_types=1);
 
-use App\Models\Listing;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\Listing;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\User;
 
 it('walks an authenticated grower through creating a listing end-to-end', function () {

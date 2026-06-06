@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use App\Captcha\Captcha;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\TelemetryEvent;
 use App\Models\User;
 use App\Roles;

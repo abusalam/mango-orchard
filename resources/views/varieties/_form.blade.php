@@ -84,7 +84,7 @@
         <label for="theme" class="block text-sm font-medium text-stone-800">Color theme</label>
         <select name="theme" id="theme" required
                 class="mt-1 block w-full rounded-lg border-stone-300 shadow-sm focus:border-orange-400 focus:ring-orange-400">
-            @foreach (\App\Models\MangoVariety::THEMES as $key => $theme)
+            @foreach (\App\Modules\MangoOrchard\Models\MangoVariety::THEMES as $key => $theme)
                 <option value="{{ $key }}" @selected(old('theme', $variety->theme) === $key)>{{ $theme['label'] }}</option>
             @endforeach
         </select>

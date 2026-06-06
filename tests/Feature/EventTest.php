@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\Event;
+use App\Modules\MangoOrchard\Models\Event;
 use App\Models\TelemetryEvent;
 use App\Models\User;
 use App\Roles;

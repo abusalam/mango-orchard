@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Models\Event;
+use App\Modules\MangoOrchard\Models\Event;
 use App\Telemetry\Telemetry;
 use Illuminate\Database\Seeder;
 

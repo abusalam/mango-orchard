@@ -2,16 +2,17 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Modules\MangoOrchard\Http\Controllers;
 
 use App\Http\Requests\StoreMangoVarietyRequest;
 use App\Http\Requests\UpdateMangoVarietyRequest;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\View\View;
+use App\Http\Controllers\Controller;
 
 class MangoVarietyController extends Controller implements HasMiddleware
 {

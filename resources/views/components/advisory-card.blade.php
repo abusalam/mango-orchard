@@ -2,17 +2,17 @@
 
 @php
     $severityStyles = match ($advisory->severity) {
-        \App\Models\Advisory::SEVERITY_URGENT => 'bg-rose-50 border-rose-300',
-        \App\Models\Advisory::SEVERITY_WARNING => 'bg-amber-50 border-amber-300',
+        \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT => 'bg-rose-50 border-rose-300',
+        \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING => 'bg-amber-50 border-amber-300',
         default => 'bg-white border-stone-200',
     };
     $severityChip = match ($advisory->severity) {
-        \App\Models\Advisory::SEVERITY_URGENT => 'bg-rose-200 text-rose-900 border-rose-300',
-        \App\Models\Advisory::SEVERITY_WARNING => 'bg-amber-200 text-amber-900 border-amber-300',
+        \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT => 'bg-rose-200 text-rose-900 border-rose-300',
+        \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING => 'bg-amber-200 text-amber-900 border-amber-300',
         default => 'bg-stone-100 text-stone-700 border-stone-200',
     };
-    $categoryLabel = \App\Models\Advisory::CATEGORIES[$advisory->category] ?? Str::headline($advisory->category);
-    $severityLabel = \App\Models\Advisory::SEVERITIES[$advisory->severity] ?? Str::headline($advisory->severity);
+    $categoryLabel = \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] ?? Str::headline($advisory->category);
+    $severityLabel = \App\Modules\MangoOrchard\Models\Advisory::SEVERITIES[$advisory->severity] ?? Str::headline($advisory->severity);
 @endphp
 
 <article

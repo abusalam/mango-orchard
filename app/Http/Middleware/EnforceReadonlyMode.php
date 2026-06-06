@@ -39,13 +39,17 @@ class EnforceReadonlyMode
     ];
 
     /**
-     * Laravel Breeze's auth POSTs (login submit, register submit) share a
-     * URI with their named GET counterpart but the POST verb itself isn't
-     * given a route name, so we match by path as a backstop.
+     * Laravel Breeze's auth POSTs share a URI with their named GET
+     * counterpart but the POST verb itself isn't given a route name,
+     * so we match by path as a backstop. Note: `register` is NOT
+     * listed — creating a new user account is a write and is blocked
+     * during read-only mode regardless of role. Sign-in itself stays
+     * open at the middleware level so the request reaches
+     * AuthenticatedSessionController, which enforces "superuser only"
+     * after credentials are verified.
      */
     private const ALWAYS_ALLOWED_PATHS = [
         'login',
-        'register',
         'logout',
     ];
 

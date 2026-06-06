@@ -1,4 +1,4 @@
-# 🥭 Mango Orchard
+# 🥭 Aamar Malda
 
 A small Laravel application that doubles as a field guide to the world's mango varieties **and** a worked example of building out a full admin-grade Laravel app — auth, onboarding, role-based permissions, settings, image captcha, and full-coverage telemetry — with Pest 4 + Playwright tests for every feature.
 

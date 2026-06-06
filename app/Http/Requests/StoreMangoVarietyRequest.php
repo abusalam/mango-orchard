@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests;
 
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 

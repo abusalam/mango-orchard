@@ -135,7 +135,7 @@
     <fieldset>
         <legend class="block text-sm font-medium text-stone-800">Visibility</legend>
         <div class="mt-3 space-y-2">
-            @foreach (\App\Models\Listing::STATUSES as $value => $label)
+            @foreach (\App\Modules\MangoOrchard\Models\Listing::STATUSES as $value => $label)
                 <label class="flex items-start gap-3 p-3 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
                     <input type="radio" name="status" value="{{ $value }}" required
                            @checked(old('status', $listing->status) === $value)

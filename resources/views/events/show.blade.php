@@ -10,17 +10,17 @@
             $isOnline = stripos($event->location, 'online') === 0;
             $isPast = $event->isPast();
             $statusStyles = match ($event->status) {
-                \App\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900 border border-rose-200',
-                \App\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700 border border-stone-300',
-                \App\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900 border border-amber-200',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900 border border-rose-200',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700 border border-stone-300',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900 border border-amber-200',
                 default => $isPast
                     ? 'bg-stone-200 text-stone-700 border border-stone-300'
                     : 'bg-orange-100 text-orange-900 border border-orange-200',
             };
             $statusLabel = match ($event->status) {
-                \App\Models\Event::STATUS_CANCELLED => 'Cancelled',
-                \App\Models\Event::STATUS_COMPLETED => 'Completed',
-                \App\Models\Event::STATUS_DRAFT => 'Draft',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_CANCELLED => 'Cancelled',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_COMPLETED => 'Completed',
+                \App\Modules\MangoOrchard\Models\Event::STATUS_DRAFT => 'Draft',
                 default => $isPast ? 'Past' : 'Upcoming',
             };
             $gradient = $isOnline
@@ -76,12 +76,12 @@
                     <p class="text-stone-800 leading-relaxed whitespace-pre-line">{{ $event->description }}</p>
                 </div>
 
-                @if ($event->registration_url && ! $event->isPast() && $event->status === \App\Models\Event::STATUS_PUBLISHED)
+                @if ($event->registration_url && ! $event->isPast() && $event->status === \App\Modules\MangoOrchard\Models\Event::STATUS_PUBLISHED)
                     <div class="mt-8 pt-6 border-t border-stone-100">
                         <a href="{{ $event->registration_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                             Register on the organiser's site ↗
                         </a>
-                        <p class="mt-2 text-xs text-stone-500">Registration is handled by {{ $event->host ?: 'the organiser' }}, not Mango Orchard.</p>
+                        <p class="mt-2 text-xs text-stone-500">Registration is handled by {{ $event->host ?: 'the organiser' }}, not Aamar Malda.</p>
                     </div>
                 @endif
 

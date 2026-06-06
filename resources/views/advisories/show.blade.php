@@ -8,21 +8,21 @@
 
         @php
             $severityBg = match ($advisory->severity) {
-                \App\Models\Advisory::SEVERITY_URGENT => 'bg-rose-50 border-rose-300',
-                \App\Models\Advisory::SEVERITY_WARNING => 'bg-amber-50 border-amber-300',
+                \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT => 'bg-rose-50 border-rose-300',
+                \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING => 'bg-amber-50 border-amber-300',
                 default => 'bg-white border-stone-200',
             };
             $severityChip = match ($advisory->severity) {
-                \App\Models\Advisory::SEVERITY_URGENT => 'bg-rose-200 text-rose-900 border-rose-300',
-                \App\Models\Advisory::SEVERITY_WARNING => 'bg-amber-200 text-amber-900 border-amber-300',
+                \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT => 'bg-rose-200 text-rose-900 border-rose-300',
+                \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING => 'bg-amber-200 text-amber-900 border-amber-300',
                 default => 'bg-stone-100 text-stone-700 border-stone-200',
             };
         @endphp
 
         <article class="rounded-2xl border {{ $severityBg }} p-6 sm:p-8" data-testid="advisory-detail">
             <div class="flex flex-wrap items-center gap-2 mb-4">
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border {{ $severityChip }}">{{ \App\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 text-stone-700 border border-stone-200">{{ \App\Models\Advisory::CATEGORIES[$advisory->category] }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border {{ $severityChip }}">{{ \App\Modules\MangoOrchard\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 text-stone-700 border border-stone-200">{{ \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] }}</span>
                 @if (! $advisory->published)
                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-200 text-stone-700 border border-stone-300">Draft</span>
                 @endif

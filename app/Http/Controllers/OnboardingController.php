@@ -6,7 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOnboardingPreferencesRequest;
 use App\Http\Requests\StoreOnboardingProfileRequest;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\User;
 use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;

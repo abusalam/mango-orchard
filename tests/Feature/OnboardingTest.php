@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\User;
 
 it('redirects a fresh registration through to the onboarding profile step', function () {

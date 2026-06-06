@@ -1,4 +1,4 @@
-<x-site-layout :title="'Varieties — Mango Orchard'">
+<x-site-layout :title="'Varieties — Aamar Malda'">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>

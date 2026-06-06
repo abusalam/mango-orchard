@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace App\Models;
+namespace App\Modules\MangoOrchard\Models;
 
-use App\Observers\MangoVarietyTelemetryObserver;
+use App\Modules\MangoOrchard\Observers\MangoVarietyTelemetryObserver;
 use Database\Factories\MangoVarietyFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -16,6 +16,11 @@ class MangoVariety extends Model
 {
     /** @use HasFactory<MangoVarietyFactory> */
     use HasFactory;
+
+    protected static function newFactory(): \Database\Factories\MangoVarietyFactory
+    {
+        return \Database\Factories\MangoVarietyFactory::new();
+    }
 
     protected $fillable = [
         'name',

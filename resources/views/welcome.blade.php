@@ -6,7 +6,7 @@
         <meta name="description" content="A field guide to the mango varieties of Malda district — origins, seasons, and tasting notes from Himsagar through Ashwina.">
         <x-form-autofill-meta />
 
-        <title>{{ config('app.name', 'Mango Orchard') }} — A field guide to mango varieties</title>
+        <title>{{ config('app.name', 'Aamar Malda') }} — A field guide to mango varieties</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -20,7 +20,7 @@
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="#top" class="flex items-center gap-2 font-semibold tracking-tight">
                     <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
-                    <span class="text-stone-900">Mango Orchard</span>
+                    <span class="text-stone-900">Aamar Malda</span>
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700">
@@ -326,15 +326,14 @@
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row gap-6 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
                     <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 ring-1 ring-orange-700/30"></span>
-                    <span class="font-semibold text-stone-100">Mango Orchard</span>
+                    <span class="font-semibold text-stone-100">Aamar Malda</span>
                 </div>
                 <p class="text-sm text-stone-400">A small love letter to the world's mango varieties.</p>
-                <button
-                    type="button"
-                    onclick="document.cookie = 'cookie_consent=; path=/; max-age=0; SameSite=Lax'; location.reload();"
+                <a
+                    href="{{ route('cookies.policy') }}"
                     class="text-xs underline text-stone-400 hover:text-stone-100 transition-colors"
                     data-testid="cookie-preferences-reset"
-                >Cookie preferences</button>
+                >Cookie preferences</a>
                 <p class="text-sm text-stone-500">v{{ app()->version() }}</p>
             </div>
         </footer>

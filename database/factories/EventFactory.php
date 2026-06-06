@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Factories;
 
-use App\Models\Event;
+use App\Modules\MangoOrchard\Models\Event;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class EventFactory extends Factory
 {
+    protected $model = Event::class;
+
     private const array SAMPLE_TITLES = [
         'Pre-monsoon Pruning Workshop',
         'Integrated Pest Management for Hapus',

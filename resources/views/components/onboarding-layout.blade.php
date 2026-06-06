@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-form-autofill-meta />
 
-        <title>{{ $title }} — Mango Orchard</title>
+        <title>{{ $title }} — Aamar Malda</title>
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -22,7 +22,7 @@
             <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
                     <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
-                    <span class="text-stone-900">Mango Orchard</span>
+                    <span class="text-stone-900">Aamar Malda</span>
                 </a>
                 <form method="POST" action="{{ route('logout') }}" class="inline">
                     @csrf

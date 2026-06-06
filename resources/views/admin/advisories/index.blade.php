@@ -39,14 +39,14 @@
                                         <div class="text-xs text-stone-500">by {{ $advisory->issuer->name }}</div>
                                     @endif
                                 </td>
-                                <td class="px-3 py-3 text-stone-700 text-xs hidden sm:table-cell">{{ \App\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
+                                <td class="px-3 py-3 text-stone-700 text-xs hidden sm:table-cell">{{ \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
                                 <td class="px-3 py-3">
                                     <span @class([
                                         'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border',
-                                        'bg-rose-200 text-rose-900 border-rose-300' => $advisory->severity === \App\Models\Advisory::SEVERITY_URGENT,
-                                        'bg-amber-200 text-amber-900 border-amber-300' => $advisory->severity === \App\Models\Advisory::SEVERITY_WARNING,
-                                        'bg-stone-100 text-stone-700 border-stone-200' => $advisory->severity === \App\Models\Advisory::SEVERITY_INFO,
-                                    ])>{{ \App\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
+                                        'bg-rose-200 text-rose-900 border-rose-300' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT,
+                                        'bg-amber-200 text-amber-900 border-amber-300' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING,
+                                        'bg-stone-100 text-stone-700 border-stone-200' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_INFO,
+                                    ])>{{ \App\Modules\MangoOrchard\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
                                 </td>
                                 <td class="px-3 py-3 text-xs text-stone-700 hidden md:table-cell truncate">
                                     @if ($advisory->isGeneral())

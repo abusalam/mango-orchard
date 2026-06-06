@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Models\Advisory;
-use App\Models\Listing;
-use App\Models\MangoVariety;
+use App\Modules\MangoOrchard\Models\Advisory;
+use App\Modules\MangoOrchard\Models\Listing;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\User;
 use App\Roles;
 use Illuminate\Http\UploadedFile;

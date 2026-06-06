@@ -284,7 +284,7 @@ it('stamps impersonator_id + impersonator_email on telemetry recorded during imp
     // While impersonating, the target's session is authenticated. Trigger a
     // listing creation — which Listing's observer telemetry-records — and
     // verify the audit trail captures who's REALLY at the controls.
-    $variety = \App\Models\MangoVariety::factory()->create();
+    $variety = \App\Modules\MangoOrchard\Models\MangoVariety::factory()->create();
     $this->post(route('my.listings.store'), [
         'mango_variety_id' => $variety->id,
         'farm_name' => 'Test Farm',
@@ -294,7 +294,7 @@ it('stamps impersonator_id + impersonator_email on telemetry recorded during imp
         'price_per_kg' => '450.00',
         'quantity_available_kg' => 500,
         'contact_email' => 'farm@example.com',
-        'status' => \App\Models\Listing::STATUS_DRAFT,
+        'status' => \App\Modules\MangoOrchard\Models\Listing::STATUS_DRAFT,
     ]);
 
     $listingEvent = TelemetryEvent::where('event', Telemetry::LISTING_CREATED)

@@ -1,4 +1,4 @@
-<x-site-layout :title="'My listings — Mango Orchard'">
+<x-site-layout :title="'My listings — Aamar Malda'">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <header class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
@@ -29,9 +29,9 @@
                         <div class="relative h-32 overflow-hidden bg-gradient-to-br {{ $listing->variety->gradient_classes }}">
                             <span @class([
                                 'absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium',
-                                'bg-emerald-100 text-emerald-900 border border-emerald-200' => $listing->status === \App\Models\Listing::STATUS_PUBLISHED,
-                                'bg-stone-100 text-stone-700 border border-stone-200' => $listing->status === \App\Models\Listing::STATUS_DRAFT,
-                                'bg-rose-100 text-rose-900 border border-rose-200' => $listing->status === \App\Models\Listing::STATUS_SOLD_OUT,
+                                'bg-emerald-100 text-emerald-900 border border-emerald-200' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_PUBLISHED,
+                                'bg-stone-100 text-stone-700 border border-stone-200' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_DRAFT,
+                                'bg-rose-100 text-rose-900 border border-rose-200' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_SOLD_OUT,
                             ])>{{ Str::headline($listing->status) }}</span>
                         </div>
                         <div class="p-5">
@@ -42,7 +42,7 @@
                             @endif
                             <div class="mt-5 flex gap-2 text-xs">
                                 <a href="{{ route('my.listings.edit', $listing) }}" class="px-2.5 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors">Edit</a>
-                                @if ($listing->status !== \App\Models\Listing::STATUS_DRAFT)
+                                @if ($listing->status !== \App\Modules\MangoOrchard\Models\Listing::STATUS_DRAFT)
                                     <a href="{{ route('listings.show', $listing) }}" target="_blank" rel="noopener" class="px-2.5 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors">View public →</a>
                                 @endif
                                 <x-confirm-form

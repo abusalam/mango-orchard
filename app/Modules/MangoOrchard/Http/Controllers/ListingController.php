@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Controllers;
+namespace App\Modules\MangoOrchard\Http\Controllers;
 
-use App\Models\Listing;
-use App\Models\MangoVariety;
+use App\Http\Controllers\Controller;
+use App\Modules\MangoOrchard\Models\Listing;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 

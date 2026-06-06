@@ -41,10 +41,10 @@
                                 <td class="px-4 py-3">
                                     @php
                                         $badge = match ($event->status) {
-                                            \App\Models\Event::STATUS_PUBLISHED => 'bg-emerald-100 text-emerald-900',
-                                            \App\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900',
-                                            \App\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900',
-                                            \App\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700',
+                                            \App\Modules\MangoOrchard\Models\Event::STATUS_PUBLISHED => 'bg-emerald-100 text-emerald-900',
+                                            \App\Modules\MangoOrchard\Models\Event::STATUS_DRAFT => 'bg-amber-100 text-amber-900',
+                                            \App\Modules\MangoOrchard\Models\Event::STATUS_CANCELLED => 'bg-rose-100 text-rose-900',
+                                            \App\Modules\MangoOrchard\Models\Event::STATUS_COMPLETED => 'bg-stone-200 text-stone-700',
                                             default => 'bg-stone-100 text-stone-700',
                                         };
                                     @endphp
