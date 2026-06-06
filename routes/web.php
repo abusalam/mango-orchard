@@ -2,6 +2,7 @@
 
 use App\Modules\MangoOrchard\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
 use App\Modules\MangoOrchard\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\ModuleAccessController as MangoOrchardAccessController;
 use App\Http\Controllers\Admin\ImpersonationController as AdminImpersonationController;
 use App\Http\Controllers\Admin\RoleApplicationController as AdminRoleApplicationController;
 use App\Http\Controllers\Admin\RoleDelegationController as AdminRoleDelegationController;
@@ -124,6 +125,14 @@ Route::middleware('auth')->group(function () {
         Route::resource('advisories', AdminAdvisoryController::class)
             ->parameters(['advisories' => 'advisory'])
             ->except(['show']);
+
+        // Mango Orchard module access — grant/revoke `mango-orchard-member`
+        // and optionally pre-assign sub-roles (grower / curator / etc.).
+        Route::prefix('mango-orchard')->name('mango-orchard.')->group(function (): void {
+            Route::get('access', [MangoOrchardAccessController::class, 'index'])->name('access.index');
+            Route::post('access/{user}', [MangoOrchardAccessController::class, 'grant'])->name('access.grant');
+            Route::delete('access/{user}', [MangoOrchardAccessController::class, 'revoke'])->name('access.revoke');
+        });
     });
 
     // Stop-impersonation lives outside the admin permission group because the

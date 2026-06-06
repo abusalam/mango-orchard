@@ -13,7 +13,8 @@ use Spatie\Permission\Models\Role;
 // ============== User-side: applying ==============
 
 it('shows the request-role section on the profile page with each non-superuser role the user does not already hold', function () {
-    $user = User::factory()->create();
+    // Mango Orchard sub-roles only show once the user is in the module.
+    $user = User::factory()->mangoOrchardMember()->create();
 
     $this->actingAs($user)
         ->get('/profile')
@@ -45,7 +46,7 @@ it('hides roles the user already holds from the apply-for list', function () {
 });
 
 it('allows an authenticated user to apply for a role', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->mangoOrchardMember()->create();
     $role = Role::findByName(Roles::GROWER);
 
     $this->actingAs($user)
@@ -87,7 +88,7 @@ it('rejects an application for a role the user already holds', function () {
 });
 
 it('rejects a second pending application for the same role', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->mangoOrchardMember()->create();
     $role = Role::findByName(Roles::GROWER);
 
     $this->actingAs($user)->post('/role-applications', ['role_id' => $role->id])->assertSessionHasNoErrors();
@@ -100,7 +101,7 @@ it('rejects a second pending application for the same role', function () {
 });
 
 it('allows re-applying after a rejection', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->mangoOrchardMember()->create();
     $role = Role::findByName(Roles::GROWER);
     RoleApplication::factory()->create([
         'user_id' => $user->id,
@@ -141,7 +142,7 @@ it('forbids cancelling another user\'s pending application', function () {
 });
 
 it('records telemetry when an application is submitted', function () {
-    $user = User::factory()->create();
+    $user = User::factory()->mangoOrchardMember()->create();
     $role = Role::findByName(Roles::CURATOR);
 
     $this->actingAs($user)->post('/role-applications', ['role_id' => $role->id]);

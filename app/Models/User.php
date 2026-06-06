@@ -65,6 +65,19 @@ class User extends Authenticatable
         return $this->hasMany(RoleApplication::class);
     }
 
+    public function designations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            \App\Modules\SchemeMonitoring\Models\Designation::class,
+            'monitoring_user_designations',
+        )->withTimestamps();
+    }
+
+    public function monitoringProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(\App\Modules\SchemeMonitoring\Models\MonitorProfile::class);
+    }
+
     public function hasCompletedOnboarding(): bool
     {
         return $this->onboarding_completed_at !== null;

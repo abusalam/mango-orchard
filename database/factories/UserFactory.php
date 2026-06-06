@@ -57,12 +57,18 @@ class UserFactory extends Factory
 
     public function curator(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::CURATOR));
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(Roles::MANGO_ORCHARD_MEMBER);
+            $user->assignRole(Roles::CURATOR);
+        });
     }
 
     public function grower(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::GROWER));
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(Roles::MANGO_ORCHARD_MEMBER);
+            $user->assignRole(Roles::GROWER);
+        });
     }
 
     public function impersonator(): static
@@ -72,11 +78,38 @@ class UserFactory extends Factory
 
     public function convener(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::CONVENER));
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(Roles::MANGO_ORCHARD_MEMBER);
+            $user->assignRole(Roles::CONVENER);
+        });
     }
 
     public function advisor(): static
     {
-        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::ADVISOR));
+        return $this->afterCreating(function (User $user): void {
+            $user->assignRole(Roles::MANGO_ORCHARD_MEMBER);
+            $user->assignRole(Roles::ADVISOR);
+        });
+    }
+
+    public function monitor(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::MONITOR));
+    }
+
+    public function monitorAdmin(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::MONITOR_ADMIN));
+    }
+
+    /**
+     * Holds the basic Mango Orchard membership role — required before a
+     * user can self-apply for grower / curator / convener / advisor.
+     * Existing factory states (grower/curator/etc.) already enrol the
+     * user, so call this only when you need membership without a sub-role.
+     */
+    public function mangoOrchardMember(): static
+    {
+        return $this->afterCreating(fn (User $user) => $user->assignRole(Roles::MANGO_ORCHARD_MEMBER));
     }
 }

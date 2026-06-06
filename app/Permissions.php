@@ -24,6 +24,10 @@ final class Permissions
 
     public const string ADVISORIES_MANAGE = 'advisories.manage';
 
+    public const string MONITORING_VIEW = 'monitoring.view';
+
+    public const string MONITORING_MANAGE = 'monitoring.manage';
+
     public const array ALL = [
         self::VARIETIES_MANAGE => 'Create, edit, and delete mango varieties',
         self::USERS_MANAGE => 'View users and assign roles',
@@ -34,5 +38,7 @@ final class Permissions
         self::USERS_IMPERSONATE => 'Log in as another user (or any user holding a given role) and switch back at will',
         self::EVENTS_MANAGE => 'Create, edit, and delete training/education events for orchard owners',
         self::ADVISORIES_MANAGE => 'Issue, edit, and retire orchard advisories (seasonal alerts, best practices, pest warnings)',
+        self::MONITORING_VIEW => 'Access the scheme / project monitoring module (visible scope follows the user\'s position in the monitoring hierarchy)',
+        self::MONITORING_MANAGE => 'Manage the scheme / project monitoring module — designations, hierarchy, scheme + task CRUD across the full org',
     ];
 }

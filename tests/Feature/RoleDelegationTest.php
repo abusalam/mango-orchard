@@ -13,7 +13,9 @@ use Spatie\Permission\Models\Role;
 
 it('lets a grower delegate the grower role to another user', function () {
     $delegator = User::factory()->grower()->create();
-    $recipient = User::factory()->create(['email' => 'newgrower@example.com']);
+    // Recipient must already be in the Mango Orchard module before a
+    // sub-role can be delegated to them.
+    $recipient = User::factory()->mangoOrchardMember()->create(['email' => 'newgrower@example.com']);
     $role = Role::findByName(Roles::GROWER);
 
     $this->actingAs($delegator)
@@ -103,7 +105,7 @@ it('refuses to delegate a role the recipient already holds', function () {
 it('refuses a duplicate active delegation', function () {
     $delegator = User::factory()->grower()->create();
     $other = User::factory()->grower()->create();
-    $recipient = User::factory()->create(['email' => 'r@example.com']);
+    $recipient = User::factory()->mangoOrchardMember()->create(['email' => 'r@example.com']);
     $role = Role::findByName(Roles::GROWER);
 
     // First delegator grants successfully.
@@ -125,7 +127,7 @@ it('refuses a duplicate active delegation', function () {
 
 it('records telemetry when a role is delegated', function () {
     $delegator = User::factory()->grower()->create();
-    $recipient = User::factory()->create(['email' => 'tel@example.com']);
+    $recipient = User::factory()->mangoOrchardMember()->create(['email' => 'tel@example.com']);
     $role = Role::findByName(Roles::GROWER);
 
     $this->actingAs($delegator)->post('/role-delegations', [
@@ -230,7 +232,7 @@ it('cannot revoke a delegation that has already been revoked', function () {
 it('allows re-delegating after a previous delegation has been revoked', function () {
     $delegatorA = User::factory()->grower()->create();
     $delegatorB = User::factory()->grower()->create();
-    $recipient = User::factory()->create(['email' => 'redo@example.com']);
+    $recipient = User::factory()->mangoOrchardMember()->create(['email' => 'redo@example.com']);
     $role = Role::findByName(Roles::GROWER);
 
     // First delegation, then revoked.

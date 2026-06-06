@@ -43,6 +43,21 @@ class RolePermissionSeeder extends Seeder
             $advisor = Role::findOrCreate(Roles::ADVISOR, 'web');
             $advisor->syncPermissions([Permissions::ADVISORIES_MANAGE]);
 
+            // Scheme/Project Monitoring module
+            $monitor = Role::findOrCreate(Roles::MONITOR, 'web');
+            $monitor->syncPermissions([Permissions::MONITORING_VIEW]);
+
+            $monitorAdmin = Role::findOrCreate(Roles::MONITOR_ADMIN, 'web');
+            $monitorAdmin->syncPermissions([
+                Permissions::MONITORING_VIEW,
+                Permissions::MONITORING_MANAGE,
+            ]);
+
+            // Mango Orchard module membership — gates self-apply for
+            // grower / curator / convener / advisor. No permissions of its
+            // own; it's the enrolment flag.
+            Role::findOrCreate(Roles::MANGO_ORCHARD_MEMBER, 'web');
+
             Role::findOrCreate(Roles::VIEWER, 'web');
         });
 

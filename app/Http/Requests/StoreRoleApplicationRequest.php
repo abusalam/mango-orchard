@@ -20,11 +20,13 @@ class StoreRoleApplicationRequest extends FormRequest
 
     public function rules(): array
     {
+        $applicable = Roles::applicableTo($this->user());
+
         return [
             'role_id' => [
                 'required',
                 'integer',
-                Rule::exists('roles', 'id')->where(fn ($q) => $q->whereNotIn('name', Roles::nonApplicable())),
+                Rule::exists('roles', 'id')->where(fn ($q) => $q->whereIn('name', $applicable)),
             ],
             'message' => ['nullable', 'string', 'max:1000'],
         ];
@@ -48,6 +50,19 @@ class StoreRoleApplicationRequest extends FormRequest
                 $validator->errors()->add('role_id', "You already hold the {$role->name} role.");
 
                 return;
+            }
+
+            // Module sub-roles are only self-applicable once the user has
+            // been enrolled in the module by an admin. Pretty-print which
+            // membership they're missing so the error explains the gate.
+            $module = Roles::moduleFor($role->name);
+            if ($module !== null) {
+                $membership = Roles::modules()[$module]['membership'];
+                if ($role->name !== $membership && ! $user->hasRole($membership)) {
+                    $validator->errors()->add('role_id', "Applying for the {$role->name} role requires module access; ask an administrator to add you to the {$module} module first.");
+
+                    return;
+                }
             }
 
             $hasPending = $user->roleApplications()

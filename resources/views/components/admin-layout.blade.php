@@ -97,6 +97,40 @@
                                'text-stone-700 hover:bg-stone-100' => $active !== 'telemetry',
                            ])>Activity</a>
                     @endcan
+                    @can(\App\Permissions::USERS_MANAGE)
+                        <div class="mt-2 pt-2 border-t border-stone-100">
+                            <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Mango Orchard</p>
+                            <a href="{{ route('admin.mango-orchard.access.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'mango-access',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'mango-access',
+                               ])>Module access</a>
+                        </div>
+                    @endcan
+                    @can(\App\Permissions::MONITORING_MANAGE)
+                        <div class="mt-2 pt-2 border-t border-stone-100">
+                            <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Monitoring</p>
+                            <a href="{{ route('admin.monitoring.access.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'monitoring-access',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring-access',
+                               ])>Module access</a>
+                            <a href="{{ route('admin.monitoring.hierarchy.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'monitoring-hierarchy',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring-hierarchy',
+                               ])>Hierarchy</a>
+                            <a href="{{ route('admin.monitoring.designations.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'monitoring',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring',
+                               ])>Designations</a>
+                        </div>
+                    @endcan
                 </nav>
             </aside>
 

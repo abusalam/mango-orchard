@@ -221,12 +221,17 @@ it('records user.roles.updated when an admin changes someone\'s roles', function
 
 it('does not record user.roles.updated when the submitted roles are unchanged', function () {
     $admin = User::factory()->superuser()->create();
+    // curator() also assigns mango-orchard-member (the Mango Orchard sub-role
+    // implies module membership). Submit BOTH so the diff is empty and the
+    // telemetry stays silent.
     $target = User::factory()->curator()->create();
 
     $countBefore = TelemetryEvent::where('event', Telemetry::USER_ROLES_UPDATED)->count();
 
     $this->actingAs($admin)
-        ->put(route('admin.users.update', $target), ['roles' => [Roles::CURATOR]]);
+        ->put(route('admin.users.update', $target), [
+            'roles' => [Roles::CURATOR, Roles::MANGO_ORCHARD_MEMBER],
+        ]);
 
     expect(TelemetryEvent::where('event', Telemetry::USER_ROLES_UPDATED)->count())->toBe($countBefore);
 });
@@ -311,7 +316,8 @@ it('exposes Activity in the admin sidebar for users with telemetry.view', functi
 // ============== Trace data: IP, session ID, user agent ==============
 
 it('captures ip_address, user_agent, and session_id on every telemetry record', function () {
-    $user = User::factory()->create();
+    // Membership unlocks the grower self-apply path used as the trigger below.
+    $user = User::factory()->mangoOrchardMember()->create();
 
     // Simulate an HTTP request with a known user-agent and IP — this is how
     // a real controller-triggered telemetry call would land.

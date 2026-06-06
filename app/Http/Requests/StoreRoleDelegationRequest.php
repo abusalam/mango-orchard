@@ -64,6 +64,19 @@ class StoreRoleDelegationRequest extends FormRequest
                 return;
             }
 
+            // Module sub-roles can only land on a recipient who's already
+            // been enrolled in that module by an admin. Peer delegation
+            // can't sneak someone into a module they haven't been added to.
+            $module = Roles::moduleFor($role->name);
+            if ($module !== null) {
+                $membership = Roles::modules()[$module]['membership'];
+                if (! $recipient->hasRole($membership)) {
+                    $validator->errors()->add('recipient_email', "{$recipient->name} isn't in the {$module} module yet — ask an administrator to add them before delegating {$role->name}.");
+
+                    return;
+                }
+            }
+
             $activeExists = RoleDelegation::active()
                 ->where('user_id', $recipient->id)
                 ->where('role_id', $role->id)

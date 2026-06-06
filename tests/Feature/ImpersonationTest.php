@@ -407,7 +407,9 @@ it('renders the impersonated tag on the dashboard latest-activity feed', functio
 
 it('correctly attributes a role-application submission made under impersonation', function () {
     $actor = User::factory()->impersonator()->create(['email' => 'actor-imp@example.com']);
-    $target = User::factory()->create();
+    // Target needs Mango Orchard membership so the impersonated request for
+    // the grower role validates — module sub-roles are gated by membership.
+    $target = User::factory()->mangoOrchardMember()->create();
 
     $this->actingAs($actor)->post("/admin/impersonate/users/{$target->id}");
 

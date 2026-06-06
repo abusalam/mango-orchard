@@ -26,8 +26,12 @@ class ProfileController extends Controller
     {
         $user = $request->user();
 
+        // applicableTo() collapses two rules into one list:
+        //   - role isn't in the never-self-applicable set, AND
+        //   - role's module (if any) is one the user has been enrolled in
+        $applicableNames = Roles::applicableTo($user);
         $applicableRoles = Role::query()
-            ->whereNotIn('name', Roles::nonApplicable())
+            ->whereIn('name', $applicableNames)
             ->orderBy('name')
             ->get()
             ->reject(fn (Role $role) => $user->hasRole($role->name))
