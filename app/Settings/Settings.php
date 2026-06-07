@@ -17,6 +17,18 @@ class Settings
 
     public const string READONLY_MODE = 'readonly_mode';
 
+    // Master switch: when off, no notification dispatches the `mail`
+    // channel. Database channel still records (TaskStatusChanged /
+    // TaskUpdated keep their in-app trail) and the admin Send button
+    // refuses for mail-only flows (Newsletter).
+    public const string MAIL_ENABLED = 'mail_enabled';
+
+    // Per-module switches. Both must be on (along with MAIL_ENABLED)
+    // for the corresponding notification to deliver mail.
+    public const string MAIL_MANGO_ORCHARD_ENABLED = 'mail_mango_orchard_enabled';
+
+    public const string MAIL_SCHEME_MONITORING_ENABLED = 'mail_scheme_monitoring_enabled';
+
     private const string CACHE_KEY = 'app_settings:all';
 
     /** @var array<string, mixed> */
@@ -25,6 +37,11 @@ class Settings
         self::CAPTCHA_AUTOSOLVE => false,
         self::FORM_AUTOFILL => false,
         self::READONLY_MODE => false,
+        // Mail defaults to ON — flipping any of these to false is a
+        // deliberate sysadmin act (incident response, staging holds, etc.).
+        self::MAIL_ENABLED => true,
+        self::MAIL_MANGO_ORCHARD_ENABLED => true,
+        self::MAIL_SCHEME_MONITORING_ENABLED => true,
     ];
 
     public function all(): array
@@ -89,6 +106,25 @@ class Settings
     public function readonlyMode(): bool
     {
         return (bool) $this->get(self::READONLY_MODE, false);
+    }
+
+    /**
+     * Master mail kill-switch. Notifications check this AND their module
+     * flag — if either is false, the mail channel is dropped from `via()`.
+     */
+    public function mailEnabled(): bool
+    {
+        return (bool) $this->get(self::MAIL_ENABLED, true);
+    }
+
+    public function mailEnabledForMangoOrchard(): bool
+    {
+        return $this->mailEnabled() && (bool) $this->get(self::MAIL_MANGO_ORCHARD_ENABLED, true);
+    }
+
+    public function mailEnabledForSchemeMonitoring(): bool
+    {
+        return $this->mailEnabled() && (bool) $this->get(self::MAIL_SCHEME_MONITORING_ENABLED, true);
     }
 
     private function encode(mixed $value): string

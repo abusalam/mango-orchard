@@ -44,7 +44,12 @@ class TaskStatusChanged extends Notification implements ShouldQueue
      */
     public function via(): array
     {
-        return ['mail', 'database'];
+        $channels = ['database'];
+        if (app(\App\Settings\Settings::class)->mailEnabledForSchemeMonitoring()) {
+            array_unshift($channels, 'mail');
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage

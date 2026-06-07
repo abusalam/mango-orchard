@@ -42,6 +42,13 @@ Route::get('/cookies-required', [CookieConsentController::class, 'show'])->name(
 // https://www.india.gov.in/cookies).
 Route::get('/cookies', [CookieConsentController::class, 'policy'])->name('cookies.policy');
 
+// Newsletter unsubscribe. Public on purpose — the signed URL embedded
+// in each newsletter email IS the proof; no login required. The
+// `signed` middleware rejects tampered or expired URLs out of hand.
+Route::get('/preferences/unsubscribe/newsletter/{user}', [\App\Modules\MangoOrchard\Http\Controllers\UnsubscribeController::class, 'newsletter'])
+    ->middleware('signed')
+    ->name('preferences.unsubscribe-newsletter');
+
 Route::resource('varieties', MangoVarietyController::class)
     ->parameters(['varieties' => 'variety']);
 
@@ -86,6 +93,9 @@ Route::middleware('auth')->group(function () {
                 Permissions::USERS_IMPERSONATE => 'admin.impersonate.index',
                 Permissions::EVENTS_MANAGE => 'admin.events.index',
                 Permissions::ADVISORIES_MANAGE => 'admin.advisories.index',
+                // Curator → Mango Orchard newsletter (their primary
+                // admin task; "New variety" remains a top-nav shortcut).
+                Permissions::VARIETIES_MANAGE => 'admin.mango-orchard.newsletter.index',
                 // Pragati Darpan admins (Niyantrak / superuser) land on
                 // Module access first — it's the entry-point that gates
                 // the rest of the Pragati Darpan admin surface.
@@ -116,6 +126,15 @@ Route::middleware('auth')->group(function () {
         // Both POST (live form values) and GET (saved version, opened
         // from the index page) hit the same preview renderer.
         Route::match(['get', 'post'], '/email-templates/{template}/preview', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'preview'])->name('email-templates.preview');
+
+        // Mango Orchard — newsletter compose / send. Gated by
+        // `varieties.manage` inside the controller, but the URL prefix
+        // groups it under the Mango Orchard admin namespace.
+        Route::prefix('mango-orchard')->name('mango-orchard.')->group(function () {
+            Route::resource('newsletter', \App\Modules\MangoOrchard\Http\Controllers\Admin\NewsletterController::class)
+                ->except(['show']);
+            Route::post('newsletter/{newsletter}/send', [\App\Modules\MangoOrchard\Http\Controllers\Admin\NewsletterController::class, 'send'])->name('newsletter.send');
+        });
 
         Route::get('/system', [\App\Http\Controllers\Admin\SystemController::class, 'index'])->name('system.index');
         Route::post('/system/failed/{id}/retry', [\App\Http\Controllers\Admin\SystemController::class, 'retryFailedJob'])->name('system.failed.retry');

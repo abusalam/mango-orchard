@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\EmailTemplateRenderer;
 use App\Models\EmailTemplate;
+use App\Modules\MangoOrchard\Notifications\VarietyInSeason;
 use App\Modules\SchemeMonitoring\Notifications\TaskDeadlineReminder;
 use App\Modules\SchemeMonitoring\Notifications\TaskStatusChanged;
 use App\Modules\SchemeMonitoring\Notifications\TaskUpdated;
@@ -167,6 +168,12 @@ HTML;
             $key === 'task.deadline_reminder.t-3' => $common + ['days_until' => '3'],
             $key === 'task.deadline_reminder.t-1' => $common + ['days_until' => '1'],
             $key === 'task.deadline_reminder.overdue' => $common + ['days_until' => ''],
+            $key === 'mango.variety_in_season' => [
+                'variety_name' => 'Alphonso',
+                'variety_origin' => 'Ratnagiri, Maharashtra',
+                'season_window' => 'April to June',
+                'variety_url' => url('/varieties/alphonso'),
+            ],
             default => $common,
         };
     }
@@ -184,6 +191,7 @@ HTML;
             $key === TaskStatusChanged::TEMPLATE_KEY => TaskStatusChanged::availablePlaceholders(),
             $key === TaskUpdated::TEMPLATE_KEY => TaskUpdated::availablePlaceholders(),
             str_starts_with($key, 'task.deadline_reminder.') => TaskDeadlineReminder::availablePlaceholders(),
+            $key === VarietyInSeason::TEMPLATE_KEY => VarietyInSeason::availablePlaceholders(),
             default => [],
         };
     }

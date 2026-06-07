@@ -91,6 +91,69 @@
             @error('readonly_mode') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
         </fieldset>
 
+        {{-- ============== Mail delivery ============== --}}
+        <fieldset class="pt-4 border-t border-stone-100"
+                  x-data="{ mailOn: {{ $mailEnabled ? 'true' : 'false' }} }"
+                  data-testid="mail-fieldset">
+            <legend class="text-lg font-semibold text-stone-900">Mail delivery</legend>
+            <p class="mt-1 text-sm text-stone-600">Pause outgoing notification emails. The in-app notification bell + audit trails keep working — only SMTP delivery is suppressed.</p>
+
+            {{-- Master switch --}}
+            <label class="mt-4 flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
+                <input type="hidden" name="mail_enabled" value="0">
+                <input type="checkbox" name="mail_enabled" id="mail_enabled" value="1"
+                       @checked($mailEnabled)
+                       x-model="mailOn"
+                       class="mt-1 rounded text-orange-500 focus:ring-orange-400"
+                       data-testid="mail-enabled-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900">Send emails</span>
+                    <span class="block text-xs text-stone-500 mt-0.5">
+                        Master switch. When off, every notification's mail channel is skipped — the database channel and admin-side flash messages still work.
+                        Currently <strong x-text="mailOn ? 'enabled' : 'disabled'">{{ $mailEnabled ? 'enabled' : 'disabled' }}</strong>.
+                    </span>
+                </span>
+            </label>
+            @error('mail_enabled') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+
+            {{-- Per-module switches — disabled (visually) when master is off --}}
+            <p class="mt-5 text-xs font-medium uppercase tracking-wider text-stone-500">Per module</p>
+
+            <label class="mt-2 flex items-start gap-3 p-4 rounded-xl border border-stone-200 transition-colors cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50"
+                   :class="{ 'opacity-50 cursor-not-allowed': !mailOn }">
+                <input type="hidden" name="mail_mango_orchard_enabled" value="0">
+                <input type="checkbox" name="mail_mango_orchard_enabled" id="mail_mango_orchard_enabled" value="1"
+                       @checked($mailMangoOrchardEnabled)
+                       :disabled="!mailOn"
+                       class="mt-1 rounded text-orange-500 focus:ring-orange-400"
+                       data-testid="mail-mango-orchard-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900">Mango Orchard emails</span>
+                    <span class="block text-xs text-stone-500 mt-0.5">
+                        Seasonal "variety in season" alerts and the monthly newsletter. When off, the Newsletter Send button is refused at the controller — drafts stay safe.
+                    </span>
+                </span>
+            </label>
+            @error('mail_mango_orchard_enabled') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+
+            <label class="mt-3 flex items-start gap-3 p-4 rounded-xl border border-stone-200 transition-colors cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50"
+                   :class="{ 'opacity-50 cursor-not-allowed': !mailOn }">
+                <input type="hidden" name="mail_scheme_monitoring_enabled" value="0">
+                <input type="checkbox" name="mail_scheme_monitoring_enabled" id="mail_scheme_monitoring_enabled" value="1"
+                       @checked($mailSchemeMonitoringEnabled)
+                       :disabled="!mailOn"
+                       class="mt-1 rounded text-orange-500 focus:ring-orange-400"
+                       data-testid="mail-scheme-monitoring-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900">Pragati Darpan emails</span>
+                    <span class="block text-xs text-stone-500 mt-0.5">
+                        Task status / update / deadline reminder emails. In-app notifications continue.
+                    </span>
+                </span>
+            </label>
+            @error('mail_scheme_monitoring_enabled') <p class="mt-2 text-sm text-rose-600">{{ $message }}</p> @enderror
+        </fieldset>
+
         <div class="flex items-center gap-3 pt-4 border-t border-stone-100">
             <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                 Save settings

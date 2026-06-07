@@ -35,5 +35,6 @@ class EnsureOnboardingComplete
         'listings.show',
         'events.index',
         'events.show',
+        'preferences.unsubscribe-newsletter',
     ];
 }

@@ -44,6 +44,10 @@ class RequireCookieConsent
         'cookies.required',
         'cookies.policy',
         'logout',
+
+        // Newsletter unsubscribe — must work even for an unconsented or
+        // not-yet-onboarded user clicking the link from their inbox.
+        'preferences.unsubscribe-newsletter',
     ];
 
     public function handle(Request $request, Closure $next): Response

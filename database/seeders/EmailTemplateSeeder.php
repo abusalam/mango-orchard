@@ -117,6 +117,19 @@ This task has passed its deadline and is still open. Please update its status or
 **Deadline:** {deadline}
 MD,
             ],
+            [
+                'key' => 'mango.variety_in_season',
+                'name' => 'Variety in season',
+                'description' => 'Sent to subscribers (notify_seasonal=true) when a variety enters its peak month.',
+                'subject' => '{variety_name} is in season',
+                'body' => <<<'MD'
+{variety_name} from {variety_origin} is hitting peak this month.
+
+Its season window: **{season_window}**.
+
+Open the variety page below for the full profile — flavor notes, origin, tags.
+MD,
+            ],
         ];
     }
 }

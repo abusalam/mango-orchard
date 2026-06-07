@@ -103,17 +103,27 @@
                                'text-stone-700 hover:bg-stone-100' => $active !== 'telemetry',
                            ])>Activity</a>
                     @endcan
-                    @can(\App\Permissions::USERS_MANAGE)
+                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::VARIETIES_MANAGE])
                         <div class="mt-2 pt-2 border-t border-stone-100">
                             <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Mango Orchard</p>
-                            <a href="{{ route('admin.mango-orchard.access.index') }}"
-                               @class([
-                                   'block px-3 py-2 rounded-lg font-medium',
-                                   'bg-stone-900 text-amber-50' => $active === 'mango-access',
-                                   'text-stone-700 hover:bg-stone-100' => $active !== 'mango-access',
-                               ])>Module access</a>
+                            @can(\App\Permissions::USERS_MANAGE)
+                                <a href="{{ route('admin.mango-orchard.access.index') }}"
+                                   @class([
+                                       'block px-3 py-2 rounded-lg font-medium',
+                                       'bg-stone-900 text-amber-50' => $active === 'mango-access',
+                                       'text-stone-700 hover:bg-stone-100' => $active !== 'mango-access',
+                                   ])>Module access</a>
+                            @endcan
+                            @can(\App\Permissions::VARIETIES_MANAGE)
+                                <a href="{{ route('admin.mango-orchard.newsletter.index') }}"
+                                   @class([
+                                       'block px-3 py-2 rounded-lg font-medium',
+                                       'bg-stone-900 text-amber-50' => $active === 'mango-newsletter',
+                                       'text-stone-700 hover:bg-stone-100' => $active !== 'mango-newsletter',
+                                   ])>Newsletter</a>
+                            @endcan
                         </div>
-                    @endcan
+                    @endcanany
                     @can(\App\Permissions::MONITORING_MANAGE)
                         <div class="mt-2 pt-2 border-t border-stone-100">
                             <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Pragati Darpan</p>
