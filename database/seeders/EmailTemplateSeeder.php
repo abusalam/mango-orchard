@@ -123,11 +123,9 @@ MD,
                 'description' => 'Sent to subscribers (notify_seasonal=true) when a variety enters its peak month.',
                 'subject' => '{variety_name} is in season',
                 'body' => <<<'MD'
-{variety_name} from {variety_origin} is hitting peak this month.
+**{variety_name}** ({variety_origin}) is entering its peak window.
 
-Its season window: **{season_window}**.
-
-Open the variety page below for the full profile — flavor notes, origin, tags.
+Season runs **{season_window}** — open the variety page below for flavor notes, tasting tips, and listings from growers offering it this year.
 MD,
             ],
         ];

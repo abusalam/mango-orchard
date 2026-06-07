@@ -88,6 +88,21 @@
                                'bg-stone-900 text-amber-50' => $active === 'settings',
                                'text-stone-700 hover:bg-stone-100' => $active !== 'settings',
                            ])>Settings</a>
+                    @endcan
+                    {{-- Email templates is reachable for any module
+                         admin (Niyantrak / Curator) as well as sysadmins;
+                         the controller's canTouch() filter scopes the
+                         view per holder so this link never lands on a
+                         403. --}}
+                    @canany([\App\Permissions::SETTINGS_MANAGE, \App\Permissions::MONITORING_MANAGE, \App\Permissions::VARIETIES_MANAGE])
+                        <a href="{{ route('admin.email-templates.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'email-templates',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'email-templates',
+                           ])>Email templates</a>
+                    @endcanany
+                    @can(\App\Permissions::SETTINGS_MANAGE)
                         <a href="{{ route('admin.system.index') }}"
                            @class([
                                'block px-3 py-2 rounded-lg font-medium',
@@ -145,12 +160,6 @@
                                    'bg-stone-900 text-amber-50' => $active === 'monitoring-designations',
                                    'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring-designations',
                                ])>Designations</a>
-                            <a href="{{ route('admin.email-templates.index') }}"
-                               @class([
-                                   'block px-3 py-2 rounded-lg font-medium',
-                                   'bg-stone-900 text-amber-50' => $active === 'email-templates',
-                                   'text-stone-700 hover:bg-stone-100' => $active !== 'email-templates',
-                               ])>Email templates</a>
                         </div>
                     @endcan
                 </nav>

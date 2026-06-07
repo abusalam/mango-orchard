@@ -134,7 +134,121 @@ it('blocks a regular user from the email-templates index', function () {
         ->assertForbidden();
 });
 
-it('lists templates for an admin with monitoring.manage', function () {
+// ============== Per-module access matrix ==============
+
+it('a Niyantrak (monitor-admin) only sees task.* templates in the index', function () {
+    $niyantrak = User::factory()->monitorAdmin()->create();
+
+    $response = $this->actingAs($niyantrak)
+        ->get(route('admin.email-templates.index'))
+        ->assertOk();
+
+    // Pragati Darpan group renders; Mango Orchard group is filtered out.
+    $response->assertSee('data-testid="email-templates-group-pragati-darpan"', escape: false);
+    $response->assertSee('Task — status changed');
+    $response->assertDontSee('data-testid="email-templates-group-mango-orchard"', escape: false);
+    $response->assertDontSee('Variety in season');
+});
+
+it('a Curator (varieties.manage) only sees mango.* templates in the index', function () {
+    $curator = User::factory()->curator()->create();
+
+    $response = $this->actingAs($curator)
+        ->get(route('admin.email-templates.index'))
+        ->assertOk();
+
+    // Mango Orchard group renders; Pragati Darpan group is filtered out.
+    $response->assertSee('data-testid="email-templates-group-mango-orchard"', escape: false);
+    $response->assertSee('Variety in season');
+    $response->assertDontSee('data-testid="email-templates-group-pragati-darpan"', escape: false);
+    $response->assertDontSee('Task — status changed');
+});
+
+it('a Niyantrak is forbidden from editing a mango.* template', function () {
+    $niyantrak = User::factory()->monitorAdmin()->create();
+    $mango = EmailTemplate::where('key', 'mango.variety_in_season')->first();
+
+    $this->actingAs($niyantrak)
+        ->get(route('admin.email-templates.edit', $mango))
+        ->assertForbidden();
+
+    $this->actingAs($niyantrak)
+        ->put(route('admin.email-templates.update', $mango), [
+            'subject' => 'should not save',
+            'body' => 'should not save',
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($niyantrak)
+        ->get(route('admin.email-templates.preview', $mango))
+        ->assertForbidden();
+
+    // Row untouched.
+    expect($mango->fresh()->subject)->not->toBe('should not save');
+});
+
+it('a Curator is forbidden from editing a task.* template', function () {
+    $curator = User::factory()->curator()->create();
+    $task = EmailTemplate::where('key', 'task.status_changed')->first();
+
+    $this->actingAs($curator)
+        ->get(route('admin.email-templates.edit', $task))
+        ->assertForbidden();
+
+    $this->actingAs($curator)
+        ->put(route('admin.email-templates.update', $task), [
+            'subject' => 'should not save',
+            'body' => 'should not save',
+        ])
+        ->assertForbidden();
+
+    $this->actingAs($curator)
+        ->get(route('admin.email-templates.preview', $task))
+        ->assertForbidden();
+
+    expect($task->fresh()->subject)->not->toBe('should not save');
+});
+
+it('a Niyantrak can edit a task.* template', function () {
+    $niyantrak = User::factory()->monitorAdmin()->create();
+    $task = EmailTemplate::where('key', 'task.status_changed')->first();
+
+    $this->actingAs($niyantrak)
+        ->put(route('admin.email-templates.update', $task), [
+            'subject' => 'Niyantrak rewrote this: {task_title}',
+            'body' => 'Updated by Niyantrak.',
+        ])
+        ->assertRedirect();
+
+    expect($task->fresh()->subject)->toBe('Niyantrak rewrote this: {task_title}');
+});
+
+it('a Curator can edit a mango.* template', function () {
+    $curator = User::factory()->curator()->create();
+    $mango = EmailTemplate::where('key', 'mango.variety_in_season')->first();
+
+    $this->actingAs($curator)
+        ->put(route('admin.email-templates.update', $mango), [
+            'subject' => 'Curator rewrote this: {variety_name}',
+            'body' => 'Updated by Curator.',
+        ])
+        ->assertRedirect();
+
+    expect($mango->fresh()->subject)->toBe('Curator rewrote this: {variety_name}');
+});
+
+it('a superuser sees both module groups', function () {
+    $admin = User::factory()->superuser()->create();
+
+    $response = $this->actingAs($admin)
+        ->get(route('admin.email-templates.index'))
+        ->assertOk();
+
+    $response->assertSee('data-testid="email-templates-group-pragati-darpan"', escape: false);
+    $response->assertSee('data-testid="email-templates-group-mango-orchard"', escape: false);
+});
+
+it('lists templates for an admin with settings.manage', function () {
     $admin = User::factory()->superuser()->create();
 
     $this->actingAs($admin)
@@ -143,6 +257,30 @@ it('lists templates for an admin with monitoring.manage', function () {
         ->assertSee('Task — status changed')
         ->assertSee('Task — fields updated')
         ->assertSee('task.deadline_reminder.t-7');
+});
+
+it('groups templates by module on the index page', function () {
+    $admin = User::factory()->superuser()->create();
+
+    $this->actingAs($admin)
+        ->get(route('admin.email-templates.index'))
+        ->assertOk()
+        // Pragati Darpan group renders with its heading + testid.
+        ->assertSee('data-testid="email-templates-group-pragati-darpan"', escape: false)
+        ->assertSeeInOrder(['Pragati Darpan', 'Task — status changed'])
+        // Mango Orchard group ditto.
+        ->assertSee('data-testid="email-templates-group-mango-orchard"', escape: false)
+        ->assertSeeInOrder(['Mango Orchard', 'Variety in season']);
+});
+
+it('hides empty module groups', function () {
+    $admin = User::factory()->superuser()->create();
+    // Wipe the Mango Orchard template — leaves only Pragati Darpan.
+    \App\Models\EmailTemplate::where('key', 'mango.variety_in_season')->delete();
+
+    $response = $this->actingAs($admin)->get(route('admin.email-templates.index'))->assertOk();
+    $response->assertSee('data-testid="email-templates-group-pragati-darpan"', escape: false);
+    $response->assertDontSee('data-testid="email-templates-group-mango-orchard"', escape: false);
 });
 
 it('shows placeholder docs on the edit page', function () {
@@ -234,6 +372,22 @@ it('includes the structural extras (action button + attachments) in the preview'
         ->toContain('Open task')                  // action button
         ->toContain('inspection-report.pdf')      // sample attachment
         ->toContain('site-photo.jpg');
+});
+
+it('previews mango.variety_in_season with the See-the-variety button and no task attachments', function () {
+    $admin = User::factory()->superuser()->create();
+    $tpl = EmailTemplate::where('key', 'mango.variety_in_season')->first();
+
+    $body = $this->actingAs($admin)
+        ->get(route('admin.email-templates.preview', $tpl))
+        ->assertOk()
+        ->getContent();
+
+    expect($body)
+        ->toContain('See the variety')
+        ->not->toContain('Open task')           // the task-shape button must not leak here
+        ->not->toContain('Attachments:')        // nor the task attachments block
+        ->not->toContain('inspection-report');  // nor the sample task files
 });
 
 it('uses different sample data per deadline-reminder kind', function () {
