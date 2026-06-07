@@ -11,6 +11,17 @@
         <p class="mt-1 text-xs text-stone-500">Higher = more senior; controls sort order on the hierarchy page.</p>
     </div>
     <div>
+        <label class="block text-sm font-medium text-stone-700">Reports to</label>
+        <select name="parent_id" class="mt-1 block w-full rounded-lg border-stone-300" data-testid="designation-parent">
+            <option value="">— top of hierarchy —</option>
+            @foreach ($parentOptions ?? [] as $opt)
+                <option value="{{ $opt->id }}" @selected((int) old('parent_id', $designation->parent_id) === $opt->id)>{{ $opt->name }}</option>
+            @endforeach
+        </select>
+        <p class="mt-1 text-xs text-stone-500">Parent designation in the reporting chain. Users holding this designation will be visible to anyone holding the parent.</p>
+        @error('parent_id') <p class="mt-1 text-xs text-rose-600">{{ $message }}</p> @enderror
+    </div>
+    <div>
         <label class="block text-sm font-medium text-stone-700">Description</label>
         <textarea name="description" rows="2" maxlength="1000" class="mt-1 block w-full rounded-lg border-stone-300">{{ old('description', $designation->description) }}</textarea>
     </div>

@@ -1,8 +1,8 @@
-<x-site-layout :title="'Monitoring dashboard — Aamar Malda'">
+<x-site-layout :title="'Pragati Darpan dashboard — Aamar Malda'">
     <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>
-                <h1 class="text-3xl font-semibold tracking-tight text-stone-900">Monitoring dashboard</h1>
+                <h1 class="text-3xl font-semibold tracking-tight text-stone-900">Pragati Darpan dashboard</h1>
                 <p class="mt-1 text-stone-600 text-sm">Tasks visible to you {{ $canManage ? '(managing all)' : '(your subtree)' }}.</p>
             </div>
             <div class="flex gap-2 text-sm">
@@ -322,12 +322,11 @@
                                                     <span data-testid="task-assignee-inline-{{ $task->id }}">{{ $task->assignee?->name ?? 'Unassigned' }}</span>
                                                 </p>
                                                 @php
-                                                    // Window anchor matches the deadline bar: prefer the
-                                                    // scheme's start_date so the chip reflects the project's
-                                                    // timeline; fall back to task.created_at when the scheme
-                                                    // has no start_date set. Same logic lives in
-                                                    // components/scheme-monitoring/deadline-bar.blade.php.
-                                                    $chipStartDay = ($task->scheme?->start_date?->copy() ?? $task->created_at->copy())->startOfDay();
+                                                    // Window anchor matches the deadline bar: task.created_at.
+                                                    // The scheme's start_date is the umbrella project timeline
+                                                    // (often a full financial year) — using it here drowns the
+                                                    // signal in hundreds of days for any mid-year task.
+                                                    $chipStartDay = $task->created_at->copy()->startOfDay();
                                                     // Inclusive day count — every day from start through
                                                     // deadline is one in the window. Same-day window is "1d",
                                                     // Mon→Tue is "2d", etc.

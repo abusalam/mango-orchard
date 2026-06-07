@@ -9,7 +9,7 @@
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
             </svg>
-            Monitoring dashboard
+            Pragati Darpan dashboard
         </a>
         <h1 class="text-3xl font-semibold tracking-tight mb-6">New task</h1>
         <form method="POST" action="{{ route('monitoring.tasks.store') }}" class="bg-white rounded-2xl border border-stone-200 p-6">

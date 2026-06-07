@@ -41,13 +41,13 @@ it('grants module access: assigns monitor role + creates profile', function () {
         ->assertRedirect();
 
     expect($target->fresh()->hasRole(Roles::MONITOR))->toBeTrue();
-    expect(MonitorProfile::where('user_id', $target->id)->whereNull('parent_user_id')->exists())->toBeTrue();
+    expect(MonitorProfile::where('user_id', $target->id)->exists())->toBeTrue();
 });
 
 it('granting a user who already holds the role is idempotent', function () {
     $admin = User::factory()->monitorAdmin()->create();
     $target = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $target->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $target->id]);
 
     $this->actingAs($admin)
         ->post(route('admin.monitoring.access.grant', $target))
@@ -62,7 +62,7 @@ it('revokes module access: drops role, deletes profile, detaches designations', 
     $admin = User::factory()->monitorAdmin()->create();
     $target = User::factory()->monitor()->create();
     $d = Designation::factory()->create();
-    MonitorProfile::create(['user_id' => $target->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $target->id]);
     $target->designations()->attach($d->id);
 
     $this->actingAs($admin)
@@ -78,7 +78,7 @@ it('revokes module access: drops role, deletes profile, detaches designations', 
 it('revoke also strips monitor-admin role', function () {
     $admin = User::factory()->monitorAdmin()->create();
     $target = User::factory()->monitorAdmin()->create();
-    MonitorProfile::create(['user_id' => $target->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $target->id]);
 
     $this->actingAs($admin)
         ->delete(route('admin.monitoring.access.revoke', $target))
@@ -87,21 +87,23 @@ it('revoke also strips monitor-admin role', function () {
     expect($target->fresh()->hasRole(Roles::MONITOR_ADMIN))->toBeFalse();
 });
 
-it('revoke re-parents the user\'s direct reports to null', function () {
+it('revoke leaves the child users\' enrolment + designations untouched', function () {
+    // Reporting now flows through designations, not user-to-user, so a
+    // revoked parent has no effect on children's profile or designations.
     $admin = User::factory()->monitorAdmin()->create();
     $parent = User::factory()->monitor()->create();
     $childA = User::factory()->monitor()->create();
     $childB = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $parent->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $childA->id, 'parent_user_id' => $parent->id]);
-    MonitorProfile::create(['user_id' => $childB->id, 'parent_user_id' => $parent->id]);
+    monitorHierarchy([[$parent, null], [$childA, $parent], [$childB, $parent]]);
 
     $this->actingAs($admin)
         ->delete(route('admin.monitoring.access.revoke', $parent))
         ->assertRedirect();
 
-    expect(MonitorProfile::where('user_id', $childA->id)->value('parent_user_id'))->toBeNull();
-    expect(MonitorProfile::where('user_id', $childB->id)->value('parent_user_id'))->toBeNull();
+    expect(MonitorProfile::where('user_id', $childA->id)->exists())->toBeTrue();
+    expect(MonitorProfile::where('user_id', $childB->id)->exists())->toBeTrue();
+    expect($childA->fresh()->designations)->not->toBeEmpty();
+    expect($childB->fresh()->designations)->not->toBeEmpty();
 });
 
 // ============== Filters on the page ==============

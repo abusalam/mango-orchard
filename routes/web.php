@@ -86,6 +86,10 @@ Route::middleware('auth')->group(function () {
                 Permissions::USERS_IMPERSONATE => 'admin.impersonate.index',
                 Permissions::EVENTS_MANAGE => 'admin.events.index',
                 Permissions::ADVISORIES_MANAGE => 'admin.advisories.index',
+                // Pragati Darpan admins (Niyantrak / superuser) land on
+                // Module access first — it's the entry-point that gates
+                // the rest of the Pragati Darpan admin surface.
+                Permissions::MONITORING_MANAGE => 'admin.monitoring.access.index',
             ];
 
             foreach ($destinations as $permission => $route) {
@@ -105,6 +109,18 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+
+        Route::get('/email-templates', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'index'])->name('email-templates.index');
+        Route::get('/email-templates/{template}/edit', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'edit'])->name('email-templates.edit');
+        Route::put('/email-templates/{template}', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'update'])->name('email-templates.update');
+        // Both POST (live form values) and GET (saved version, opened
+        // from the index page) hit the same preview renderer.
+        Route::match(['get', 'post'], '/email-templates/{template}/preview', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'preview'])->name('email-templates.preview');
+
+        Route::get('/system', [\App\Http\Controllers\Admin\SystemController::class, 'index'])->name('system.index');
+        Route::post('/system/failed/{id}/retry', [\App\Http\Controllers\Admin\SystemController::class, 'retryFailedJob'])->name('system.failed.retry');
+        Route::post('/system/failed/{id}/forget', [\App\Http\Controllers\Admin\SystemController::class, 'forgetFailedJob'])->name('system.failed.forget');
+        Route::post('/system/failed/flush', [\App\Http\Controllers\Admin\SystemController::class, 'flushFailedJobs'])->name('system.failed.flush');
 
         Route::get('/telemetry', [TelemetryController::class, 'index'])->name('telemetry.index');
 

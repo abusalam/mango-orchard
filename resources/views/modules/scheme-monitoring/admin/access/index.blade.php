@@ -1,9 +1,9 @@
-<x-admin-layout title="Monitoring access" active="monitoring-access">
+<x-admin-layout title="Pragati Darpan access" active="monitoring-access">
     <header class="mb-6">
         <div class="flex items-end justify-between gap-4 flex-wrap">
             <div>
-                <h1 class="text-3xl font-semibold tracking-tight">Monitoring module access</h1>
-                <p class="mt-1 text-stone-600 text-sm">Grant the <code>monitor</code> role and create a profile in one click. Users without a profile here will never see the monitoring dashboard, even if they hold the role from elsewhere.</p>
+                <h1 class="text-3xl font-semibold tracking-tight">Pragati Darpan module access</h1>
+                <p class="mt-1 text-stone-600 text-sm">Grant the <code>Samikshak</code> role and create a profile in one click. Users without a profile here will never see the Pragati Darpan dashboard, even if they hold the role from elsewhere.</p>
             </div>
             <p class="text-sm text-stone-500" data-testid="monitoring-member-count">{{ $memberCount }} {{ $memberCount === 1 ? 'member' : 'members' }}</p>
         </div>

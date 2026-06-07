@@ -37,14 +37,20 @@ class SchemeMonitoringServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([DispatchDeadlineReminders::class]);
-
-            $this->app->booted(function (): void {
-                $schedule = $this->app->make(Schedule::class);
-                $schedule->command('monitoring:dispatch-deadline-reminders')
-                    ->dailyAt('06:00')
-                    ->name('monitoring:dispatch-deadline-reminders')
-                    ->withoutOverlapping();
-            });
         }
+
+        // Register the schedule outside the CLI-only block so the admin
+        // System page (which resolves Schedule in an HTTP request) can
+        // introspect it. The schedule itself only FIRES from CLI via
+        // `php artisan schedule:run`, so adding events here has no
+        // runtime cost in HTTP — just makes the in-memory event list
+        // populated everywhere.
+        $this->app->booted(function (): void {
+            $schedule = $this->app->make(Schedule::class);
+            $schedule->command('monitoring:dispatch-deadline-reminders')
+                ->dailyAt('06:00')
+                ->name('monitoring:dispatch-deadline-reminders')
+                ->withoutOverlapping();
+        });
     }
 }

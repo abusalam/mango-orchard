@@ -4,21 +4,22 @@ declare(strict_types=1);
 
 use App\Models\User;
 use App\Modules\SchemeMonitoring\Hierarchy;
-use App\Modules\SchemeMonitoring\Models\MonitorProfile;
 use App\Modules\SchemeMonitoring\Models\Scheme;
 use App\Modules\SchemeMonitoring\Models\Task;
 
 beforeEach(function (): void {
-    // Build a 3-level tree:    director -> lead -> officer
+    // Build a 3-level tree via the designation chain: director -> lead -> officer
     $this->director = User::factory()->monitor()->create(['name' => 'Director']);
     $this->lead = User::factory()->monitor()->create(['name' => 'Team Lead']);
     $this->officer = User::factory()->monitor()->create(['name' => 'Field Officer']);
     $this->stranger = User::factory()->monitor()->create(['name' => 'Stranger']);
 
-    MonitorProfile::create(['user_id' => $this->director->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $this->lead->id, 'parent_user_id' => $this->director->id]);
-    MonitorProfile::create(['user_id' => $this->officer->id, 'parent_user_id' => $this->lead->id]);
-    MonitorProfile::create(['user_id' => $this->stranger->id, 'parent_user_id' => null]);
+    monitorHierarchy([
+        [$this->director, null],
+        [$this->lead, $this->director],
+        [$this->officer, $this->lead],
+        [$this->stranger, null],
+    ]);
 });
 
 it('returns self plus every descendant', function () {

@@ -10,8 +10,7 @@ use App\Modules\SchemeMonitoring\Models\Task;
 it('creates a task assigned to a subordinate', function () {
     $lead = User::factory()->monitor()->create();
     $officer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
+    monitorHierarchy([[$lead, null], [$officer, $lead]]);
 
     $scheme = Scheme::factory()->create(['owner_id' => $lead->id]);
 
@@ -36,8 +35,7 @@ it('creates a task assigned to a subordinate', function () {
 it('lets the assignee flip their own task status and stamps completed_at', function () {
     $lead = User::factory()->monitor()->create();
     $officer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
+    monitorHierarchy([[$lead, null], [$officer, $lead]]);
 
     $scheme = Scheme::factory()->create(['owner_id' => $lead->id]);
     $task = Task::factory()->create(['scheme_id' => $scheme->id, 'assigned_to' => $officer->id, 'status' => Task::STATUS_PENDING]);
@@ -54,8 +52,7 @@ it('lets the assignee flip their own task status and stamps completed_at', funct
 it('blocks a supervisor from flipping a subordinate\'s task status', function () {
     $lead = User::factory()->monitor()->create();
     $officer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
+    monitorHierarchy([[$lead, null], [$officer, $lead]]);
 
     $scheme = Scheme::factory()->create(['owner_id' => $lead->id]);
     $task = Task::factory()->create(['scheme_id' => $scheme->id, 'assigned_to' => $officer->id, 'status' => Task::STATUS_PENDING]);
@@ -70,7 +67,7 @@ it('blocks a supervisor from flipping a subordinate\'s task status', function ()
 it('lets a monitor-admin override the assignee-only status rule', function () {
     $admin = User::factory()->monitorAdmin()->create();
     $officer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $officer->id]);
     $scheme = Scheme::factory()->create(['owner_id' => $officer->id]);
     $task = Task::factory()->create(['scheme_id' => $scheme->id, 'assigned_to' => $officer->id, 'status' => Task::STATUS_PENDING]);
 
@@ -85,9 +82,7 @@ it('blocks a stranger from updating a task outside their subtree', function () {
     $lead = User::factory()->monitor()->create();
     $officer = User::factory()->monitor()->create();
     $stranger = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    monitorHierarchy([[$lead, null], [$officer, $lead], [$stranger, null]]);
 
     $scheme = Scheme::factory()->create(['owner_id' => $lead->id]);
     $task = Task::factory()->create(['scheme_id' => $scheme->id, 'assigned_to' => $officer->id]);

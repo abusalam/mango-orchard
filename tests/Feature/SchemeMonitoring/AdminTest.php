@@ -32,43 +32,74 @@ it('rejects a duplicate designation name', function () {
         ->assertSessionHasErrors('name');
 });
 
-it('updates a user\'s monitoring profile (parent + designations)', function () {
+it('creates a designation with a parent (reports to)', function () {
     $admin = User::factory()->monitorAdmin()->create();
-    $parent = User::factory()->monitor()->create();
-    $child = User::factory()->monitor()->create();
+    $parent = Designation::factory()->create(['name' => 'District Officer']);
+
+    $this->actingAs($admin)
+        ->post(route('admin.monitoring.designations.store'), [
+            'name' => 'Block Officer',
+            'level' => 2,
+            'parent_id' => $parent->id,
+        ])
+        ->assertRedirect();
+
+    $child = Designation::where('name', 'Block Officer')->first();
+    expect($child)->not->toBeNull();
+    expect($child->parent_id)->toBe($parent->id);
+});
+
+it('rejects setting a designation as its own parent', function () {
+    $admin = User::factory()->monitorAdmin()->create();
+    $d = Designation::factory()->create();
+
+    $this->actingAs($admin)
+        ->put(route('admin.monitoring.designations.update', $d), [
+            'name' => $d->name,
+            'level' => $d->level,
+            'parent_id' => $d->id,
+        ])
+        ->assertSessionHasErrors('parent_id');
+});
+
+it('rejects a designation cycle through a descendant', function () {
+    $admin = User::factory()->monitorAdmin()->create();
+    $grandparent = Designation::factory()->create();
+    $parent = Designation::factory()->create(['parent_id' => $grandparent->id]);
+    $child = Designation::factory()->create(['parent_id' => $parent->id]);
+
+    // grandparent cannot point to child — child is its descendant.
+    $this->actingAs($admin)
+        ->put(route('admin.monitoring.designations.update', $grandparent), [
+            'name' => $grandparent->name,
+            'level' => $grandparent->level,
+            'parent_id' => $child->id,
+        ])
+        ->assertSessionHasErrors('parent_id');
+});
+
+it('updates a user\'s designations on the hierarchy admin page', function () {
+    $admin = User::factory()->monitorAdmin()->create();
+    $user = User::factory()->monitor()->create();
     $d1 = Designation::factory()->create(['name' => 'Block Officer']);
     $d2 = Designation::factory()->create(['name' => 'District Officer']);
 
     $this->actingAs($admin)
-        ->post(route('admin.monitoring.hierarchy.update', $child), [
-            'parent_user_id' => $parent->id,
+        ->post(route('admin.monitoring.hierarchy.update', $user), [
             'designation_ids' => [$d1->id, $d2->id],
         ])
         ->assertRedirect();
 
-    $profile = MonitorProfile::where('user_id', $child->id)->first();
-    expect($profile)->not->toBeNull();
-    expect($profile->parent_user_id)->toBe($parent->id);
-    expect($child->fresh()->designations->pluck('id')->all())
+    expect(MonitorProfile::where('user_id', $user->id)->exists())->toBeTrue();
+    expect($user->fresh()->designations->pluck('id')->all())
         ->toEqualCanonicalizing([$d1->id, $d2->id]);
-});
-
-it('rejects assigning a user as their own parent', function () {
-    $admin = User::factory()->monitorAdmin()->create();
-    $user = User::factory()->monitor()->create();
-
-    $this->actingAs($admin)
-        ->post(route('admin.monitoring.hierarchy.update', $user), [
-            'parent_user_id' => $user->id,
-        ])
-        ->assertSessionHasErrors('parent_user_id');
 });
 
 it('removes a user from the hierarchy', function () {
     $admin = User::factory()->monitorAdmin()->create();
     $user = User::factory()->monitor()->create();
     $d = Designation::factory()->create();
-    MonitorProfile::create(['user_id' => $user->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $user->id]);
     $user->designations()->attach($d->id);
 
     $this->actingAs($admin)

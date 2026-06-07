@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
- * One row per user enrolled in the scheme/project monitoring module. The
- * enrolment is the gate for visibility — having the `monitor` role grants
- * access to the module, but `parent_user_id` here decides whose tasks the
- * user can see (own + entire subtree underneath).
+ * Enrolment row — one per user inside the monitoring module. Holds nothing
+ * but the user reference; visibility flows through the designation
+ * hierarchy (see {@see \App\Modules\SchemeMonitoring\Hierarchy}). Kept as
+ * a separate row so an admin can revoke module access without dropping the
+ * user's designations.
  */
 class MonitorProfile extends Model
 {
@@ -21,7 +22,7 @@ class MonitorProfile extends Model
 
     protected $table = 'monitoring_profiles';
 
-    protected $fillable = ['user_id', 'parent_user_id'];
+    protected $fillable = ['user_id'];
 
     protected static function newFactory(): \Database\Factories\SchemeMonitoring\MonitorProfileFactory
     {
@@ -31,10 +32,5 @@ class MonitorProfile extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function parent(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'parent_user_id');
     }
 }

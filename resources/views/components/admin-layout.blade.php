@@ -88,6 +88,12 @@
                                'bg-stone-900 text-amber-50' => $active === 'settings',
                                'text-stone-700 hover:bg-stone-100' => $active !== 'settings',
                            ])>Settings</a>
+                        <a href="{{ route('admin.system.index') }}"
+                           @class([
+                               'block px-3 py-2 rounded-lg font-medium',
+                               'bg-stone-900 text-amber-50' => $active === 'system',
+                               'text-stone-700 hover:bg-stone-100' => $active !== 'system',
+                           ])>System</a>
                     @endcan
                     @can(\App\Permissions::TELEMETRY_VIEW)
                         <a href="{{ route('admin.telemetry.index') }}"
@@ -110,7 +116,7 @@
                     @endcan
                     @can(\App\Permissions::MONITORING_MANAGE)
                         <div class="mt-2 pt-2 border-t border-stone-100">
-                            <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Monitoring</p>
+                            <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500">Pragati Darpan</p>
                             <a href="{{ route('admin.monitoring.access.index') }}"
                                @class([
                                    'block px-3 py-2 rounded-lg font-medium',
@@ -126,9 +132,15 @@
                             <a href="{{ route('admin.monitoring.designations.index') }}"
                                @class([
                                    'block px-3 py-2 rounded-lg font-medium',
-                                   'bg-stone-900 text-amber-50' => $active === 'monitoring',
-                                   'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring',
+                                   'bg-stone-900 text-amber-50' => $active === 'monitoring-designations',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'monitoring-designations',
                                ])>Designations</a>
+                            <a href="{{ route('admin.email-templates.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'email-templates',
+                                   'text-stone-700 hover:bg-stone-100' => $active !== 'email-templates',
+                               ])>Email templates</a>
                         </div>
                     @endcan
                 </nav>

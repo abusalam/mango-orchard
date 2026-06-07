@@ -1,5 +1,16 @@
 <x-site-layout :title="$scheme->name.' — Aamar Malda'">
     <section class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-8">
+        <a
+            href="{{ route('monitoring.schemes.index') }}"
+            class="inline-flex items-center gap-1 text-sm text-stone-600 hover:text-stone-900 mb-3"
+            data-testid="back-to-schemes-index"
+        >
+            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+            All schemes
+        </a>
         <header class="mb-6 flex items-end justify-between">
             <div>
                 <h1 class="text-3xl font-semibold tracking-tight">{{ $scheme->name }}</h1>

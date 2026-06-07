@@ -9,7 +9,7 @@
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
             </svg>
-            Monitoring dashboard
+            Pragati Darpan dashboard
         </a>
         <header class="mb-6 flex flex-wrap justify-between items-end gap-3">
             <h1 class="text-3xl font-semibold tracking-tight">Tasks</h1>
@@ -55,7 +55,11 @@
                         @foreach ($tasks as $task)
                             <tr class="odd:bg-white even:bg-stone-50/50">
                                 <td class="px-4 py-2 font-medium"><a href="{{ route('monitoring.tasks.edit', $task) }}" class="hover:underline">{{ $task->title }}</a></td>
-                                <td class="px-4 py-2 text-stone-600 hidden sm:table-cell">{{ $task->scheme?->name }}</td>
+                                <td class="px-4 py-2 text-stone-600 hidden sm:table-cell">
+                                    @if ($task->scheme)
+                                        <a href="{{ route('monitoring.schemes.show', $task->scheme) }}" class="hover:underline">{{ $task->scheme->name }}</a>
+                                    @endif
+                                </td>
                                 <td class="px-4 py-2 text-stone-600 hidden md:table-cell">{{ $task->assignee?->name ?? '—' }}</td>
                                 <td class="px-4 py-2 text-stone-600">{{ $task->deadline->format('d M Y') }}</td>
                                 <td class="px-4 py-2 text-stone-600">{{ \App\Modules\SchemeMonitoring\Models\Task::STATUSES[$task->status] }}</td>

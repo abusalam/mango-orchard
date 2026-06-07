@@ -266,10 +266,16 @@ it('forces unonboarded users to finish onboarding before reaching /my/listings',
 
 // ============== Side nav ==============
 
-it('exposes the My listings menu item to authed onboarded users', function () {
+it('exposes the My listings menu item to growers', function () {
+    $grower = User::factory()->grower()->create();
+
+    $this->actingAs($grower)->get(route('varieties.index'))->assertSee('My listings');
+});
+
+it('hides the My listings menu item from non-growers', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get(route('varieties.index'))->assertSee('My listings');
+    $this->actingAs($user)->get(route('varieties.index'))->assertDontSee('My listings');
 });
 
 // ============== Create-gate (listings.manage permission) ==============

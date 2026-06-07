@@ -9,7 +9,7 @@ use App\Modules\SchemeMonitoring\Models\Task;
 
 beforeEach(function (): void {
     $this->viewer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $this->viewer->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $this->viewer->id]);
     $this->scheme = Scheme::factory()->create(['owner_id' => $this->viewer->id]);
 });
 
@@ -179,8 +179,7 @@ it('excludes the selected windows when windows_mode = exclude', function () {
 it('excludes tasks assigned to the selected users when assignees_mode = exclude', function () {
     $u1 = User::factory()->monitor()->create(['name' => 'Excluded']);
     $u2 = User::factory()->monitor()->create(['name' => 'Kept']);
-    MonitorProfile::create(['user_id' => $u1->id, 'parent_user_id' => $this->viewer->id]);
-    MonitorProfile::create(['user_id' => $u2->id, 'parent_user_id' => $this->viewer->id]);
+    monitorHierarchy([[$this->viewer, null], [$u1, $this->viewer], [$u2, $this->viewer]]);
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $u1->id, 'title' => 'DROP-TASK']);
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $u2->id, 'title' => 'KEEP-TASK']);
 
@@ -198,8 +197,7 @@ it('excludes tasks for users holding the selected designations when designations
     $blockOfficer = \App\Modules\SchemeMonitoring\Models\Designation::factory()->create(['name' => 'Block Officer']);
     $u1 = User::factory()->monitor()->create();
     $u2 = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $u1->id, 'parent_user_id' => $this->viewer->id]);
-    MonitorProfile::create(['user_id' => $u2->id, 'parent_user_id' => $this->viewer->id]);
+    monitorHierarchy([[$this->viewer, null], [$u1, $this->viewer], [$u2, $this->viewer]]);
     $u1->designations()->attach($blockOfficer->id);
 
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $u1->id, 'title' => 'DROP-TASK']);

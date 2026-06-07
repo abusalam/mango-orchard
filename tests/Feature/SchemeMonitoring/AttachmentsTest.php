@@ -14,7 +14,7 @@ beforeEach(function (): void {
     Storage::fake('public');
 
     $this->owner = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $this->owner->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $this->owner->id]);
     $this->scheme = Scheme::factory()->create(['owner_id' => $this->owner->id]);
     $this->task = Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $this->owner->id]);
 });
@@ -48,7 +48,7 @@ it('rejects a file larger than the 10 MB ceiling', function () {
 
 it('forbids attaching to a scheme you do not own', function () {
     $other = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $other->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $other->id]);
     $file = UploadedFile::fake()->create('snoop.pdf', 100, 'application/pdf');
 
     $this->actingAs($other)
@@ -72,7 +72,7 @@ it('lets a viewer within the subtree attach a file to a task', function () {
 
 it('forbids attaching to a task outside the viewer subtree', function () {
     $stranger = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $stranger->id]);
     $file = UploadedFile::fake()->create('intrude.pdf', 100, 'application/pdf');
 
     $this->actingAs($stranger)
@@ -100,8 +100,7 @@ it('lets the uploader delete their own attachment', function () {
 it('lets a supervisor delete an attachment uploaded by a subordinate', function () {
     $lead = User::factory()->monitor()->create();
     $officer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => null]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
+    monitorHierarchy([[$lead, null], [$officer, $lead]]);
 
     $scheme = Scheme::factory()->create(['owner_id' => $lead->id]);
     $task = Task::factory()->create(['scheme_id' => $scheme->id, 'assigned_to' => $officer->id]);
@@ -120,7 +119,7 @@ it('lets a supervisor delete an attachment uploaded by a subordinate', function 
 
 it('forbids a stranger from deleting someone else\'s attachment', function () {
     $stranger = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $stranger->id]);
 
     $file = UploadedFile::fake()->create('mine.pdf', 100, 'application/pdf');
     $this->actingAs($this->owner)

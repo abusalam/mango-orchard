@@ -9,7 +9,7 @@
                 <line x1="19" y1="12" x2="5" y2="12"/>
                 <polyline points="12 19 5 12 12 5"/>
             </svg>
-            Monitoring dashboard
+            Pragati Darpan dashboard
         </a>
         <header class="mb-6 flex flex-wrap justify-between items-end gap-3">
             <h1 class="text-3xl font-semibold tracking-tight">Schemes</h1>

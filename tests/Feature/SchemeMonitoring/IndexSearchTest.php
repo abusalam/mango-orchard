@@ -9,7 +9,7 @@ use App\Modules\SchemeMonitoring\Models\Task;
 
 beforeEach(function (): void {
     $this->viewer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $this->viewer->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $this->viewer->id]);
 });
 
 // ============== Schemes index search ==============
@@ -135,7 +135,7 @@ it('shows a "no match" message when the tasks search comes up empty', function (
 
 it('still respects hierarchy scoping when searching tasks', function () {
     $stranger = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $stranger->id]);
     $strangerScheme = Scheme::factory()->create(['owner_id' => $stranger->id]);
     Task::factory()->create(['scheme_id' => $strangerScheme->id, 'assigned_to' => $stranger->id, 'title' => 'StrangerTask']);
 

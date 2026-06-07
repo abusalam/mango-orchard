@@ -65,6 +65,49 @@ services:
                 - ping
             retries: 3
             timeout: 5s
+    # Queue worker — drains the database-backed queue. Must run `queue:work`
+    # (true daemon), not `queue:listen`: only the daemon path fires the
+    # `Looping` event that our heartbeat listener depends on, so the admin
+    # System page can detect whether the worker is alive. `--max-time=900`
+    # bounces the process every 15 min so any code changes since the last
+    # restart get picked up; for instant pickup after editing notification
+    # code, run `sail restart queue`.
+    queue:
+        image: sail-8.5/app
+        command: php artisan queue:work --tries=3 --sleep=3 --backoff=60 --max-time=900
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        restart: unless-stopped
+        depends_on:
+            laravel.test:
+                condition: service_started
+            pgsql:
+                condition: service_healthy
+            redis:
+                condition: service_healthy
+    # Scheduler — runs `schedule:run` every minute (e.g. the daily 06:00
+    # deadline reminder dispatch registered in SchemeMonitoringServiceProvider).
+    scheduler:
+        image: sail-8.5/app
+        command: php artisan schedule:work
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - sail
+        restart: unless-stopped
+        depends_on:
+            laravel.test:
+                condition: service_started
+            pgsql:
+                condition: service_healthy
     mailpit:
         image: 'axllent/mailpit:latest'
         ports:

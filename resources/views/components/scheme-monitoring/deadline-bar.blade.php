@@ -6,11 +6,13 @@
     $now = now()->startOfDay();
     $deadlineDay = $task->deadline->copy()->startOfDay();
 
-    // Anchor the bar to the scheme's start date when one is set — that's
-    // the project's timeline and matches what an "upper-level" viewer
-    // expects to see progress against. Without a scheme start date, fall
-    // back to the task's own creation date.
-    $startDay = ($task->scheme?->start_date?->copy() ?? $task->created_at->copy())->startOfDay();
+    // Anchor the bar to the task's own creation date — that's THIS task's
+    // runway. Anchoring to scheme.start_date was misleading for tasks
+    // created mid-scheme: a yearly programme starting Apr 1 makes every
+    // mid-year task look mostly-elapsed before any real work is due.
+    // The scheme-level timeline is surfaced separately by the duration
+    // chip on the dashboard card.
+    $startDay = $task->created_at->copy()->startOfDay();
 
     // Runway: start → deadline, in days. Floor of 1 so the progress math
     // doesn't divide by zero for same-day windows.

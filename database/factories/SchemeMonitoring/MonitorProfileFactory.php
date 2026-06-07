@@ -19,7 +19,6 @@ class MonitorProfileFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'parent_user_id' => null,
         ];
     }
 }

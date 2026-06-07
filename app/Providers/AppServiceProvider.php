@@ -13,6 +13,9 @@ use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Queue\Events\Looping as QueueLooping;
+use Illuminate\Queue\Events\WorkerStopping as QueueWorkerStopping;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -30,6 +33,15 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Event::listen(Registered::class, AssignSuperuserToFirstUser::class);
+
+        // Queue-worker heartbeat. `Looping` fires on every poll cycle —
+        // multiple times per second when idle, once per job otherwise.
+        // The cache key TTLs out after 60s, so the admin System page can
+        // tell whether the worker is alive (heartbeat seen recently) or
+        // stopped (no heartbeat / stale). `WorkerStopping` proactively
+        // clears the key so a graceful shutdown shows "stopped" instantly.
+        Event::listen(QueueLooping::class, fn () => Cache::put('queue:worker:heartbeat', now()->timestamp, 60));
+        Event::listen(QueueWorkerStopping::class, fn () => Cache::forget('queue:worker:heartbeat'));
 
         Event::listen(Registered::class, [RecordAuthTelemetry::class, 'onRegistered']);
         Event::listen(Login::class, [RecordAuthTelemetry::class, 'onLogin']);

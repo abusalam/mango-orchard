@@ -52,13 +52,15 @@
                                 </button>
                                 <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white border border-stone-200 rounded-xl shadow-lg overflow-hidden text-stone-700 py-1">
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Dashboard</a>
-                                    <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
-                                    @can(\App\Permissions::MONITORING_VIEW)
-                                        <a href="{{ route('monitoring.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Monitoring</a>
+                                    @can(\App\Permissions::LISTINGS_MANAGE)
+                                        <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">My listings</a>
                                     @endcan
-                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
+                                    @can(\App\Permissions::MONITORING_VIEW)
+                                        <a href="{{ route('monitoring.dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Pragati Darpan</a>
+                                    @endcan
+                                    @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::VARIETIES_MANAGE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE, \App\Permissions::MONITORING_MANAGE])
                                         <div class="my-1 border-t border-stone-100"></div>
-                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
+                                        @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE, \App\Permissions::MONITORING_MANAGE])
                                             <a href="{{ route('admin.home') }}" class="block px-4 py-2 text-sm hover:bg-stone-50">Admin</a>
                                         @endcanany
                                         @can(\App\Permissions::VARIETIES_MANAGE)
@@ -104,7 +106,7 @@
                             <a href="{{ route('onboarding.start') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">Finish onboarding</a>
                         @else
                             <a href="{{ route('dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Dashboard</a>
-                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE])
+                            @canany([\App\Permissions::USERS_MANAGE, \App\Permissions::ROLES_MANAGE, \App\Permissions::SETTINGS_MANAGE, \App\Permissions::TELEMETRY_VIEW, \App\Permissions::USERS_IMPERSONATE, \App\Permissions::EVENTS_MANAGE, \App\Permissions::ADVISORIES_MANAGE, \App\Permissions::MONITORING_MANAGE])
                                 <a href="{{ route('admin.home') }}" class="px-3 py-2 rounded hover:bg-amber-100">Admin</a>
                             @endcanany
                             @can(\App\Permissions::VARIETIES_MANAGE)
@@ -113,9 +115,12 @@
                             @can(\App\Permissions::EVENTS_MANAGE)
                                 <a href="{{ route('admin.events.create') }}" class="px-3 py-2 rounded hover:bg-amber-100">New event</a>
                             @endcan
-                            <a href="{{ route('my.listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">My listings</a>
                             @can(\App\Permissions::LISTINGS_MANAGE)
+                                <a href="{{ route('my.listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100">My listings</a>
                                 <a href="{{ route('my.listings.create') }}" class="px-3 py-2 rounded bg-amber-500 text-stone-900 font-medium text-center">List your harvest</a>
+                            @endcan
+                            @can(\App\Permissions::MONITORING_VIEW)
+                                <a href="{{ route('monitoring.dashboard') }}" class="px-3 py-2 rounded hover:bg-amber-100">Pragati Darpan</a>
                             @endcan
                             <div class="px-3 py-2 flex items-center gap-2 text-stone-500 text-xs">
                                 Signed in as <span class="font-medium text-stone-800">{{ auth()->user()->name }}</span>

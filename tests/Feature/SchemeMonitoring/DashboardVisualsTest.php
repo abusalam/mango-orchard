@@ -9,7 +9,7 @@ use App\Modules\SchemeMonitoring\Models\Task;
 
 beforeEach(function (): void {
     $this->viewer = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $this->viewer->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $this->viewer->id]);
     $this->scheme = Scheme::factory()->create([
         'name' => 'Drinking Water Programme',
         'abbreviation' => 'DWP',
@@ -199,9 +199,12 @@ it('renders the completed bucket regardless of deadline', function () {
         ->assertSee('data-bucket="completed"', escape: false);
 });
 
-// ============== Deadline bar: scheme-start anchor ==============
+// ============== Deadline bar: task-creation anchor ==============
 
-it('anchors the bar to scheme.start_date when set, so fresh tasks already show progress', function () {
+it('anchors the bar to task.created_at regardless of scheme.start_date', function () {
+    // Scheme started 10 days ago, but task was just created today. The
+    // bar represents THIS task's runway, not the umbrella project — so a
+    // fresh task should sit at 0% even when its scheme is well underway.
     $scheme = Scheme::factory()->create([
         'owner_id' => $this->viewer->id,
         'start_date' => now()->subDays(10),
@@ -210,17 +213,15 @@ it('anchors the bar to scheme.start_date when set, so fresh tasks already show p
         'scheme_id' => $scheme->id,
         'assigned_to' => $this->viewer->id,
     ]);
-    // Task just created today, but scheme started 10 days ago.
     $task->forceFill(['created_at' => now()])->save();
 
-    // start = 10 days ago, deadline = 10 days out → 20-day runway, 10 elapsed → 50%.
     $this->actingAs($this->viewer)
         ->get(route('monitoring.dashboard'))
         ->assertOk()
-        ->assertSee('data-progress="50"', escape: false);
+        ->assertSee('data-progress="0"', escape: false);
 });
 
-it('falls back to task.created_at when the scheme has no start_date', function () {
+it('uses task.created_at as the anchor when the scheme has no start_date', function () {
     $task = Task::factory()->dueIn(10)->create([
         'scheme_id' => $this->scheme->id, // start_date already pinned to null in beforeEach
         'assigned_to' => $this->viewer->id,
@@ -232,23 +233,6 @@ it('falls back to task.created_at when the scheme has no start_date', function (
         ->get(route('monitoring.dashboard'))
         ->assertOk()
         ->assertSee('data-progress="33"', escape: false);
-});
-
-it('clamps progress to 0 when the scheme has not started yet', function () {
-    $scheme = Scheme::factory()->create([
-        'owner_id' => $this->viewer->id,
-        'start_date' => now()->addDays(7),
-    ]);
-    $task = Task::factory()->dueIn(20)->create([
-        'scheme_id' => $scheme->id,
-        'assigned_to' => $this->viewer->id,
-    ]);
-    $task->forceFill(['created_at' => now()])->save();
-
-    $this->actingAs($this->viewer)
-        ->get(route('monitoring.dashboard'))
-        ->assertOk()
-        ->assertSee('data-progress="0"', escape: false);
 });
 
 // ============== Priority chip ==============
@@ -356,7 +340,9 @@ it('renders a duration chip counting every day between start and deadline (inclu
     $response->assertSee('15d window');
 });
 
-it('anchors the duration chip to scheme.start_date when set', function () {
+it('anchors the duration chip to task.created_at regardless of scheme.start_date', function () {
+    // Scheme started 20 days ago, but the chip represents THIS task's
+    // window — created today, due in 10 days → 11 days inclusive.
     $scheme = Scheme::factory()->create([
         'owner_id' => $this->viewer->id,
         'start_date' => now()->subDays(20),
@@ -365,14 +351,12 @@ it('anchors the duration chip to scheme.start_date when set', function () {
         'scheme_id' => $scheme->id,
         'assigned_to' => $this->viewer->id,
     ]);
-    // Task itself was created today, but the chip should use the scheme's
-    // start (20 days ago) → 20 + 10 + 1 (inclusive) = 31 days.
     $task->forceFill(['created_at' => now()])->save();
 
     $this->actingAs($this->viewer)
         ->get(route('monitoring.dashboard'))
         ->assertOk()
-        ->assertSee('31d window');
+        ->assertSee('11d window');
 });
 
 it('renders "1d window" when the task was created on its deadline', function () {
@@ -472,8 +456,7 @@ it('renders an assignee sidebar listing visible users with task counts', functio
     // Build a small subtree below viewer so the sidebar has rows to show.
     $lead = User::factory()->monitor()->create(['name' => 'Lead Person']);
     $officer = User::factory()->monitor()->create(['name' => 'Officer Person']);
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => $this->viewer->id]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $lead->id]);
+    monitorHierarchy([[$this->viewer, null], [$lead, $this->viewer], [$officer, $lead]]);
 
     Task::factory()->count(2)->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $lead->id]);
     Task::factory()->count(5)->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $officer->id]);
@@ -504,8 +487,7 @@ it('drops the Assignee column from the table header (now in the sidebar)', funct
 it('filters tasks to only the selected assignees', function () {
     $lead = User::factory()->monitor()->create(['name' => 'PickMe']);
     $officer = User::factory()->monitor()->create(['name' => 'SkipMe']);
-    MonitorProfile::create(['user_id' => $lead->id, 'parent_user_id' => $this->viewer->id]);
-    MonitorProfile::create(['user_id' => $officer->id, 'parent_user_id' => $this->viewer->id]);
+    monitorHierarchy([[$this->viewer, null], [$lead, $this->viewer], [$officer, $this->viewer]]);
 
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $lead->id, 'title' => 'KEEP-TASK']);
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $officer->id, 'title' => 'DROP-TASK']);
@@ -519,7 +501,7 @@ it('filters tasks to only the selected assignees', function () {
 
 it('ignores assignee ids that are outside the viewer\'s subtree', function () {
     $stranger = User::factory()->monitor()->create(['name' => 'Stranger']);
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $stranger->id]);
 
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $this->viewer->id, 'title' => 'OWN-TASK']);
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $stranger->id, 'title' => 'STRANGER-TASK']);
@@ -562,9 +544,12 @@ it('renders a second sidebar group for designations held in the subtree', functi
     $u1 = User::factory()->monitor()->create(['name' => 'BlockyA']);
     $u2 = User::factory()->monitor()->create(['name' => 'BlockyB']);
     $u3 = User::factory()->monitor()->create(['name' => 'DistrictX']);
-    foreach ([$u1, $u2, $u3] as $u) {
-        MonitorProfile::create(['user_id' => $u->id, 'parent_user_id' => $this->viewer->id]);
-    }
+    monitorHierarchy([
+        [$this->viewer, null],
+        [$u1, $this->viewer],
+        [$u2, $this->viewer],
+        [$u3, $this->viewer],
+    ]);
     $u1->designations()->attach($blockOfficer->id);
     $u2->designations()->attach($blockOfficer->id);
     $u3->designations()->attach($districtOfficer->id);
@@ -583,8 +568,7 @@ it('filters tasks by selecting a designation', function () {
     $blockOfficer = \App\Modules\SchemeMonitoring\Models\Designation::factory()->create(['name' => 'Block Officer']);
     $u1 = User::factory()->monitor()->create();
     $u2 = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $u1->id, 'parent_user_id' => $this->viewer->id]);
-    MonitorProfile::create(['user_id' => $u2->id, 'parent_user_id' => $this->viewer->id]);
+    monitorHierarchy([[$this->viewer, null], [$u1, $this->viewer], [$u2, $this->viewer]]);
     $u1->designations()->attach($blockOfficer->id);
 
     Task::factory()->create(['scheme_id' => $this->scheme->id, 'assigned_to' => $u1->id, 'title' => 'BLOCK-TASK']);
@@ -600,7 +584,7 @@ it('filters tasks by selecting a designation', function () {
 it('hides designations whose users are all outside the viewers subtree', function () {
     $blockOfficer = \App\Modules\SchemeMonitoring\Models\Designation::factory()->create(['name' => 'Block Officer']);
     $stranger = User::factory()->monitor()->create();
-    MonitorProfile::create(['user_id' => $stranger->id, 'parent_user_id' => null]);
+    MonitorProfile::create(['user_id' => $stranger->id]);
     $stranger->designations()->attach($blockOfficer->id);
 
     $body = $this->actingAs($this->viewer)

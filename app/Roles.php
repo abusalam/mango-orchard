@@ -22,9 +22,9 @@ final class Roles
 
     public const string ADVISOR = 'advisor';
 
-    public const string MONITOR = 'monitor';
+    public const string MONITOR = 'Samikshak';
 
-    public const string MONITOR_ADMIN = 'monitor-admin';
+    public const string MONITOR_ADMIN = 'Niyantrak';
 
     public const string MANGO_ORCHARD_MEMBER = 'mango-orchard-member';
 

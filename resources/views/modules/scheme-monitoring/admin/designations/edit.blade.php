@@ -1,4 +1,4 @@
-<x-admin-layout :title="'Edit '.$designation->name" active="monitoring">
+<x-admin-layout :title="'Edit '.$designation->name" active="monitoring-designations">
     <h1 class="text-3xl font-semibold tracking-tight mb-6">Edit designation</h1>
     <form method="POST" action="{{ route('admin.monitoring.designations.update', $designation) }}" class="bg-white rounded-2xl border border-stone-200 p-6 max-w-2xl">
         @method('PUT')
