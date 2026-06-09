@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
                 <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight">All mango varieties</h1>
-                <p class="mt-2 text-stone-600">Browse the {{ $varieties->count() }} {{ Str::plural('variety', $varieties->count()) }} in the orchard.</p>
+                <p class="mt-2 text-stone-600 dark:text-stone-300">Browse the {{ $varieties->count() }} {{ Str::plural('variety', $varieties->count()) }} in the orchard.</p>
             </div>
             @can(\App\Permissions::VARIETIES_MANAGE)
                 <a href="{{ route('varieties.create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
@@ -14,7 +14,7 @@
 
         @if ($varieties->isEmpty())
             <div class="rounded-2xl border border-dashed border-stone-300 p-12 text-center">
-                <p class="text-stone-600">No varieties yet.</p>
+                <p class="text-stone-600 dark:text-stone-300">No varieties yet.</p>
                 @can(\App\Permissions::VARIETIES_MANAGE)
                     <a href="{{ route('varieties.create') }}" class="mt-4 inline-block text-orange-700 font-medium">Add the first one.</a>
                 @endcan
@@ -22,7 +22,7 @@
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($varieties as $variety)
-                    <article class="group relative overflow-hidden rounded-2xl bg-white border border-stone-200/80 hover:border-stone-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <article class="group relative overflow-hidden rounded-2xl bg-white dark:bg-stone-950 border border-stone-200/80 hover:border-stone-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <a href="{{ route('varieties.show', $variety) }}" class="block">
                             <div class="relative h-40 overflow-hidden bg-gradient-to-br {{ $variety->gradient_classes }}">
                                 <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
@@ -33,12 +33,12 @@
                             </div>
                             <div class="p-5">
                                 <h2 class="text-lg font-semibold tracking-tight">{{ $variety->name }}</h2>
-                                <p class="mt-1 text-sm text-stone-500">{{ $variety->origin }}</p>
+                                <p class="mt-1 text-sm text-stone-500 dark:text-stone-400">{{ $variety->origin }}</p>
                             </div>
                         </a>
                         @can(\App\Permissions::VARIETIES_MANAGE)
                             <div class="px-5 pb-5 flex gap-2 text-xs">
-                                <a href="{{ route('varieties.edit', $variety) }}" class="px-2.5 py-1 rounded border border-stone-200 hover:border-stone-400 transition-colors">Edit</a>
+                                <a href="{{ route('varieties.edit', $variety) }}" class="px-2.5 py-1 rounded border border-stone-200 dark:border-stone-800 hover:border-stone-400 transition-colors">Edit</a>
                                 <x-confirm-form
                                     :action="route('varieties.destroy', $variety)"
                                     method="DELETE"
@@ -46,7 +46,7 @@
                                     message="This variety will be removed from the public catalogue."
                                     confirm-label="Remove variety"
                                 >
-                                    <button type="button" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 hover:border-rose-400 transition-colors">Delete</button>
+                                    <button type="button" class="px-2.5 py-1 rounded border border-rose-200 text-rose-700 dark:text-rose-400 hover:border-rose-400 transition-colors">Delete</button>
                                 </x-confirm-form>
                             </div>
                         @endcan

@@ -63,7 +63,7 @@
          control, so what's picked is always visible. --}}
     <div
         @click="open = true; $refs.search?.focus()"
-        class="min-h-[2.25rem] flex flex-wrap items-center gap-1 px-2 py-1 rounded-lg border border-stone-300 bg-white text-xs cursor-text focus-within:border-orange-400 focus-within:ring-1 focus-within:ring-orange-400"
+        class="min-h-[2.25rem] flex flex-wrap items-center gap-1 px-2 py-1 rounded-lg border border-stone-300 bg-white dark:bg-stone-950 text-xs cursor-text focus-within:border-orange-400 focus-within:ring-1 focus-within:ring-orange-400"
     >
         <template x-for="opt in selectedOptions" :key="opt.id">
             <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-stone-900 text-amber-50">
@@ -101,16 +101,16 @@
         x-show="open"
         x-cloak
         x-transition.opacity.duration.100ms
-        class="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-lg border border-stone-200 bg-white shadow-lg z-30"
+        class="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 shadow-lg z-30"
     >
         <template x-if="available.length === 0">
-            <p class="px-3 py-2 text-xs text-stone-500" x-text="search.trim() === '' ? 'No more designations.' : 'No matches.'"></p>
+            <p class="px-3 py-2 text-xs text-stone-500 dark:text-stone-400" x-text="search.trim() === '' ? 'No more designations.' : 'No matches.'"></p>
         </template>
         <template x-for="opt in available" :key="opt.id">
             <button
                 type="button"
                 @click="toggle(opt.id)"
-                class="block w-full text-left px-3 py-1.5 text-xs hover:bg-stone-100"
+                class="block w-full text-left px-3 py-1.5 text-xs hover:bg-stone-100 dark:hover:bg-stone-700"
                 x-text="opt.name"
             ></button>
         </template>

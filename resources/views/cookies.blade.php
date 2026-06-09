@@ -19,13 +19,13 @@
         }"
     >
         <header class="mb-8" data-testid="cookies-policy-header">
-            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900">Cookie settings</h1>
-            <p class="mt-3 text-stone-600 max-w-3xl leading-relaxed">
+            <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">Cookie settings</h1>
+            <p class="mt-3 text-stone-600 dark:text-stone-300 max-w-3xl leading-relaxed">
                 Welcome to the Cookie Settings page, where you have the power to tailor your browsing experience. Here, you&rsquo;ll find detailed information about the cookies we use, categorised as <strong>Essential</strong> and <strong>Optional</strong>. Make informed choices that align with your privacy preferences.
             </p>
 
             @if ($current)
-                <p class="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-stone-100 text-stone-700 text-xs">
+                <p class="mt-4 inline-flex items-center px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 text-xs">
                     Your current choice:
                     <strong class="ml-1">
                         @if ($current === 'all') Essential + Optional cookies
@@ -43,15 +43,15 @@
 
         {{-- Essential cookies ---------------------------------------- --}}
         <section class="mb-10" data-testid="cookies-essential-section">
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3">Essential cookies</h2>
-            <div class="bg-white rounded-2xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-3">Essential cookies</h2>
+            <div class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 divide-y divide-stone-100 dark:divide-stone-800 overflow-hidden">
                 @foreach ($essential as $cookie)
                     <article class="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div class="min-w-0 flex-1">
-                            <h3 class="font-semibold text-stone-900 break-words">{{ $cookie['name'] }}</h3>
-                            <p class="mt-1 text-sm text-stone-600 leading-relaxed">{{ $cookie['purpose'] }}</p>
-                            <p class="mt-2 text-xs text-stone-500">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-stone-100 text-stone-600 font-medium">Essential for site functionality</span>
+                            <h3 class="font-semibold text-stone-900 dark:text-stone-100 break-words">{{ $cookie['name'] }}</h3>
+                            <p class="mt-1 text-sm text-stone-600 dark:text-stone-300 leading-relaxed">{{ $cookie['purpose'] }}</p>
+                            <p class="mt-2 text-xs text-stone-500 dark:text-stone-400">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-medium">Essential for site functionality</span>
                                 <span class="ml-2">Lifetime: {{ $cookie['lifetime'] }}</span>
                             </p>
                         </div>
@@ -60,7 +60,7 @@
                             <div class="inline-flex items-center gap-2 text-xs font-medium select-none" aria-label="Essential cookie, always on">
                                 <span class="w-6 text-right text-stone-400">Off</span>
                                 <span class="inline-flex w-11 h-6 items-center rounded-full bg-emerald-500 cursor-not-allowed" title="Required — cannot be disabled">
-                                    <span class="inline-block w-5 h-5 rounded-full bg-white shadow translate-x-5"></span>
+                                    <span class="inline-block w-5 h-5 rounded-full bg-white dark:bg-stone-950 shadow translate-x-5"></span>
                                 </span>
                                 <span class="w-6 text-left text-emerald-700 font-semibold">On</span>
                             </div>
@@ -72,15 +72,15 @@
 
         {{-- Optional cookies ---------------------------------------- --}}
         <section class="mb-10" data-testid="cookies-optional-section">
-            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500 mb-3">Optional cookies</h2>
-            <div class="bg-white rounded-2xl border border-stone-200 divide-y divide-stone-100 overflow-hidden">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-3">Optional cookies</h2>
+            <div class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 divide-y divide-stone-100 dark:divide-stone-800 overflow-hidden">
                 @foreach ($optional as $cookie)
                     <article class="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                         <div class="min-w-0 flex-1">
-                            <h3 class="font-semibold text-stone-900">{{ $cookie['name'] }}</h3>
-                            <p class="mt-1 text-sm text-stone-600 leading-relaxed">{{ $cookie['purpose'] }}</p>
-                            <p class="mt-2 text-xs text-stone-500">
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 font-medium border border-amber-100">Activated based on your preference</span>
+                            <h3 class="font-semibold text-stone-900 dark:text-stone-100">{{ $cookie['name'] }}</h3>
+                            <p class="mt-1 text-sm text-stone-600 dark:text-stone-300 leading-relaxed">{{ $cookie['purpose'] }}</p>
+                            <p class="mt-2 text-xs text-stone-500 dark:text-stone-400">
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 dark:bg-stone-900 text-amber-800 font-medium border border-amber-100 dark:border-stone-800">Activated based on your preference</span>
                                 <span class="ml-2">Lifetime: {{ $cookie['lifetime'] }}</span>
                             </p>
                         </div>
@@ -90,7 +90,7 @@
                                     type="button"
                                     x-on:click="analytics = false; saved = false"
                                     class="w-6 text-right transition-colors"
-                                    :class="!analytics ? 'text-stone-900 font-semibold' : 'text-stone-400 hover:text-stone-600'"
+                                    :class="!analytics ? 'text-stone-900 dark:text-stone-100 font-semibold' : 'text-stone-400 hover:text-stone-600 dark:text-stone-300'"
                                     aria-label="Set activity analytics off"
                                 >Off</button>
                                 <button
@@ -103,7 +103,7 @@
                                     aria-label="Toggle activity analytics"
                                 >
                                     <span
-                                        class="inline-block w-5 h-5 rounded-full bg-white shadow transition-transform duration-200 ease-out"
+                                        class="inline-block w-5 h-5 rounded-full bg-white dark:bg-stone-950 shadow transition-transform duration-200 ease-out"
                                         :class="analytics ? 'translate-x-5' : 'translate-x-0.5'"
                                     ></span>
                                 </button>
@@ -111,7 +111,7 @@
                                     type="button"
                                     x-on:click="analytics = true; saved = false"
                                     class="w-6 text-left transition-colors"
-                                    :class="analytics ? 'text-emerald-700 font-semibold' : 'text-stone-400 hover:text-stone-600'"
+                                    :class="analytics ? 'text-emerald-700 font-semibold' : 'text-stone-400 hover:text-stone-600 dark:text-stone-300'"
                                     aria-label="Set activity analytics on"
                                 >On</button>
                             </div>
@@ -132,12 +132,12 @@
             <span x-show="saved" x-cloak class="text-sm text-emerald-700" data-testid="cookies-save-feedback">
                 Saved. Reloading&hellip;
             </span>
-            <a href="{{ route('home') }}" class="text-sm text-stone-600 hover:text-stone-900 underline">Back to home</a>
+            <a href="{{ route('home') }}" class="text-sm text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:text-stone-100 underline">Back to home</a>
         </div>
 
         {{-- FAQ — mirrors india.gov.in's 4 collapsible questions ---------------------------------------- --}}
         <section class="mt-12" data-testid="cookies-faq">
-            <h2 class="text-xl font-semibold text-stone-900 mb-4">Frequently asked questions</h2>
+            <h2 class="text-xl font-semibold text-stone-900 dark:text-stone-100 mb-4">Frequently asked questions</h2>
             <div class="space-y-2">
                 @php
                     $faqs = [
@@ -160,12 +160,12 @@
                     ];
                 @endphp
                 @foreach ($faqs as $i => $faq)
-                    <details class="bg-white rounded-xl border border-stone-200 p-4 group" data-testid="cookies-faq-item-{{ $i }}">
-                        <summary class="cursor-pointer font-medium text-stone-900 flex items-center justify-between gap-3">
+                    <details class="bg-white dark:bg-stone-950 rounded-xl border border-stone-200 dark:border-stone-800 p-4 group" data-testid="cookies-faq-item-{{ $i }}">
+                        <summary class="cursor-pointer font-medium text-stone-900 dark:text-stone-100 flex items-center justify-between gap-3">
                             <span>{{ $faq['q'] }}</span>
-                            <svg class="w-4 h-4 text-stone-500 transition-transform group-open:rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            <svg class="w-4 h-4 text-stone-500 dark:text-stone-400 transition-transform group-open:rotate-180" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
                         </summary>
-                        <p class="mt-3 text-sm text-stone-600 leading-relaxed">{{ $faq['a'] }}</p>
+                        <p class="mt-3 text-sm text-stone-600 dark:text-stone-300 leading-relaxed">{{ $faq['a'] }}</p>
                     </details>
                 @endforeach
             </div>

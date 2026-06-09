@@ -3,7 +3,7 @@
         <nav class="text-sm text-stone-500 mb-6">
             <a href="{{ route('admin.advisories.index') }}" class="hover:text-orange-700">All advisories</a>
             <span class="mx-2">/</span>
-            <span class="text-stone-800">{{ Str::limit($advisory->title, 60) }}</span>
+            <span class="text-stone-800 dark:text-stone-200">{{ Str::limit($advisory->title, 60) }}</span>
         </nav>
 
         <h1 class="text-3xl font-semibold tracking-tight mb-6">Edit advisory</h1>

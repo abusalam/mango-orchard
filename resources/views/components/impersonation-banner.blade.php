@@ -12,7 +12,7 @@
             </p>
             <form method="POST" action="{{ route('impersonate.stop') }}">
                 @csrf
-                <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full bg-rose-50 text-rose-900 text-xs font-semibold hover:bg-white transition-colors" data-testid="impersonate-stop">
+                <button type="submit" class="inline-flex items-center px-3 py-1 rounded-full bg-rose-50 text-rose-900 text-xs font-semibold hover:bg-white dark:bg-stone-950 transition-colors" data-testid="impersonate-stop">
                     Return to my account
                 </button>
             </form>

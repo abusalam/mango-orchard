@@ -1,20 +1,20 @@
 <x-admin-layout title="Role delegations" active="role-delegations">
     <header class="mb-6">
         <h1 class="text-3xl font-semibold tracking-tight">Role delegations</h1>
-        <p class="mt-1 text-stone-600">Peer-to-peer role grants — created by users who hold a delegatable role. You can revoke any of them on behalf of either party.</p>
+        <p class="mt-1 text-stone-600 dark:text-stone-300">Peer-to-peer role grants — created by users who hold a delegatable role. You can revoke any of them on behalf of either party.</p>
     </header>
 
     <section class="mb-10">
-        <h2 class="text-lg font-medium text-stone-900 mb-3">Active <span class="text-stone-400 text-sm">({{ $active->count() }})</span></h2>
+        <h2 class="text-lg font-medium text-stone-900 dark:text-stone-100 mb-3">Active <span class="text-stone-400 text-sm">({{ $active->count() }})</span></h2>
 
         @if ($active->isEmpty())
-            <div class="rounded-2xl border border-dashed border-stone-300 p-10 text-center text-stone-500" data-testid="delegations-active-empty">
+            <div class="rounded-2xl border border-dashed border-stone-300 p-10 text-center text-stone-500 dark:text-stone-400" data-testid="delegations-active-empty">
                 No active delegations right now.
             </div>
         @else
-            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+            <div class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead class="bg-stone-50 text-stone-500 text-left">
+                    <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
                             <th class="px-5 py-3 font-medium">When</th>
                             <th class="px-5 py-3 font-medium">Recipient</th>
@@ -23,18 +23,18 @@
                             <th class="px-5 py-3 font-medium text-right">Action</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-stone-100">
+                    <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($active as $delegation)
-                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors" data-testid="active-delegation-row">
-                                <td class="px-5 py-3 text-stone-600 whitespace-nowrap" title="{{ $delegation->delegated_at }}">
+                            <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="active-delegation-row">
+                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap" title="{{ $delegation->delegated_at }}">
                                     {{ $delegation->delegated_at->diffForHumans() }}
                                 </td>
-                                <td class="px-5 py-3 text-stone-700">
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
                                     {{ $delegation->recipient->name }}
                                     <span class="block text-xs text-stone-400">{{ $delegation->recipient->email }}</span>
                                 </td>
-                                <td class="px-5 py-3 font-mono text-xs text-stone-800">{{ $delegation->role?->name }}</td>
-                                <td class="px-5 py-3 text-stone-700">
+                                <td class="px-5 py-3 font-mono text-xs text-stone-800 dark:text-stone-200">{{ $delegation->role?->name }}</td>
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
                                     {{ $delegation->delegator?->name ?? '—' }}
                                 </td>
                                 <td class="px-5 py-3 text-right">
@@ -45,7 +45,7 @@
                                         :message="$delegation->recipient->name.' will lose the '.$delegation->role?->name.' role unless they were granted it independently.'"
                                         confirm-label="Revoke delegation"
                                     >
-                                        <button type="button" class="text-rose-700 hover:text-rose-900 font-medium" data-testid="admin-revoke-delegation">Revoke</button>
+                                        <button type="button" class="text-rose-700 dark:text-rose-400 hover:text-rose-900 font-medium" data-testid="admin-revoke-delegation">Revoke</button>
                                     </x-confirm-form>
                                 </td>
                             </tr>
@@ -57,14 +57,14 @@
     </section>
 
     <section>
-        <h2 class="text-lg font-medium text-stone-900 mb-3">Recently revoked</h2>
+        <h2 class="text-lg font-medium text-stone-900 dark:text-stone-100 mb-3">Recently revoked</h2>
 
         @if ($revoked->isEmpty())
-            <p class="text-sm text-stone-500">No delegations have been revoked yet.</p>
+            <p class="text-sm text-stone-500 dark:text-stone-400">No delegations have been revoked yet.</p>
         @else
-            <div class="bg-white rounded-2xl border border-stone-200 overflow-hidden">
+            <div class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
                 <table class="w-full text-sm">
-                    <thead class="bg-stone-50 text-stone-500 text-left">
+                    <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
                             <th class="px-5 py-3 font-medium">When revoked</th>
                             <th class="px-5 py-3 font-medium">Recipient</th>
@@ -73,19 +73,19 @@
                             <th class="px-5 py-3 font-medium">Revoked by</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-stone-100">
+                    <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($revoked as $delegation)
-                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors">
-                                <td class="px-5 py-3 text-stone-600 whitespace-nowrap" title="{{ $delegation->revoked_at }}">
+                            <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors">
+                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap" title="{{ $delegation->revoked_at }}">
                                     {{ $delegation->revoked_at?->diffForHumans() }}
                                 </td>
-                                <td class="px-5 py-3 text-stone-700">
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
                                     {{ $delegation->recipient->name }}
                                     <span class="block text-xs text-stone-400">{{ $delegation->recipient->email }}</span>
                                 </td>
-                                <td class="px-5 py-3 font-mono text-xs text-stone-800">{{ $delegation->role?->name }}</td>
-                                <td class="px-5 py-3 text-stone-700">{{ $delegation->delegator?->name ?? '—' }}</td>
-                                <td class="px-5 py-3 text-stone-700">{{ $delegation->revoker?->name ?? '—' }}</td>
+                                <td class="px-5 py-3 font-mono text-xs text-stone-800 dark:text-stone-200">{{ $delegation->role?->name }}</td>
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">{{ $delegation->delegator?->name ?? '—' }}</td>
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">{{ $delegation->revoker?->name ?? '—' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

@@ -1,10 +1,10 @@
 <section>
     <header>
-        <h2 class="text-lg font-medium text-stone-900">
+        <h2 class="text-lg font-medium text-stone-900 dark:text-stone-100">
             {{ __('Orchard preferences') }}
         </h2>
 
-        <p class="mt-1 text-sm text-stone-600">
+        <p class="mt-1 text-sm text-stone-600 dark:text-stone-300">
             {{ __('The answers you gave during onboarding — update them any time.') }}
         </p>
     </header>
@@ -22,14 +22,14 @@
         </div>
 
         <fieldset>
-            <legend class="block text-sm font-medium text-stone-700">{{ __('How would you describe yourself?') }}</legend>
+            <legend class="block text-sm font-medium text-stone-700 dark:text-stone-300">{{ __('How would you describe yourself?') }}</legend>
             <div class="mt-3 grid sm:grid-cols-2 gap-3">
                 @foreach ($expertiseLevels as $key => $label)
-                    <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
+                    <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-800 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
                         <input type="radio" name="expertise" value="{{ $key }}" required
                                @checked(old('expertise', $user->expertise) === $key)
                                class="mt-1 text-orange-500 focus:ring-orange-400">
-                        <span class="text-sm font-medium text-stone-800">{{ $label }}</span>
+                        <span class="text-sm font-medium text-stone-800 dark:text-stone-200">{{ $label }}</span>
                     </label>
                 @endforeach
             </div>
@@ -38,11 +38,13 @@
 
         <div>
             <x-input-label for="preferences_favorite_variety_id" :value="__('Favorite variety')" />
-            <select name="favorite_variety_id" id="preferences_favorite_variety_id"
-                    class="mt-1 block w-full rounded-lg border-stone-300 shadow-sm focus:border-orange-400 focus:ring-orange-400">
-                <option value="">{{ __('No favorite yet') }}</option>
+            
+        <select name="favorite_variety_id" id="preferences_favorite_variety_id"
+                    class="mt-1 block w-full rounded-lg border-stone-300 dark:border-stone-700 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-sm focus:border-orange-400 focus:ring-orange-400"
+    >
+                <option class="bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100" value="">{{ __('No favorite yet') }}</option>
                 @foreach ($varieties as $variety)
-                    <option value="{{ $variety->id }}" @selected((int) old('favorite_variety_id', $user->favorite_variety_id) === $variety->id)>
+                    <option class="bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100" value="{{ $variety->id }}" @selected((int) old('favorite_variety_id', $user->favorite_variety_id) === $variety->id)>
                         {{ $variety->name }} — {{ $variety->origin }}
                     </option>
                 @endforeach
@@ -51,23 +53,23 @@
         </div>
 
         <div class="space-y-3">
-            <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
+            <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-800 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
                 <input type="checkbox" name="notify_seasonal" value="1"
                        @checked(old('notify_seasonal', $user->notify_seasonal))
                        class="mt-1 rounded text-orange-500 focus:ring-orange-400">
                 <span>
-                    <span class="block text-sm font-medium text-stone-800">{{ __('Notify me when a variety hits its season') }}</span>
-                    <span class="block text-xs text-stone-500 mt-0.5">{{ __('A heads-up when something like Alphonso or Chaunsa comes into peak.') }}</span>
+                    <span class="block text-sm font-medium text-stone-800 dark:text-stone-200">{{ __('Notify me when a variety hits its season') }}</span>
+                    <span class="block text-xs text-stone-500 dark:text-stone-400 mt-0.5">{{ __('A heads-up when something like Alphonso or Chaunsa comes into peak.') }}</span>
                 </span>
             </label>
 
-            <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
+            <label class="flex items-start gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-800 cursor-pointer hover:border-orange-300 has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50 transition-colors">
                 <input type="checkbox" name="subscribe_newsletter" value="1"
                        @checked(old('subscribe_newsletter', $user->subscribe_newsletter))
                        class="mt-1 rounded text-orange-500 focus:ring-orange-400">
                 <span>
-                    <span class="block text-sm font-medium text-stone-800">{{ __('Send me the monthly orchard newsletter') }}</span>
-                    <span class="block text-xs text-stone-500 mt-0.5">{{ __('Seasonal stories, new cultivar profiles, and tasting notes. Once a month, never more.') }}</span>
+                    <span class="block text-sm font-medium text-stone-800 dark:text-stone-200">{{ __('Send me the monthly orchard newsletter') }}</span>
+                    <span class="block text-xs text-stone-500 dark:text-stone-400 mt-0.5">{{ __('Seasonal stories, new cultivar profiles, and tasting notes. Once a month, never more.') }}</span>
                 </span>
             </label>
         </div>
@@ -81,7 +83,7 @@
                     x-show="show"
                     x-transition
                     x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-stone-600"
+                    class="text-sm text-stone-600 dark:text-stone-300"
                 >{{ __('Saved.') }}</p>
             @endif
         </div>

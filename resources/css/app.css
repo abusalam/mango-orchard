@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Reserve the vertical scrollbar groove on every page so navigating from a
+ * short page (no scrollbar) to a tall one (scrollbar appears) doesn't shift
+ * the sticky nav and centered content horizontally. `overflow-y: scroll` is
+ * the universal fallback that works in every browser, including Edge configs
+ * where `scrollbar-gutter` silently doesn't apply. */
+html {
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+}
+
 [x-cloak] {
     display: none !important;
 }

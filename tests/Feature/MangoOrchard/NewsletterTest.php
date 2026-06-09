@@ -40,7 +40,7 @@ it('shows the subscribed-and-verified subscriber count on the index', function (
         ->assertOk()
         // The curator themselves is verified + not_subscribe by default,
         // so the count is exactly the 2 we explicitly subscribed.
-        ->assertSee('<span class="font-medium text-stone-900">2</span> subscribers', escape: false);
+        ->assertSee('<span class="font-medium text-stone-900 dark:text-stone-100">2</span> subscribers', escape: false);
 });
 
 // ============== Compose / draft CRUD ==============

@@ -210,12 +210,14 @@ test('profile sidebar wires up hash-based active-link tracking', function () {
     expect($body)->toContain('x-on:hashchange.window="active = window.location.hash.slice(1)"');
 
     // Each sidebar link has an x-bind:class that flips on the section name,
-    // and an aria-current binding for accessibility.
+    // and an aria-current binding for accessibility. The inactive-state
+    // class list carries dark-mode variants so the sidebar reads cleanly
+    // in either theme.
     foreach (['profile-information', 'preferences', 'role-applications', 'role-delegations', 'password'] as $section) {
-        expect($body)->toContain("active === '{$section}' ? 'bg-orange-50 text-orange-900' : 'text-stone-700 hover:bg-stone-100'");
+        expect($body)->toContain("active === '{$section}' ? 'bg-orange-50 text-orange-900' : 'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-700'");
         expect($body)->toContain("active === '{$section}' ? 'true' : null");
     }
 
     // Danger zone uses the rose palette instead of orange to stay distinct.
-    expect($body)->toContain("active === 'danger-zone' ? 'bg-rose-100 text-rose-900' : 'text-rose-700 hover:bg-rose-50'");
+    expect($body)->toContain("active === 'danger-zone' ? 'bg-rose-100 text-rose-900' : 'text-rose-700 dark:text-rose-400 hover:bg-rose-50'");
 });

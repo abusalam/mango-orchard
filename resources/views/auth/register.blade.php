@@ -42,7 +42,7 @@
         <x-captcha-field class="mt-4" />
 
         <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-stone-600 hover:text-stone-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400" href="{{ route('login') }}">
+            <a class="underline text-sm text-stone-600 dark:text-stone-300 hover:text-stone-900 dark:text-stone-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-400" href="{{ route('login') }}">
                 {{ __('Already registered?') }}
             </a>
 

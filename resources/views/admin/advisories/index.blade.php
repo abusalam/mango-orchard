@@ -3,7 +3,7 @@
         <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-3xl font-semibold tracking-tight">Orchard advisories</h1>
-                <p class="mt-2 text-stone-600">Manage seasonal alerts, best-practice notes, and pest warnings. Drafts and expired advisories are listed here too — only published+active ones reach the public page.</p>
+                <p class="mt-2 text-stone-600 dark:text-stone-300">Manage seasonal alerts, best-practice notes, and pest warnings. Drafts and expired advisories are listed here too — only published+active ones reach the public page.</p>
             </div>
             <a href="{{ route('admin.advisories.create') }}" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                 New advisory
@@ -12,13 +12,13 @@
 
         @if ($advisories->isEmpty())
             <div class="rounded-2xl border border-dashed border-stone-300 p-12 text-center">
-                <p class="text-stone-600">No advisories yet.</p>
+                <p class="text-stone-600 dark:text-stone-300">No advisories yet.</p>
                 <a href="{{ route('admin.advisories.create') }}" class="mt-4 inline-block text-orange-700 font-medium">Issue the first one →</a>
             </div>
         @else
-            <div class="rounded-2xl border border-stone-200 bg-white overflow-hidden">
+            <div class="rounded-2xl border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 overflow-hidden">
                 <table class="w-full text-sm table-fixed">
-                    <thead class="bg-stone-50 text-stone-600 text-xs uppercase tracking-wider">
+                    <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-xs uppercase tracking-wider">
                         <tr>
                             <th class="px-3 py-3 text-left w-28">Issued</th>
                             <th class="px-3 py-3 text-left">Title</th>
@@ -29,26 +29,26 @@
                             <th class="px-3 py-3 w-16"></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-stone-100">
+                    <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($advisories as $advisory)
-                            <tr class="odd:bg-stone-50/60 hover:bg-amber-50/60 transition-colors" data-testid="admin-advisory-row">
-                                <td class="px-3 py-3 whitespace-nowrap text-stone-700 text-xs">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
+                            <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="admin-advisory-row">
+                                <td class="px-3 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300 text-xs">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
                                 <td class="px-3 py-3 min-w-0">
-                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="font-medium text-stone-900 hover:text-orange-700 break-words">{{ $advisory->title }}</a>
+                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="font-medium text-stone-900 dark:text-stone-100 hover:text-orange-700 break-words">{{ $advisory->title }}</a>
                                     @if ($advisory->issuer)
-                                        <div class="text-xs text-stone-500">by {{ $advisory->issuer->name }}</div>
+                                        <div class="text-xs text-stone-500 dark:text-stone-400">by {{ $advisory->issuer->name }}</div>
                                     @endif
                                 </td>
-                                <td class="px-3 py-3 text-stone-700 text-xs hidden sm:table-cell">{{ \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
+                                <td class="px-3 py-3 text-stone-700 dark:text-stone-300 text-xs hidden sm:table-cell">{{ \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
                                 <td class="px-3 py-3">
                                     <span @class([
                                         'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border',
                                         'bg-rose-200 text-rose-900 border-rose-300' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT,
                                         'bg-amber-200 text-amber-900 border-amber-300' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_WARNING,
-                                        'bg-stone-100 text-stone-700 border-stone-200' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_INFO,
+                                        'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border-stone-200 dark:border-stone-800' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_INFO,
                                     ])>{{ \App\Modules\MangoOrchard\Models\Advisory::SEVERITIES[$advisory->severity] }}</span>
                                 </td>
-                                <td class="px-3 py-3 text-xs text-stone-700 hidden md:table-cell truncate">
+                                <td class="px-3 py-3 text-xs text-stone-700 dark:text-stone-300 hidden md:table-cell truncate">
                                     @if ($advisory->isGeneral())
                                         <em class="text-stone-400">All</em>
                                     @else
@@ -57,15 +57,15 @@
                                 </td>
                                 <td class="px-3 py-3">
                                     @if (! $advisory->published)
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 text-stone-700 border border-stone-200">Draft</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800">Draft</span>
                                     @elseif ($advisory->isExpired())
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-200 text-stone-700 border border-stone-300">Expired</span>
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-200 text-stone-700 dark:text-stone-300 border border-stone-300">Expired</span>
                                     @else
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-100 text-emerald-900 border border-emerald-200">Published</span>
                                     @endif
                                 </td>
                                 <td class="px-3 py-3 text-right">
-                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="text-orange-700 hover:text-orange-900 font-medium text-sm">Edit</a>
+                                    <a href="{{ route('admin.advisories.edit', $advisory) }}" class="text-stone-700 dark:text-stone-100 hover:underline font-medium text-sm">Edit</a>
                                 </td>
                             </tr>
                         @endforeach
