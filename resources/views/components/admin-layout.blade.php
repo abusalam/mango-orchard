@@ -177,6 +177,17 @@
                                ])>MPCP directory</a>
                         </div>
                     @endcan
+                    @can(\App\Permissions::GALLERY_MANAGE)
+                        <div class="mt-2 pt-2 border-t border-stone-100 dark:border-stone-800">
+                            <p class="px-3 py-1 text-xs uppercase tracking-wider text-stone-500 dark:text-stone-400">Mango Gallery</p>
+                            <a href="{{ route('admin.gallery.index') }}"
+                               @class([
+                                   'block px-3 py-2 rounded-lg font-medium',
+                                   'bg-stone-900 text-amber-50' => $active === 'gallery',
+                                   'text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800' => $active !== 'gallery',
+                               ])>Albums</a>
+                        </div>
+                    @endcan
                 </nav>
             </aside>
 

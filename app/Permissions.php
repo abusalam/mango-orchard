@@ -30,6 +30,8 @@ final class Permissions
 
     public const string MPCP_MANAGE = 'mpcp.manage';
 
+    public const string GALLERY_MANAGE = 'gallery.manage';
+
     public const array ALL = [
         self::VARIETIES_MANAGE => 'Create, edit, and delete mango varieties',
         self::USERS_MANAGE => 'View users and assign roles',
@@ -43,5 +45,6 @@ final class Permissions
         self::MONITORING_VIEW => 'Access the scheme / project monitoring module (visible scope follows the user\'s position in the monitoring hierarchy)',
         self::MONITORING_MANAGE => 'Manage the scheme / project monitoring module — designations, hierarchy, scheme + task CRUD across the full org',
         self::MPCP_MANAGE => 'Manage the Mango Promotion Communication Plan — sections, entries, and document chrome',
+        self::GALLERY_MANAGE => 'Manage Mango Gallery — albums and photos',
     ];
 }

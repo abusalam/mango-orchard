@@ -29,7 +29,10 @@
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700 dark:text-stone-300">
                     <a href="{{ route('varieties.index') }}" class="hover:text-orange-700 transition-colors">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors">Marketplace</a>
-                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors">MPCP</a>
+                    <a href="{{ route('events.index') }}" class="hover:text-orange-700 transition-colors">Training</a>
+                    <a href="{{ route('advisories.index') }}" class="hover:text-orange-700 transition-colors">Advisories</a>
+                    <a href="{{ route('gallery.index') }}" class="hover:text-orange-700 transition-colors">Gallery</a>
+                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors">Mango Directory</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -93,7 +96,10 @@
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-col gap-1 text-sm text-stone-700 dark:text-stone-300">
                     <a href="{{ route('varieties.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Marketplace</a>
-                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">MPCP</a>
+                    <a href="{{ route('events.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Training</a>
+                    <a href="{{ route('advisories.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Advisories</a>
+                    <a href="{{ route('gallery.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Gallery</a>
+                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Mango Directory</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 dark:border-stone-800 my-2"></div>
@@ -138,11 +144,16 @@
                 // Two hero styles coexist:
                 //   "branding" → official Aamar Malda — Mango Capital block
                 //   "guide"    → original orchard-photo / field-guide block
-                // Default is "branding". The cookie is set client-side by the
-                // small toggle button rendered inside each hero variant; it's
-                // exempt from EncryptCookies (see bootstrap/app.php) so PHP
-                // reads it unencrypted on the next request.
-                $heroStyle = request()->cookie('hero_style', 'branding');
+                //
+                // The on-page toggle is hidden by default; switch with a URL
+                // query param (`?hero=guide` or `?hero=branding`). The cookie
+                // is still honoured as a fallback so anyone who set it via the
+                // old toggle keeps their preference.
+                $heroStyle = request()->query('hero')
+                    ?? request()->cookie('hero_style', 'branding');
+                if (! in_array($heroStyle, ['branding', 'guide'], true)) {
+                    $heroStyle = 'branding';
+                }
             @endphp
 
             @if ($heroStyle === 'branding')
@@ -156,7 +167,8 @@
                         <div class="absolute -bottom-32 -right-24 w-[32rem] h-[32rem] rounded-full bg-amber-300/20 blur-3xl"></div>
                     </div>
 
-                    <x-hero-style-toggle current="branding" next="guide" label="Orchard view" tone="light" />
+                    {{-- Toggle hidden by default; switch via ?hero=guide URL param.
+                         <x-hero-style-toggle current="branding" next="guide" label="Orchard view" tone="light" /> --}}
 
                     <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
                         <div class="grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-12 items-center">
@@ -164,7 +176,7 @@
                                 <img
                                     src="/images/LOGO-Square.webp"
                                     alt="Aamar Malda — The Mango Capital, West Bengal, India"
-                                    class="w-36 h-36 sm:w-44 sm:h-44 lg:w-48 lg:h-48 rounded-full ring-4 ring-amber-300/40 shadow-2xl"
+                                    class="w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full ring-4 ring-amber-300/40 shadow-2xl"
                                     loading="eager"
                                     decoding="async"
                                 />
@@ -273,7 +285,8 @@
                         </div>
                     @endif
 
-                    <x-hero-style-toggle current="guide" next="branding" label="Aamar Malda view" tone="dark" />
+                    {{-- Toggle hidden by default; switch via ?hero=branding URL param.
+                         <x-hero-style-toggle current="guide" next="branding" label="Aamar Malda view" tone="dark" /> --}}
 
                     <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
                         <div class="@if ($heroPhoto) lg:w-1/2 @else grid lg:grid-cols-2 gap-12 items-center @endif">
@@ -334,6 +347,7 @@
                  mirrors the prod HERO byte-for-byte; the rest of the welcome
                  page is free to carry our additions. --}}
             <x-mpcp-summary />
+            <x-gallery-summary />
 
             <section id="varieties" class="bg-white dark:bg-stone-900 border-t border-amber-100 dark:border-stone-800">
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-20 sm:py-24">

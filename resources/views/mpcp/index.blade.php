@@ -34,9 +34,52 @@
             </section>
         @endif
 
+        {{-- Section navigation: sticky chip strip with anchor links to each
+             numbered section. Scrolls horizontally on narrow screens. Alpine +
+             IntersectionObserver lights the chip for the section currently in
+             view (small bias toward the top of the viewport via rootMargin so
+             the highlight changes as you read into a section, not just when
+             you scroll past the boundary). --}}
+        @if ($sections->count() > 1)
+            <nav x-data="{
+                    active: null,
+                    init() {
+                        const targets = document.querySelectorAll('[data-mpcp-section-anchor]');
+                        const obs = new IntersectionObserver((entries) => {
+                            entries.forEach((entry) => {
+                                if (entry.isIntersecting) this.active = entry.target.id;
+                            });
+                        }, { rootMargin: '-20% 0px -60% 0px', threshold: 0 });
+                        targets.forEach((t) => obs.observe(t));
+                    },
+                    chipClasses(slug) {
+                        return this.active === slug
+                            ? 'border-emerald-500 dark:border-emerald-500 bg-emerald-50 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200'
+                            : 'border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 text-stone-700 dark:text-stone-300 hover:border-amber-400 dark:hover:border-amber-700';
+                    }
+                 }"
+                 aria-label="Jump to section"
+                 class="sticky top-16 z-20 -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8 py-3 bg-amber-50/95 dark:bg-stone-900/95 backdrop-blur border-y border-amber-200/60 dark:border-stone-800"
+                 data-testid="mpcp-section-nav">
+                <ul class="flex flex-wrap gap-2">
+                    @foreach ($sections as $section)
+                        <li class="shrink-0">
+                            <a href="#{{ $section->slug }}"
+                               :class="chipClasses('{{ $section->slug }}')"
+                               class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-sm transition-colors"
+                               data-testid="mpcp-nav-chip-{{ $section->slug }}">
+                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shrink-0">{{ $section->display_order }}</span>
+                                <span class="whitespace-nowrap">{{ $section->title_en }}</span>
+                            </a>
+                        </li>
+                    @endforeach
+                </ul>
+            </nav>
+        @endif
+
         {{-- Sections --}}
         @foreach ($sections as $section)
-            <section id="{{ $section->slug }}" class="space-y-5" data-testid="mpcp-section-{{ $section->slug }}">
+            <section id="{{ $section->slug }}" data-mpcp-section-anchor class="space-y-5 scroll-mt-32" data-testid="mpcp-section-{{ $section->slug }}">
                 <header class="border-b border-stone-200 dark:border-stone-800 pb-3">
                     <div class="flex items-baseline gap-3 flex-wrap">
                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-emerald-600 text-white text-xs font-semibold">{{ $section->display_order }}</span>

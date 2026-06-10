@@ -42,7 +42,7 @@
 
             <div class="mt-8 text-center">
                 <a href="{{ route('mpcp.index') }}" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-emerald-700 text-white font-medium hover:bg-emerald-800 transition-colors" data-testid="mpcp-summary-cta">
-                    View complete plan
+                    View Mango Directory
                     <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 </a>
             </div>

@@ -32,7 +32,8 @@
                     <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('listings.*') ? 'text-orange-700' : '' }}">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('events.*') ? 'text-orange-700' : '' }}">Training</a>
                     <a href="{{ route('advisories.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('advisories.*') ? 'text-orange-700' : '' }}">Advisories</a>
-                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('mpcp.*') ? 'text-orange-700' : '' }}">MPCP</a>
+                    <a href="{{ route('gallery.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('gallery.*') ? 'text-orange-700' : '' }}">Gallery</a>
+                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('mpcp.*') ? 'text-orange-700' : '' }}">Mango Directory</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -102,7 +103,8 @@
                     <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Training</a>
                     <a href="{{ route('advisories.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Advisories</a>
-                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">MPCP</a>
+                    <a href="{{ route('gallery.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Gallery</a>
+                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Mango Directory</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 dark:border-stone-800 my-2"></div>

@@ -67,6 +67,10 @@ Route::get('/advisories/{advisory}', [AdvisoryController::class, 'show'])->name(
 // Public MPCP — Mango Promotion Communication Plan directory.
 Route::get('/mpcp', [App\Http\Controllers\MpcpController::class, 'index'])->name('mpcp.index');
 
+// Public Mango Gallery — album list + per-album photo grid.
+Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{album:slug}', [App\Http\Controllers\GalleryController::class, 'show'])->name('gallery.show');
+
 Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -105,6 +109,8 @@ Route::middleware('auth')->group(function () {
                 Permissions::MONITORING_MANAGE => 'admin.monitoring.access.index',
                 // MPCP managers → sections list.
                 Permissions::MPCP_MANAGE => 'admin.mpcp.index',
+                // Gallery managers → albums list.
+                Permissions::GALLERY_MANAGE => 'admin.gallery.index',
             ];
 
             foreach ($destinations as $permission => $route) {
@@ -172,6 +178,22 @@ Route::middleware('auth')->group(function () {
             Route::get('access', [MangoOrchardAccessController::class, 'index'])->name('access.index');
             Route::post('access/{user}', [MangoOrchardAccessController::class, 'grant'])->name('access.grant');
             Route::delete('access/{user}', [MangoOrchardAccessController::class, 'revoke'])->name('access.revoke');
+        });
+
+        // Mango Gallery — albums + photos admin.
+        Route::prefix('gallery')->name('gallery.')->group(function (): void {
+            Route::get('/', [\App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('index');
+            Route::get('albums/create', [\App\Http\Controllers\Admin\GalleryController::class, 'create'])->name('albums.create');
+            Route::post('albums', [\App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('albums.store');
+            Route::get('albums/{album:slug}/edit', [\App\Http\Controllers\Admin\GalleryController::class, 'edit'])->name('albums.edit');
+            Route::put('albums/{album:slug}', [\App\Http\Controllers\Admin\GalleryController::class, 'update'])->name('albums.update');
+            Route::delete('albums/{album:slug}', [\App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('albums.destroy');
+
+            // Photos within an album. Multi-file POST endpoint.
+            Route::post('albums/{album:slug}/photos', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'store'])->name('photos.store');
+            Route::put('albums/{album:slug}/photos/{photo}', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'update'])->name('photos.update');
+            Route::patch('albums/{album:slug}/photos/{photo}/cover', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'setCover'])->name('photos.set-cover');
+            Route::delete('albums/{album:slug}/photos/{photo}', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'destroy'])->name('photos.destroy');
         });
 
         // MPCP — Mango Promotion Communication Plan admin (gated per-route by

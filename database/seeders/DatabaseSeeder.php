@@ -39,5 +39,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AdvisorySeeder::class);
         $this->call(SchemeMonitoringSeeder::class);
         $this->call(MpcpSeeder::class);
+        $this->call(GallerySeeder::class);
     }
 }
