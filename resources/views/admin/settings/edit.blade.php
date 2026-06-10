@@ -89,6 +89,21 @@
                 </span>
             </label>
             @error('readonly_mode') <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
+
+            <label class="mt-3 flex items-start gap-3 p-4 rounded-xl border border-stone-200 dark:border-stone-700 cursor-pointer hover:border-amber-300 dark:hover:border-amber-700 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 dark:has-[:checked]:bg-amber-950 transition-colors">
+                <input type="hidden" name="dev_banner_enabled" value="0">
+                <input type="checkbox" name="dev_banner_enabled" id="dev_banner_enabled" value="1"
+                       @checked($devBannerEnabled)
+                       class="mt-1 rounded text-amber-500 focus:ring-amber-400"
+                       data-testid="dev-banner-toggle">
+                <span>
+                    <span class="block font-medium text-stone-900 dark:text-stone-100">Show under-development banner</span>
+                    <span class="block text-xs text-stone-500 dark:text-stone-400 mt-0.5">
+                        Pins a dismissible amber notice to the top of every page warning that content is preliminary and not finalised for public access. Each visitor can hide it once per session via the close button; flipping this back off retracts it globally.
+                    </span>
+                </span>
+            </label>
+            @error('dev_banner_enabled') <p class="mt-2 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
         </fieldset>
 
         {{-- ============== Mail delivery ============== --}}

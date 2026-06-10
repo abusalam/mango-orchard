@@ -24,10 +24,10 @@ const BROWSER_VARIETIES = [
 it('boots the home page with the expected branding and hero copy', function () {
     visit('/')
         ->assertTitleContains('A field guide to mango varieties')
-        ->assertSee('A field guide')
-        ->assertSee('The world tastes')
-        ->assertSee('sweeter')
-        ->assertSee('mango season')
+        ->assertSee('Aamar Malda')
+        ->assertSee('The Mango Capital')
+        ->assertSee('Nestled in the heart of North Bengal')
+        ->assertSee('Present Status of Malda Mango')
         ->assertSeeLink('Browse varieties')
         ->assertSeeLink('See season guide');
 });

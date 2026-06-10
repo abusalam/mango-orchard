@@ -35,6 +35,7 @@ class EnsureOnboardingComplete
         'listings.show',
         'events.index',
         'events.show',
+        'mpcp.index',
         'preferences.unsubscribe-newsletter',
     ];
 }

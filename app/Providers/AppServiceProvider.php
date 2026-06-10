@@ -54,6 +54,7 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view): void {
             $view->with('formAutofillEnabled', app(Settings::class)->formAutofill());
             $view->with('readonlyModeEnabled', app(Settings::class)->readonlyMode());
+            $view->with('devBannerEnabled', app(Settings::class)->devBannerEnabled());
 
             $impersonation = app(Impersonation::class);
             if ($impersonation->isActive() && ($target = auth()->user()) !== null && ($actor = $impersonation->originalUser()) !== null) {

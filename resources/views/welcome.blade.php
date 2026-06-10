@@ -8,6 +8,7 @@
 
         <title>{{ config('app.name', 'Aamar Malda') }} — A field guide to mango varieties</title>
 
+        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -16,17 +17,19 @@
     </head>
     <body class="bg-amber-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 antialiased">
         <x-readonly-banner />
+        <x-dev-banner />
         <x-impersonation-banner />
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 dark:bg-stone-900/80 border-b border-amber-200/60 dark:border-stone-800" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="#top" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
+                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
                     <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700 dark:text-stone-300">
                     <a href="{{ route('varieties.index') }}" class="hover:text-orange-700 transition-colors">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors">Marketplace</a>
+                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors">MPCP</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -90,6 +93,7 @@
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex flex-col gap-1 text-sm text-stone-700 dark:text-stone-300">
                     <a href="{{ route('varieties.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">All varieties</a>
                     <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Marketplace</a>
+                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">MPCP</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 dark:border-stone-800 my-2"></div>
@@ -131,105 +135,205 @@
 
         <main id="top">
             @php
-                // Drop a JPG/PNG/WebP at public/images/hero-orchard-photo.<ext> to use a real photo.
-                // WebP is preferred (smallest), then JPG, then PNG.
-                $heroPhotoCandidates = ['hero-orchard-photo.webp', 'hero-orchard-photo.jpg', 'hero-orchard-photo.png'];
-                $heroPhoto = null;
-                foreach ($heroPhotoCandidates as $candidate) {
-                    if (file_exists(public_path("images/{$candidate}"))) {
-                        $heroPhoto = asset("images/{$candidate}");
-                        break;
-                    }
-                }
+                // Two hero styles coexist:
+                //   "branding" → official Aamar Malda — Mango Capital block
+                //   "guide"    → original orchard-photo / field-guide block
+                // Default is "branding". The cookie is set client-side by the
+                // small toggle button rendered inside each hero variant; it's
+                // exempt from EncryptCookies (see bootstrap/app.php) so PHP
+                // reads it unencrypted on the next request.
+                $heroStyle = request()->cookie('hero_style', 'branding');
             @endphp
 
-            <section class="relative overflow-hidden">
-                @if ($heroPhoto)
-                    {{-- Full-bleed photo backdrop. Cream gradient overlays on the left, top
-                         and bottom blend the image seamlessly into the page; text overlays
-                         the left half on top. --}}
-                    <div aria-hidden="true" class="absolute inset-0 z-0">
-                        <img
-                            src="{{ $heroPhoto }}"
-                            alt=""
-                            class="w-full h-full object-cover lg:translate-x-[12%] origin-right"
-                            loading="eager"
-                            decoding="async"
-                        />
-                        {{-- Left → right cream wash. Solid on the left so the headline reads,
-                             fades out by the centre so the photo dominates the right half.
-                             Covers the slim left-edge gap created by the photo's translate.
-                             Dark-mode variants swap the cream wash for stone-900 so the
-                             hero region blends with the dark body bg instead of glowing. --}}
-                        <div class="absolute inset-0 bg-amber-50/80 dark:bg-stone-900/80 lg:hidden"></div>
-                        <div class="hidden lg:block absolute inset-0 bg-gradient-to-r from-amber-50 dark:from-stone-900 from-35% via-amber-50/85 dark:via-stone-900/85 via-55% to-transparent to-80%"></div>
-                        {{-- Top + bottom fades so the photo dissolves into the page chrome. --}}
-                        <div class="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-amber-50 dark:from-stone-900 to-transparent"></div>
-                        <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-amber-50 dark:from-stone-900 via-amber-50/80 dark:via-stone-900/80 to-transparent"></div>
+            @if ($heroStyle === 'branding')
+                {{-- ============== Hero: Aamar Malda — The Mango Capital ============== --}}
+                <section class="relative overflow-hidden">
+                    {{-- Green → orange gradient backdrop. Mirrors the official Malda
+                         mango-capital branding and stays legible in both modes. --}}
+                    <div aria-hidden="true" class="absolute inset-0 z-0 bg-gradient-to-br from-emerald-900 via-emerald-700 to-orange-500"></div>
+                    <div aria-hidden="true" class="absolute inset-0 z-0 pointer-events-none">
+                        <div class="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-emerald-300/20 blur-3xl"></div>
+                        <div class="absolute -bottom-32 -right-24 w-[32rem] h-[32rem] rounded-full bg-amber-300/20 blur-3xl"></div>
                     </div>
-                @else
-                    {{-- Decorative gradient blobs while no hero photo is present.
-                         Dim-tones in dark mode so the blobs read as subtle ambient
-                         hue rather than glowing pastel highlights against the dark bg. --}}
-                    <div aria-hidden="true" class="absolute inset-0 -z-10">
-                        <div class="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber-300/40 dark:bg-amber-800/30 blur-3xl"></div>
-                        <div class="absolute top-20 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-300/30 dark:bg-rose-800/20 blur-3xl"></div>
-                        <div class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-lime-300/30 dark:bg-lime-800/20 blur-3xl"></div>
-                    </div>
-                @endif
 
-                <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
-                    <div class="@if ($heroPhoto) lg:w-1/2 @else grid lg:grid-cols-2 gap-12 items-center @endif">
-                        <div>
-                            <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 text-xs font-medium tracking-wide uppercase">
-                                <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
-                                A field guide
-                            </span>
-                            <h1 class="mt-5 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-stone-900 dark:text-stone-100 leading-[1.05]">
-                                The world tastes <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">sweeter</span> in mango season.
-                            </h1>
-                            <p class="mt-6 text-lg text-stone-800 dark:text-stone-200 max-w-xl leading-relaxed">
-                                In the sunlit Malda orchard, a rhythmic dance of nature and labor unfolds as workers methodically harvest heavy, golden mangoes for the upcoming market rush. These fragrant fruits carry the distinct geography of their grove in every bite, inviting you to explore the rich varieties that define the season.
-                            </p>
-                            <div class="mt-8 flex flex-wrap gap-3">
-                                <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors">
-                                    Browse varieties
-                                    <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                                </a>
-                                <a href="#season" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium border border-stone-200 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500 transition-colors">
-                                    See season guide
-                                </a>
-                            </div>
-                        </div>
+                    <x-hero-style-toggle current="branding" next="guide" label="Orchard view" tone="light" />
 
-                        @unless ($heroPhoto)
-                            <div class="relative hidden lg:block">
+                    <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-20 sm:pb-24 lg:pt-24 lg:pb-28">
+                        <div class="grid lg:grid-cols-[auto_1fr] gap-8 lg:gap-12 items-center">
+                            <div class="flex justify-center lg:justify-start">
                                 <img
-                                    src="{{ asset('images/hero-orchard-canopy.svg') }}"
-                                    alt="A mango tree branch heavy with ripe yellow and red mangoes against a warm sky"
-                                    class="w-full h-auto max-h-[28rem] object-contain drop-shadow-2xl"
+                                    src="/images/LOGO-Square.webp"
+                                    alt="Aamar Malda — The Mango Capital, West Bengal, India"
+                                    class="w-36 h-36 sm:w-44 sm:h-44 lg:w-48 lg:h-48 rounded-full ring-4 ring-amber-300/40 shadow-2xl"
                                     loading="eager"
                                     decoding="async"
                                 />
                             </div>
-                        @endunless
-                    </div>
 
-                    <div class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 border-t border-amber-200/70 dark:border-stone-800 pt-10">
-                        @foreach ([
-                            ['1,000+', 'cultivars worldwide'],
-                            ['~4000', 'years cultivated'],
-                            ['100+', 'growing countries'],
-                            [$varieties->count(), 'varieties featured'],
-                        ] as $stat)
-                            <div>
-                                <div class="text-3xl sm:text-4xl font-semibold text-stone-900 dark:text-stone-100 tracking-tight">{{ $stat[0] }}</div>
-                                <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">{{ $stat[1] }}</div>
+                            <div class="text-center lg:text-left">
+                                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.05]">
+                                    Aamar Malda
+                                </h1>
+                                <p class="mt-3 text-xl sm:text-2xl font-medium text-amber-300">
+                                    The Mango Capital
+                                </p>
+                                <p class="mt-6 text-base sm:text-lg text-amber-50/95 max-w-2xl leading-relaxed">
+                                    Nestled in the heart of North Bengal, Malda is celebrated across India and beyond as the land of the finest mangoes. From the fragrant Himsagar to the giant Fazli, the district's orchards turn every summer into a season of gold — sustaining lakhs of families and carrying the taste of Malda to the world.
+                                </p>
+                                <div class="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start">
+                                    <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-amber-500 text-stone-900 font-medium hover:bg-amber-400 transition-colors shadow-sm">
+                                        Browse varieties
+                                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </a>
+                                    <a href="#season" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white/10 text-white font-medium border border-white/30 hover:bg-white/15 transition-colors backdrop-blur">
+                                        See season guide
+                                    </a>
+                                </div>
                             </div>
-                        @endforeach
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                {{-- ============== Present Status of Malda Mango ============== --}}
+                {{-- Renders only with the Aamar Malda branding hero; the field-guide
+                     variant deliberately mirrors aamarmalda.wb.gov.in, which goes
+                     straight from hero to the "Twelve mangoes worth knowing" grid. --}}
+                <section class="bg-white dark:bg-stone-900 border-t border-amber-100 dark:border-stone-800">
+                    <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
+                        <div class="text-center mb-10">
+                            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Present Status of Malda Mango</h2>
+                            <div aria-hidden="true" class="mt-3 mx-auto w-16 h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500"></div>
+                            <p class="mt-4 text-stone-600 dark:text-stone-300">A snapshot of the district's mango economy for the 2025–26 season.</p>
+                        </div>
+
+                        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+                            @foreach ([
+                                ['31,958', 'HECTARES', 'Area under mango cultivation'],
+                                ['3,80,776', 'METRIC TONNES', 'Annual production'],
+                                ['4,80,000', 'PEOPLE (APPROX.)', 'Directly & indirectly involved'],
+                                ['96,602', 'OWNERS', 'Orchard owners in the district'],
+                                ['₹1,350', 'PER QUINTAL', 'Average rate of fresh mango'],
+                            ] as $stat)
+                                <div class="bg-white dark:bg-stone-950 border border-amber-200 dark:border-stone-800 rounded-2xl p-5 text-center hover:border-amber-400 dark:hover:border-amber-700 transition-colors">
+                                    <div class="text-2xl sm:text-3xl font-semibold text-amber-700 dark:text-amber-300 tracking-tight">{{ $stat[0] }}</div>
+                                    <div class="mt-1 text-[11px] uppercase tracking-wide text-stone-600 dark:text-stone-300 font-medium">{{ $stat[1] }}</div>
+                                    <div class="mt-3 text-xs text-stone-500 dark:text-stone-400">{{ $stat[2] }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @else
+                {{-- ============== Hero: A field guide to mango varieties ============== --}}
+                @php
+                    // Drop a JPG/PNG/WebP at public/images/hero-orchard-photo.<ext> to use a real photo.
+                    // WebP is preferred (smallest), then JPG, then PNG.
+                    $heroPhotoCandidates = ['hero-orchard-photo.webp', 'hero-orchard-photo.jpg', 'hero-orchard-photo.png'];
+                    $heroPhoto = null;
+                    foreach ($heroPhotoCandidates as $candidate) {
+                        if (file_exists(public_path("images/{$candidate}"))) {
+                            $heroPhoto = asset("images/{$candidate}");
+                            break;
+                        }
+                    }
+                @endphp
+
+                <section class="relative overflow-hidden">
+                    @if ($heroPhoto)
+                        {{-- Full-bleed photo backdrop. Cream gradient overlays on the left, top
+                             and bottom blend the image seamlessly into the page; text overlays
+                             the left half on top. --}}
+                        <div aria-hidden="true" class="absolute inset-0 z-0">
+                            <img
+                                src="{{ $heroPhoto }}"
+                                alt=""
+                                class="w-full h-full object-cover lg:translate-x-[12%] origin-right"
+                                loading="eager"
+                                decoding="async"
+                            />
+                            {{-- Left → right cream wash. Solid on the left so the headline reads,
+                                 fades out by the centre so the photo dominates the right half.
+                                 Covers the slim left-edge gap created by the photo's translate.
+                                 Dark-mode variants swap the cream wash for stone-900 so the
+                                 hero region blends with the dark body bg instead of glowing. --}}
+                            <div class="absolute inset-0 bg-amber-50/80 dark:bg-stone-900/80 lg:hidden"></div>
+                            <div class="hidden lg:block absolute inset-0 bg-gradient-to-r from-amber-50 dark:from-stone-900 from-35% via-amber-50/85 dark:via-stone-900/85 via-55% to-transparent to-80%"></div>
+                            {{-- Top + bottom fades so the photo dissolves into the page chrome. --}}
+                            <div class="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-amber-50 dark:from-stone-900 to-transparent"></div>
+                            <div class="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-amber-50 dark:from-stone-900 via-amber-50/80 dark:via-stone-900/80 to-transparent"></div>
+                        </div>
+                    @else
+                        {{-- Decorative gradient blobs while no hero photo is present.
+                             Dim-tones in dark mode so the blobs read as subtle ambient
+                             hue rather than glowing pastel highlights against the dark bg. --}}
+                        <div aria-hidden="true" class="absolute inset-0 -z-10">
+                            <div class="absolute -top-32 -left-24 w-96 h-96 rounded-full bg-amber-300/40 dark:bg-amber-800/30 blur-3xl"></div>
+                            <div class="absolute top-20 -right-24 w-[28rem] h-[28rem] rounded-full bg-rose-300/30 dark:bg-rose-800/20 blur-3xl"></div>
+                            <div class="absolute bottom-0 left-1/3 w-80 h-80 rounded-full bg-lime-300/30 dark:bg-lime-800/20 blur-3xl"></div>
+                        </div>
+                    @endif
+
+                    <x-hero-style-toggle current="guide" next="branding" label="Aamar Malda view" tone="dark" />
+
+                    <div class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
+                        <div class="@if ($heroPhoto) lg:w-1/2 @else grid lg:grid-cols-2 gap-12 items-center @endif">
+                            <div>
+                                <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 text-xs font-medium tracking-wide uppercase">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                                    Mango Orchard
+                                </span>
+                                <h1 class="mt-5 text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-stone-900 dark:text-stone-100 leading-[1.05]">
+                                    The world tastes <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">sweeter</span> in mango season.
+                                </h1>
+                                <p class="mt-6 text-lg text-stone-800 dark:text-stone-200 max-w-xl leading-relaxed">
+                                    In the sunlit Malda orchard, a rhythmic dance of nature and labor unfolds as workers methodically harvest heavy, golden mangoes for the upcoming market rush. These fragrant fruits carry the distinct geography of their grove in every bite, inviting you to explore the rich varieties that define the season.
+                                </p>
+                                <div class="mt-8 flex flex-wrap gap-3">
+                                    <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors">
+                                        Browse varieties
+                                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 10h10M11 6l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                    </a>
+                                    <a href="#season" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 font-medium border border-stone-200 dark:border-stone-700 hover:border-stone-400 dark:hover:border-stone-500 transition-colors">
+                                        See season guide
+                                    </a>
+                                </div>
+                            </div>
+
+                            @unless ($heroPhoto)
+                                <div class="relative hidden lg:block">
+                                    <img
+                                        src="{{ asset('images/hero-orchard-canopy.svg') }}"
+                                        alt="A mango tree branch heavy with ripe yellow and red mangoes against a warm sky"
+                                        class="w-full h-auto max-h-[28rem] object-contain drop-shadow-2xl"
+                                        loading="eager"
+                                        decoding="async"
+                                    />
+                                </div>
+                            @endunless
+                        </div>
+
+                        <div class="mt-16 grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-8 border-t border-amber-200/70 dark:border-stone-800 pt-10">
+                            @foreach ([
+                                ['31,958', 'Mango cultivation area in hectares'],
+                                ['3,80,776', 'Annual production in metric tonnes'],
+                                ['96,602', 'Orchard owners in the district'],
+                                [$varieties->count(), 'mango varieties'],
+                            ] as $stat)
+                                <div>
+                                    <div class="text-3xl sm:text-4xl font-semibold text-stone-900 dark:text-stone-100 tracking-tight">{{ $stat[0] }}</div>
+                                    <div class="mt-1 text-sm text-stone-600 dark:text-stone-300">{{ $stat[1] }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </section>
+            @endif
+
+            {{-- ============== MPCP summary card ============== --}}
+            {{-- Common to both hero variants — the field-guide variant only
+                 mirrors the prod HERO byte-for-byte; the rest of the welcome
+                 page is free to carry our additions. --}}
+            <x-mpcp-summary />
 
             <section id="varieties" class="bg-white dark:bg-stone-900 border-t border-amber-100 dark:border-stone-800">
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-20 sm:py-24">
@@ -341,8 +445,11 @@
         <footer class="bg-stone-900 text-stone-300">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row gap-6 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 ring-1 ring-orange-700/30"></span>
-                    <span class="font-semibold text-stone-100">Aamar Malda</span>
+                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
+                    <div>
+                        <p class="text-lg font-semibold text-stone-100">Aamar Malda</p>
+                        <p class="text-xs text-stone-400">an initiative by District Administration, Malda</p>
+                    </div>
                 </div>
                 <p class="text-sm text-stone-400">A small love letter to the world's mango varieties.</p>
                 <a

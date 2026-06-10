@@ -38,5 +38,6 @@ class DatabaseSeeder extends Seeder
         $this->call(EventSeeder::class);
         $this->call(AdvisorySeeder::class);
         $this->call(SchemeMonitoringSeeder::class);
+        $this->call(MpcpSeeder::class);
     }
 }

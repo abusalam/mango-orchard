@@ -48,10 +48,12 @@ return Application::configure(basePath: dirname(__DIR__))
             RequireCookieConsent::class,
         );
 
-        // `cookie_consent` and `theme_preference` are both set client-side
-        // by JS — the cookie banner and the theme switcher — so they
-        // arrive unencrypted. Tell Laravel not to try decrypting them.
-        $middleware->encryptCookies(except: ['cookie_consent', 'theme_preference']);
+        // `cookie_consent`, `theme_preference`, `hero_style`, and
+        // `dev_banner_dismissed` are set client-side by JS — the cookie
+        // banner, the theme switcher, the hero variant toggle, and the
+        // dev-banner close button — so they arrive unencrypted. Tell
+        // Laravel not to try decrypting them.
+        $middleware->encryptCookies(except: ['cookie_consent', 'theme_preference', 'hero_style', 'dev_banner_dismissed']);
 
         // Strip session + XSRF cookies from responses to guest visitors who
         // haven't yet clicked the cookie banner. Prepended so it runs LAST

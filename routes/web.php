@@ -64,6 +64,9 @@ Route::get('/events/{event:slug}', [EventController::class, 'show'])->name('even
 Route::get('/advisories', [AdvisoryController::class, 'index'])->name('advisories.index');
 Route::get('/advisories/{advisory}', [AdvisoryController::class, 'show'])->name('advisories.show');
 
+// Public MPCP — Mango Promotion Communication Plan directory.
+Route::get('/mpcp', [App\Http\Controllers\MpcpController::class, 'index'])->name('mpcp.index');
+
 Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -100,6 +103,8 @@ Route::middleware('auth')->group(function () {
                 // Module access first — it's the entry-point that gates
                 // the rest of the Pragati Darpan admin surface.
                 Permissions::MONITORING_MANAGE => 'admin.monitoring.access.index',
+                // MPCP managers → sections list.
+                Permissions::MPCP_MANAGE => 'admin.mpcp.index',
             ];
 
             foreach ($destinations as $permission => $route) {
@@ -167,6 +172,26 @@ Route::middleware('auth')->group(function () {
             Route::get('access', [MangoOrchardAccessController::class, 'index'])->name('access.index');
             Route::post('access/{user}', [MangoOrchardAccessController::class, 'grant'])->name('access.grant');
             Route::delete('access/{user}', [MangoOrchardAccessController::class, 'revoke'])->name('access.revoke');
+        });
+
+        // MPCP — Mango Promotion Communication Plan admin (gated per-route by
+        // `permission:mpcp.manage` on each controller, not at the group level).
+        Route::prefix('mpcp')->name('mpcp.')->group(function (): void {
+            Route::get('/', [\App\Http\Controllers\Admin\MpcpController::class, 'index'])->name('index');
+            Route::get('document', [\App\Http\Controllers\Admin\MpcpController::class, 'editDocument'])->name('document.edit');
+            Route::put('document', [\App\Http\Controllers\Admin\MpcpController::class, 'updateDocument'])->name('document.update');
+            Route::get('sections/create', [\App\Http\Controllers\Admin\MpcpController::class, 'create'])->name('sections.create');
+            Route::post('sections', [\App\Http\Controllers\Admin\MpcpController::class, 'store'])->name('sections.store');
+            Route::get('sections/{section:slug}/edit', [\App\Http\Controllers\Admin\MpcpController::class, 'edit'])->name('sections.edit');
+            Route::put('sections/{section:slug}', [\App\Http\Controllers\Admin\MpcpController::class, 'update'])->name('sections.update');
+            Route::delete('sections/{section:slug}', [\App\Http\Controllers\Admin\MpcpController::class, 'destroy'])->name('sections.destroy');
+
+            Route::get('sections/{section:slug}/entries', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'index'])->name('entries.index');
+            Route::get('sections/{section:slug}/entries/create', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'create'])->name('entries.create');
+            Route::post('sections/{section:slug}/entries', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'store'])->name('entries.store');
+            Route::get('sections/{section:slug}/entries/{entry}/edit', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'edit'])->name('entries.edit');
+            Route::put('sections/{section:slug}/entries/{entry}', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'update'])->name('entries.update');
+            Route::delete('sections/{section:slug}/entries/{entry}', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'destroy'])->name('entries.destroy');
         });
     });
 

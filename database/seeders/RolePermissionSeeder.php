@@ -29,7 +29,7 @@ class RolePermissionSeeder extends Seeder
             $superuser->syncPermissions(array_keys(Permissions::ALL));
 
             $curator = Role::findOrCreate(Roles::CURATOR, 'web');
-            $curator->syncPermissions([Permissions::VARIETIES_MANAGE]);
+            $curator->syncPermissions([Permissions::VARIETIES_MANAGE, Permissions::MPCP_MANAGE]);
 
             $grower = Role::findOrCreate(Roles::GROWER, 'web');
             $grower->syncPermissions([Permissions::LISTINGS_MANAGE]);

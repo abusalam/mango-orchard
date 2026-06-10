@@ -8,6 +8,7 @@
 
         <title>{{ $title ?? 'Aamar Malda' }}</title>
 
+        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -16,11 +17,12 @@
     </head>
     <body class="bg-amber-50 dark:bg-stone-900 text-stone-900 dark:text-stone-100 antialiased min-h-screen flex flex-col">
         <x-readonly-banner />
+        <x-dev-banner />
         <x-impersonation-banner />
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 dark:bg-stone-900/80 border-b border-amber-200/60 dark:border-stone-800" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
+                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
                     <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
                 </a>
 
@@ -30,6 +32,7 @@
                     <a href="{{ route('listings.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('listings.*') ? 'text-orange-700' : '' }}">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('events.*') ? 'text-orange-700' : '' }}">Training</a>
                     <a href="{{ route('advisories.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('advisories.*') ? 'text-orange-700' : '' }}">Advisories</a>
+                    <a href="{{ route('mpcp.index') }}" class="hover:text-orange-700 transition-colors {{ request()->routeIs('mpcp.*') ? 'text-orange-700' : '' }}">MPCP</a>
 
                     @guest
                         <a href="{{ route('login') }}" class="hover:text-orange-700 transition-colors">Log in</a>
@@ -99,6 +102,7 @@
                     <a href="{{ route('listings.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Marketplace</a>
                     <a href="{{ route('events.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Training</a>
                     <a href="{{ route('advisories.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">Advisories</a>
+                    <a href="{{ route('mpcp.index') }}" class="px-3 py-2 rounded hover:bg-amber-100 dark:hover:bg-stone-800">MPCP</a>
 
                     @guest
                         <div class="border-t border-amber-200/60 dark:border-stone-800 my-2"></div>
@@ -156,8 +160,11 @@
         <footer class="bg-stone-900 text-stone-300 mt-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 ring-1 ring-orange-700/30"></span>
-                    <span class="font-semibold text-stone-100">Aamar Malda</span>
+                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
+                    <div>
+                        <p class="text-lg font-semibold text-stone-100">Aamar Malda</p>
+                        <p class="text-xs text-stone-400">an initiative by District Administration, Malda</p>
+                    </div>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-stone-400">
                     <span>A small love letter to the world's mango varieties.</span>

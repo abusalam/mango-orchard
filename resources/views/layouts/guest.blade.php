@@ -15,6 +15,7 @@
 
         <title>{{ $title ? $title.' — Aamar Malda' : config('app.name', 'Aamar Malda') }}</title>
 
+        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -23,6 +24,7 @@
     </head>
     <body class="font-sans text-stone-900 dark:text-stone-100 antialiased">
         <x-readonly-banner />
+        <x-dev-banner />
         <x-impersonation-banner />
         @if ($step)
             {{-- Onboarding chrome: branded header bar + step indicator. --}}
@@ -30,7 +32,7 @@
                 <header class="border-b border-amber-200/60 dark:border-stone-800 bg-amber-50/80 dark:bg-stone-900/80 backdrop-blur">
                     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                         <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                            <span class="inline-block w-7 h-7 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
+                            <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
                             <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
                         </a>
                         @auth
@@ -83,7 +85,7 @@
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-amber-50 dark:bg-stone-900">
                 <div>
                     <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight text-stone-900 dark:text-stone-100">
-                        <span class="inline-block w-10 h-10 rounded-full bg-gradient-to-br from-yellow-300 via-orange-400 to-rose-500 shadow-inner ring-1 ring-orange-700/20"></span>
+                        <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-10 h-10 rounded-full object-cover">
                         <span class="text-lg">Aamar Malda</span>
                     </a>
                 </div>

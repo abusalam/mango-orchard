@@ -30,6 +30,7 @@ class SettingsController extends Controller implements HasMiddleware
             'captchaAutosolve' => (bool) $settings->get(Settings::CAPTCHA_AUTOSOLVE, false),
             'formAutofill' => $settings->formAutofill(),
             'readonlyMode' => $settings->readonlyMode(),
+            'devBannerEnabled' => $settings->devBannerEnabled(),
             'mailEnabled' => $settings->mailEnabled(),
             'mailMangoOrchardEnabled' => (bool) $settings->get(Settings::MAIL_MANGO_ORCHARD_ENABLED, true),
             'mailSchemeMonitoringEnabled' => (bool) $settings->get(Settings::MAIL_SCHEME_MONITORING_ENABLED, true),
@@ -43,6 +44,7 @@ class SettingsController extends Controller implements HasMiddleware
             'captcha_autosolve' => ['nullable', 'boolean'],
             'form_autofill' => ['nullable', 'boolean'],
             'readonly_mode' => ['nullable', 'boolean'],
+            'dev_banner_enabled' => ['nullable', 'boolean'],
             'mail_enabled' => ['nullable', 'boolean'],
             'mail_mango_orchard_enabled' => ['nullable', 'boolean'],
             'mail_scheme_monitoring_enabled' => ['nullable', 'boolean'],
@@ -53,6 +55,7 @@ class SettingsController extends Controller implements HasMiddleware
             Settings::CAPTCHA_AUTOSOLVE => (bool) $settings->get(Settings::CAPTCHA_AUTOSOLVE, false),
             Settings::FORM_AUTOFILL => $settings->formAutofill(),
             Settings::READONLY_MODE => $settings->readonlyMode(),
+            Settings::DEV_BANNER_ENABLED => $settings->devBannerEnabled(),
             Settings::MAIL_ENABLED => $settings->mailEnabled(),
             Settings::MAIL_MANGO_ORCHARD_ENABLED => (bool) $settings->get(Settings::MAIL_MANGO_ORCHARD_ENABLED, true),
             Settings::MAIL_SCHEME_MONITORING_ENABLED => (bool) $settings->get(Settings::MAIL_SCHEME_MONITORING_ENABLED, true),
@@ -63,6 +66,7 @@ class SettingsController extends Controller implements HasMiddleware
             Settings::CAPTCHA_AUTOSOLVE => (bool) ($data['captcha_autosolve'] ?? false),
             Settings::FORM_AUTOFILL => (bool) ($data['form_autofill'] ?? false),
             Settings::READONLY_MODE => (bool) ($data['readonly_mode'] ?? false),
+            Settings::DEV_BANNER_ENABLED => (bool) ($data['dev_banner_enabled'] ?? false),
             Settings::MAIL_ENABLED => (bool) ($data['mail_enabled'] ?? false),
             Settings::MAIL_MANGO_ORCHARD_ENABLED => (bool) ($data['mail_mango_orchard_enabled'] ?? false),
             Settings::MAIL_SCHEME_MONITORING_ENABLED => (bool) ($data['mail_scheme_monitoring_enabled'] ?? false),
@@ -72,6 +76,7 @@ class SettingsController extends Controller implements HasMiddleware
         $settings->set(Settings::CAPTCHA_AUTOSOLVE, $next[Settings::CAPTCHA_AUTOSOLVE]);
         $settings->set(Settings::FORM_AUTOFILL, $next[Settings::FORM_AUTOFILL]);
         $settings->set(Settings::READONLY_MODE, $next[Settings::READONLY_MODE]);
+        $settings->set(Settings::DEV_BANNER_ENABLED, $next[Settings::DEV_BANNER_ENABLED]);
         $settings->set(Settings::MAIL_ENABLED, $next[Settings::MAIL_ENABLED]);
         $settings->set(Settings::MAIL_MANGO_ORCHARD_ENABLED, $next[Settings::MAIL_MANGO_ORCHARD_ENABLED]);
         $settings->set(Settings::MAIL_SCHEME_MONITORING_ENABLED, $next[Settings::MAIL_SCHEME_MONITORING_ENABLED]);

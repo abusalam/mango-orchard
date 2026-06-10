@@ -17,6 +17,8 @@ class Settings
 
     public const string READONLY_MODE = 'readonly_mode';
 
+    public const string DEV_BANNER_ENABLED = 'dev_banner_enabled';
+
     // Master switch: when off, no notification dispatches the `mail`
     // channel. Database channel still records (TaskStatusChanged /
     // TaskUpdated keep their in-app trail) and the admin Send button
@@ -37,6 +39,7 @@ class Settings
         self::CAPTCHA_AUTOSOLVE => false,
         self::FORM_AUTOFILL => false,
         self::READONLY_MODE => false,
+        self::DEV_BANNER_ENABLED => false,
         // Mail defaults to ON — flipping any of these to false is a
         // deliberate sysadmin act (incident response, staging holds, etc.).
         self::MAIL_ENABLED => true,
@@ -106,6 +109,11 @@ class Settings
     public function readonlyMode(): bool
     {
         return (bool) $this->get(self::READONLY_MODE, false);
+    }
+
+    public function devBannerEnabled(): bool
+    {
+        return (bool) $this->get(self::DEV_BANNER_ENABLED, false);
     }
 
     /**
