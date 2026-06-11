@@ -135,7 +135,7 @@
         @if (! empty($footerCards))
             <section class="pt-10 border-t border-stone-200 dark:border-stone-800" data-testid="mpcp-footer">
                 <header class="text-center mb-8">
-                    <h2 class="text-2xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Prepared by — Malda District Administration</h2>
+                    <h2 class="text-2xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Prepared by — {{ config('app.owner') }}</h2>
                     <p class="mt-1 text-sm text-stone-600 dark:text-stone-400">মালদা জেলা প্রশাসন</p>
                 </header>
 

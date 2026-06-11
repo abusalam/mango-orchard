@@ -8,7 +8,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-form-autofill-meta />
 
-        <title>{{ $title }} — Aamar Malda Admin</title>
+        <title>{{ $title }} — {{ config('app.name') }} Admin</title>
 
         <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -24,8 +24,8 @@
         <header class="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
-                    <span class="text-stone-900 dark:text-stone-100">Aamar Malda Admin</span>
+                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                    <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }} Admin</span>
                 </a>
                 <div class="flex items-center gap-4 text-sm">
                     <x-theme-switcher />
@@ -209,13 +209,12 @@
                 <p class="sm:text-right sm:max-w-xl leading-relaxed">
                     <span class="font-medium text-stone-200">Disclaimer:</span>
                     Content, data, process and operation owned and maintained by the
-                    Office of the District Magistrate &amp; Collector, Malda,
-                    Government of West Bengal.
+                    {{ config('app.disclaimer_owner') }}.
                 </p>
             </div>
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
                 <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
-                <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
+                <span data-testid="app-copyright">&copy; {{ now()->year }} {{ config('app.owner') }}. All rights reserved.</span>
             </div>
         </footer>
         <x-scroll-to-top />

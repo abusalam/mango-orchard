@@ -1,4 +1,4 @@
-<x-site-layout :title="'New variety — Aamar Malda'">
+<x-site-layout :title="'New variety — '.config('app.name')">
     <section class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <header class="mb-8">
             <p class="text-sm text-stone-500 dark:text-stone-400"><a href="{{ route('varieties.index') }}" class="hover:text-orange-700">Varieties</a> / New</p>

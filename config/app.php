@@ -13,7 +13,28 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Aamar Malda'),
+    'name' => env('APP_NAME', 'Aamar [District Name]'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Branding
+    |--------------------------------------------------------------------------
+    |
+    | Chrome strings surfaced throughout layouts, footers, hero sections and
+    | notification copy. The defaults below are deliberately placeholders —
+    | every environment MUST supply real values via .env. Seeded demo CONTENT
+    | (variety descriptions, events, the MPCP directory) intentionally stays
+    | district-specific — it is data, not branding.
+    |
+    */
+
+    'tagline' => env('APP_TAGLINE', 'The Mango Capital'),
+
+    'owner' => env('APP_OWNER', 'District Administration, [District Name]'),
+
+    'district' => env('APP_DISTRICT', '[District Name]'),
+
+    'disclaimer_owner' => env('APP_DISCLAIMER_OWNER', 'Office of the District Magistrate & Collector, [District Name], Government of West Bengal'),
 
     /*
     |--------------------------------------------------------------------------

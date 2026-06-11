@@ -1,4 +1,4 @@
-<x-site-layout :title="'Marketplace — Aamar Malda'">
+<x-site-layout :title="'Marketplace — '.config('app.name')">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         <header class="mb-10">
             <span class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-xs font-medium tracking-wide uppercase">

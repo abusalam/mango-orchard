@@ -1,4 +1,4 @@
-<x-site-layout :title="'Cookies required — Aamar Malda'">
+<x-site-layout :title="'Cookies required — '.config('app.name')">
     <section class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="rounded-2xl border border-amber-200 dark:border-stone-800 bg-white dark:bg-stone-950 shadow-sm p-8 sm:p-10" data-testid="cookies-required-card">
             <div class="flex items-start gap-4">

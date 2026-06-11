@@ -1,4 +1,4 @@
-<x-site-layout :title="'Profile — Aamar Malda'">
+<x-site-layout :title="'Profile — '.config('app.name')">
 
     @php
         // Sidebar badge counts — surface "needs attention" items so the user

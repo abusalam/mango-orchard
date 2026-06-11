@@ -13,7 +13,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-form-autofill-meta />
 
-        <title>{{ $title ? $title.' — Aamar Malda' : config('app.name', 'Aamar Malda') }}</title>
+        <title>{{ $title ? $title.' — '.config('app.name') : config('app.name') }}</title>
 
         <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -32,8 +32,8 @@
                 <header class="border-b border-amber-200/60 dark:border-stone-800 bg-amber-50/80 dark:bg-stone-900/80 backdrop-blur">
                     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                         <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                            <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
-                            <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
+                            <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                            <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }}</span>
                         </a>
                         @auth
                             <form method="POST" action="{{ route('logout') }}" class="inline">
@@ -85,8 +85,8 @@
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-amber-50 dark:bg-stone-900">
                 <div>
                     <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight text-stone-900 dark:text-stone-100">
-                        <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-10 h-10 rounded-full object-cover">
-                        <span class="text-lg">Aamar Malda</span>
+                        <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-10 h-10 rounded-full object-cover">
+                        <span class="text-lg">{{ config('app.name') }}</span>
                     </a>
                 </div>
 

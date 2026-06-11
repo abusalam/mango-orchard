@@ -26,7 +26,7 @@ beforeEach(fn () => $this->seed(MangoVarietySeeder::class));
 it('serves the welcome page successfully', function () {
     $this->get('/')
         ->assertOk()
-        ->assertSee('Aamar Malda', false)
+        ->assertSee(config('app.name'), false)
         ->assertSee('Twelve mangoes worth knowing', false);
 });
 

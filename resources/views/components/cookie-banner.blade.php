@@ -47,7 +47,7 @@
     <div class="pointer-events-auto mx-auto max-w-3xl rounded-2xl bg-stone-900 text-stone-100 shadow-2xl border border-stone-700 p-5 sm:p-6">
         <div class="flex flex-col sm:flex-row sm:items-start gap-4">
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-semibold text-amber-50">Cookies on Aamar Malda</p>
+                <p class="text-sm font-semibold text-amber-50">Cookies on {{ config('app.name') }}</p>
                 <p class="mt-1 text-xs text-stone-300 leading-relaxed">
                     We use a session cookie to keep you signed in (strictly necessary) and, with your consent, behavioural cookies to record activity in the admin telemetry feed. Without analytics consent we only record security events (sign-ins, administrative account access).
                 </p>

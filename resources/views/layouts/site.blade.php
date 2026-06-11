@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <x-form-autofill-meta />
 
-        <title>{{ $title ?? 'Aamar Malda' }}</title>
+        <title>{{ $title ?? config('app.name') }}</title>
 
         <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -22,8 +22,8 @@
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 dark:bg-stone-900/80 border-b border-amber-200/60 dark:border-stone-800" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
-                    <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
+                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                    <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }}</span>
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700 dark:text-stone-300">
@@ -176,10 +176,10 @@
         <footer class="bg-stone-900 text-stone-300 mt-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
+                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
                     <div>
-                        <p class="text-lg font-semibold text-stone-100">Aamar Malda</p>
-                        <p class="text-xs text-stone-400">an initiative by District Administration, Malda</p>
+                        <p class="text-lg font-semibold text-stone-100">{{ config('app.name') }}</p>
+                        <p class="text-xs text-stone-400">an initiative by {{ config('app.owner') }}</p>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-4 text-sm text-stone-400">
@@ -203,13 +203,12 @@
                     <p class="sm:text-right sm:max-w-xl leading-relaxed">
                         <span class="font-medium text-stone-200">Disclaimer:</span>
                         Content, data, process and operation owned and maintained by the
-                        Office of the District Magistrate &amp; Collector, Malda,
-                        Government of West Bengal.
+                        {{ config('app.disclaimer_owner') }}.
                     </p>
                 </div>
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
                     <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
-                    <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
+                    <span data-testid="app-copyright">&copy; {{ now()->year }} {{ config('app.owner') }}. All rights reserved.</span>
                 </div>
             </div>
         </footer>

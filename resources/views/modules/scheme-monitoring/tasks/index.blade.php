@@ -1,4 +1,4 @@
-<x-site-layout :title="'Tasks — Aamar Malda'">
+<x-site-layout :title="'Tasks — '.config('app.name')">
     <section class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-8">
         <a
             href="{{ route('monitoring.dashboard') }}"

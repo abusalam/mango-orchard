@@ -1,9 +1,9 @@
-<x-site-layout title="Mango Gallery — Aamar Malda">
+<x-site-layout :title="'Mango Gallery — '.config('app.name')">
     <main class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <header class="mb-10 text-center">
             <h1 class="text-3xl sm:text-4xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Mango Gallery</h1>
             <div aria-hidden="true" class="mt-3 mx-auto w-16 h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500"></div>
-            <p class="mt-4 max-w-2xl mx-auto text-stone-600 dark:text-stone-300">Photographs from the orchards of Malda — variety closeups, harvest scenes, pack-houses, fairs and field events.</p>
+            <p class="mt-4 max-w-2xl mx-auto text-stone-600 dark:text-stone-300">Photographs from the orchards of {{ config('app.district') }} — variety closeups, harvest scenes, pack-houses, fairs and field events.</p>
         </header>
 
         @if ($albums->isEmpty())

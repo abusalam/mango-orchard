@@ -142,6 +142,9 @@ Beyond the routine flow above, a fresh environment needs:
 # 1. .env setup
 cp .env.example .env
 # Edit .env: APP_KEY, DB credentials, MAIL credentials, APP_VERSION, APP_COMMIT, etc.
+# IMPORTANT — branding keys are placeholders in config defaults ("[District Name]").
+# Set real values or the placeholders render verbatim in the public chrome:
+#   APP_NAME, APP_TAGLINE, APP_OWNER, APP_DISTRICT, APP_DISCLAIMER_OWNER
 php artisan key:generate                       # if APP_KEY is blank
 
 # 2. Storage symlink (gallery + variety + listing images live under storage/app/public)

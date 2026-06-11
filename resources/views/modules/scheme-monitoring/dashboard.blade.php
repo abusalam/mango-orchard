@@ -1,4 +1,4 @@
-<x-site-layout :title="'Pragati Darpan dashboard — Aamar Malda'">
+<x-site-layout :title="'Pragati Darpan dashboard — '.config('app.name')">
     <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
         <header class="mb-6 flex flex-wrap items-end justify-between gap-3">
             <div>

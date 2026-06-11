@@ -13,7 +13,7 @@ it('renders the cookie banner on every layout for visitors', function () {
     $this->get('/')
         ->assertOk()
         ->assertSee('data-testid="cookie-banner"', escape: false)
-        ->assertSee('Cookies on Aamar Malda');
+        ->assertSee('Cookies on '.config('app.name'));
 
     // Guest layout (login) — also guests.
     $this->get(route('login'))

@@ -24,10 +24,10 @@ const BROWSER_VARIETIES = [
 it('boots the home page with the expected branding and hero copy', function () {
     visit('/')
         ->assertTitleContains('A field guide to mango varieties')
-        ->assertSee('Aamar Malda')
-        ->assertSee('The Mango Capital')
+        ->assertSee(config('app.name'))
+        ->assertSee(config('app.tagline'))
         ->assertSee('Nestled in the heart of North Bengal')
-        ->assertSee('Present Status of Malda Mango')
+        ->assertSee('Present Status of '.config('app.district').' Mango')
         ->assertSeeLink('Browse varieties')
         ->assertSeeLink('See season guide');
 });
@@ -70,7 +70,7 @@ it('renders the picking-guide tips', function () {
 it('hides the decorative hero cluster on a phone-sized viewport', function () {
     visit('/')
         ->on()->iPhone15Pro()
-        ->assertSee('Aamar Malda')
+        ->assertSee(config('app.name'))
         ->assertSee('Browse varieties')
         ->assertSee('Himsagar');
 });
@@ -78,7 +78,7 @@ it('hides the decorative hero cluster on a phone-sized viewport', function () {
 it('shows the decorative hero cluster on a desktop viewport', function () {
     visit('/')
         ->on()->desktop()
-        ->assertSee('Aamar Malda')
+        ->assertSee(config('app.name'))
         ->assertSee('Browse varieties');
 });
 

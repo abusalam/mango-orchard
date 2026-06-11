@@ -3,10 +3,10 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="A field guide to the mango varieties of Malda district — origins, seasons, and tasting notes from Himsagar through Ashwina.">
+        <meta name="description" content="A field guide to the mango varieties of {{ config('app.district') }} district — origins, seasons, and tasting notes from Himsagar through Ashwina.">
         <x-form-autofill-meta />
 
-        <title>{{ config('app.name', 'Aamar Malda') }} — A field guide to mango varieties</title>
+        <title>{{ config('app.name') }} — A field guide to mango varieties</title>
 
         <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
@@ -22,8 +22,8 @@
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 dark:bg-stone-900/80 border-b border-amber-200/60 dark:border-stone-800" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="#top" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-7 h-7 rounded-full object-cover">
-                    <span class="text-stone-900 dark:text-stone-100">Aamar Malda</span>
+                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                    <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }}</span>
                 </a>
 
                 <nav class="hidden lg:flex items-center gap-5 text-sm text-stone-700 dark:text-stone-300">
@@ -189,7 +189,7 @@
                             <div class="flex justify-center lg:justify-start">
                                 <img
                                     src="/images/LOGO-Square.webp"
-                                    alt="Aamar Malda — The Mango Capital, West Bengal, India"
+                                    alt="{{ config('app.name') }} — {{ config('app.tagline') }}, West Bengal, India"
                                     class="w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full ring-4 ring-amber-300/40 shadow-2xl"
                                     loading="eager"
                                     decoding="async"
@@ -198,13 +198,13 @@
 
                             <div class="text-center lg:text-left">
                                 <h1 class="text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.05]">
-                                    Aamar Malda
+                                    {{ config('app.name') }}
                                 </h1>
                                 <p class="mt-3 text-xl sm:text-2xl font-medium text-amber-300">
-                                    The Mango Capital
+                                    {{ config('app.tagline') }}
                                 </p>
                                 <p class="mt-6 text-base sm:text-lg text-amber-50/95 max-w-2xl leading-relaxed">
-                                    Nestled in the heart of North Bengal, Malda is celebrated across India and beyond as the land of the finest mangoes. From the fragrant Himsagar to the giant Fazli, the district's orchards turn every summer into a season of gold — sustaining lakhs of families and carrying the taste of Malda to the world.
+                                    Nestled in the heart of North Bengal, {{ config('app.district') }} is celebrated across India and beyond as the land of the finest mangoes. From the fragrant Himsagar to the giant Fazli, the district's orchards turn every summer into a season of gold — sustaining lakhs of families and carrying the taste of {{ config('app.district') }} to the world.
                                 </p>
                                 <div class="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start">
                                     <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-amber-500 text-stone-900 font-medium hover:bg-amber-400 transition-colors shadow-sm">
@@ -227,7 +227,7 @@
                 <section class="bg-white dark:bg-stone-900 border-t border-amber-100 dark:border-stone-800">
                     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
                         <div class="text-center mb-10">
-                            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Present Status of Malda Mango</h2>
+                            <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-emerald-900 dark:text-emerald-200">Present Status of {{ config('app.district') }} Mango</h2>
                             <div aria-hidden="true" class="mt-3 mx-auto w-16 h-0.5 bg-gradient-to-r from-emerald-500 to-amber-500"></div>
                             <p class="mt-4 text-stone-600 dark:text-stone-300">A snapshot of the district's mango economy for the 2025–26 season.</p>
                         </div>
@@ -313,7 +313,7 @@
                                     The world tastes <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500">sweeter</span> in mango season.
                                 </h1>
                                 <p class="mt-6 text-lg text-stone-800 dark:text-stone-200 max-w-xl leading-relaxed">
-                                    In the sunlit Malda orchard, a rhythmic dance of nature and labor unfolds as workers methodically harvest heavy, golden mangoes for the upcoming market rush. These fragrant fruits carry the distinct geography of their grove in every bite, inviting you to explore the rich varieties that define the season.
+                                    In the sunlit {{ config('app.district') }} orchard, a rhythmic dance of nature and labor unfolds as workers methodically harvest heavy, golden mangoes for the upcoming market rush. These fragrant fruits carry the distinct geography of their grove in every bite, inviting you to explore the rich varieties that define the season.
                                 </p>
                                 <div class="mt-8 flex flex-wrap gap-3">
                                     <a href="#varieties" class="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors">
@@ -479,10 +479,10 @@
         <footer class="bg-stone-900 text-stone-300">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-12 flex flex-col sm:flex-row gap-6 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="/images/LOGO-Square.webp" alt="Aamar Malda" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
+                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
                     <div>
-                        <p class="text-lg font-semibold text-stone-100">Aamar Malda</p>
-                        <p class="text-xs text-stone-400">an initiative by District Administration, Malda</p>
+                        <p class="text-lg font-semibold text-stone-100">{{ config('app.name') }}</p>
+                        <p class="text-xs text-stone-400">an initiative by {{ config('app.owner') }}</p>
                     </div>
                 </div>
                 <p class="text-sm text-stone-400">A small love letter to the world's mango varieties.</p>
@@ -504,13 +504,12 @@
                     <p class="sm:text-right sm:max-w-xl leading-relaxed">
                         <span class="font-medium text-stone-200">Disclaimer:</span>
                         Content, data, process and operation owned and maintained by the
-                        Office of the District Magistrate &amp; Collector, Malda,
-                        Government of West Bengal.
+                        {{ config('app.disclaimer_owner') }}.
                     </p>
                 </div>
                 <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
                     <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
-                    <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
+                    <span data-testid="app-copyright">&copy; {{ now()->year }} {{ config('app.owner') }}. All rights reserved.</span>
                 </div>
             </div>
         </footer>

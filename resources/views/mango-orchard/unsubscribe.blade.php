@@ -1,4 +1,4 @@
-<x-site-layout :title="'Unsubscribed — Aamar Malda'">
+<x-site-layout :title="'Unsubscribed — '.config('app.name')">
     <section class="mx-auto max-w-xl px-4 sm:px-6 lg:px-8 py-16">
         <div class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-8 sm:p-10 text-center">
             <span class="inline-block w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3" aria-hidden="true">✓</span>

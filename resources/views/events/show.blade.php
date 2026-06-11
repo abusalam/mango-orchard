@@ -81,7 +81,7 @@
                         <a href="{{ $event->registration_url }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
                             Register on the organiser's site ↗
                         </a>
-                        <p class="mt-2 text-xs text-stone-500 dark:text-stone-400">Registration is handled by {{ $event->host ?: 'the organiser' }}, not Aamar Malda.</p>
+                        <p class="mt-2 text-xs text-stone-500 dark:text-stone-400">Registration is handled by {{ $event->host ?: 'the organiser' }}, not {{ config('app.name') }}.</p>
                     </div>
                 @endif
 

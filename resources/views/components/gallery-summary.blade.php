@@ -15,7 +15,7 @@
             <div class="text-center mb-10">
                 <h2 class="text-3xl sm:text-4xl font-semibold tracking-tight text-amber-900 dark:text-amber-200">Mango Gallery</h2>
                 <div aria-hidden="true" class="mt-3 mx-auto w-16 h-0.5 bg-gradient-to-r from-amber-500 to-rose-500"></div>
-                <p class="mt-4 max-w-2xl mx-auto text-stone-700 dark:text-stone-300 text-sm">Photographs from Malda's orchards, pack-houses, and mango fairs.</p>
+                <p class="mt-4 max-w-2xl mx-auto text-stone-700 dark:text-stone-300 text-sm">Photographs from {{ config('app.district') }}'s orchards, pack-houses, and mango fairs.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
