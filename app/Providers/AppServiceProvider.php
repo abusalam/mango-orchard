@@ -55,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
             $view->with('formAutofillEnabled', app(Settings::class)->formAutofill());
             $view->with('readonlyModeEnabled', app(Settings::class)->readonlyMode());
             $view->with('devBannerEnabled', app(Settings::class)->devBannerEnabled());
+            $view->with('appVersionTag', \App\Support\Version::tag());
 
             $impersonation = app(Impersonation::class);
             if ($impersonation->isActive() && ($target = auth()->user()) !== null && ($actor = $impersonation->originalUser()) !== null) {

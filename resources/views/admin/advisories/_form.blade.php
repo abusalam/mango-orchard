@@ -107,7 +107,10 @@
                onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
                class="mt-2 block w-full text-sm text-stone-600 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
                data-testid="advisory-image-input">
-        <p class="mt-1 text-xs text-stone-500 dark:text-stone-400">JPEG, PNG, or WebP. Helpful for pest identification or technique illustration.</p>
+        <x-image-upload-guide
+            dimensions="1600 × 900 px"
+            aspect="16:9"
+            note="Helpful for pest identification, technique illustration, or before/after comparison." />
         @error('image') <p class="mt-1 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
     </div>
 

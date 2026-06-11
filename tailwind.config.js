@@ -13,7 +13,11 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
-        './app/Models/MangoVariety.php',
+        // The MangoVariety THEMES constant holds dynamic gradient classes
+        // (e.g. `from-lime-300 via-green-400 to-amber-500`) that no Blade
+        // template references directly — Tailwind needs to scan this file
+        // to keep them in the built CSS.
+        './app/Modules/MangoOrchard/Models/MangoVariety.php',
     ],
 
     theme: {

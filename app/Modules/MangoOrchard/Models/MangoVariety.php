@@ -9,6 +9,7 @@ use Database\Factories\MangoVarietyFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 #[ObservedBy([MangoVarietyTelemetryObserver::class])]
@@ -32,6 +33,7 @@ class MangoVariety extends Model
         'flavor',
         'tags',
         'theme',
+        'image_path',
     ];
 
     protected $casts = [
@@ -100,6 +102,20 @@ class MangoVariety extends Model
                 $variety->slug = Str::slug($variety->name);
             }
         });
+
+        // Wipe the uploaded image from disk when the variety is deleted.
+        static::deleting(function (self $variety): void {
+            if ($variety->image_path && Storage::disk('public')->exists($variety->image_path)) {
+                Storage::disk('public')->delete($variety->image_path);
+            }
+        });
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image_path
+            ? Storage::disk('public')->url($this->image_path)
+            : null;
     }
 
     public function getRouteKeyName(): string

@@ -8,9 +8,16 @@
 
         <div class="rounded-3xl overflow-hidden border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 shadow-sm">
             <div class="relative h-56 sm:h-72 overflow-hidden bg-gradient-to-br {{ $variety->gradient_classes }}">
-                <div aria-hidden="true" class="absolute -bottom-12 -right-8 w-72 h-80 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
-                <div aria-hidden="true" class="absolute -top-10 -left-8 w-48 h-48 rounded-full bg-white/20 blur-2xl"></div>
-                <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium {{ $variety->accent_classes }}">
+                @if ($variety->image_url)
+                    <img src="{{ $variety->image_url }}" alt="{{ $variety->name }}"
+                         class="absolute inset-0 w-full h-full object-cover"
+                         loading="eager" decoding="async"
+                         data-testid="variety-show-image">
+                @else
+                    <div aria-hidden="true" class="absolute -bottom-12 -right-8 w-72 h-80 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                    <div aria-hidden="true" class="absolute -top-10 -left-8 w-48 h-48 rounded-full bg-white/20 blur-2xl"></div>
+                @endif
+                <div class="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-medium {{ $variety->accent_classes }} backdrop-blur">
                     Peak: {{ $variety->season }}
                 </div>
             </div>

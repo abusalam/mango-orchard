@@ -25,9 +25,15 @@
                     <article class="group relative overflow-hidden rounded-2xl bg-white dark:bg-stone-950 border border-stone-200/80 hover:border-stone-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                         <a href="{{ route('varieties.show', $variety) }}" class="block">
                             <div class="relative h-40 overflow-hidden bg-gradient-to-br {{ $variety->gradient_classes }}">
-                                <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
-                                <div aria-hidden="true" class="absolute -top-8 -left-6 w-32 h-32 rounded-full bg-white/20 blur-xl"></div>
-                                <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $variety->accent_classes }}">
+                                @if ($variety->image_url)
+                                    <img src="{{ $variety->image_url }}" alt="{{ $variety->name }}"
+                                         class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                         loading="lazy" decoding="async">
+                                @else
+                                    <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                                    <div aria-hidden="true" class="absolute -top-8 -left-6 w-32 h-32 rounded-full bg-white/20 blur-xl"></div>
+                                @endif
+                                <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $variety->accent_classes }} backdrop-blur">
                                     {{ $variety->season }}
                                 </div>
                             </div>

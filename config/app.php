@@ -17,6 +17,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | Surfaced in the public footer + admin /system page as "v{version} · {commit}".
+    | Bump `version` on real releases. `commit` is normally set by CI/CD at deploy
+    | time (`APP_COMMIT=$(git rev-parse HEAD)`) — when unset and the .git
+    | directory is present, App\Support\Version reads .git/HEAD as a fallback
+    | for local development.
+    |
+    */
+
+    'version' => env('APP_VERSION', '0.1.0'),
+
+    'commit' => env('APP_COMMIT'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

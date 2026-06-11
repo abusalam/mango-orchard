@@ -11,6 +11,7 @@ use App\Permissions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use App\Http\Controllers\Controller;
 
@@ -40,7 +41,14 @@ class MangoVarietyController extends Controller implements HasMiddleware
 
     public function store(StoreMangoVarietyRequest $request): RedirectResponse
     {
-        $variety = MangoVariety::create($request->validated());
+        $data = $request->validated();
+        unset($data['remove_image'], $data['image']);
+
+        if ($upload = $request->file('image')) {
+            $data['image_path'] = $upload->store('varieties', 'public');
+        }
+
+        $variety = MangoVariety::create($data);
 
         return redirect()
             ->route('varieties.show', $variety)
@@ -63,7 +71,21 @@ class MangoVarietyController extends Controller implements HasMiddleware
 
     public function update(UpdateMangoVarietyRequest $request, MangoVariety $variety): RedirectResponse
     {
-        $variety->update($request->validated());
+        $data = $request->validated();
+        $removeImage = (bool) ($data['remove_image'] ?? false);
+        unset($data['remove_image'], $data['image']);
+
+        if ($upload = $request->file('image')) {
+            if ($variety->image_path) {
+                Storage::disk('public')->delete($variety->image_path);
+            }
+            $data['image_path'] = $upload->store('varieties', 'public');
+        } elseif ($removeImage && $variety->image_path) {
+            Storage::disk('public')->delete($variety->image_path);
+            $data['image_path'] = null;
+        }
+
+        $variety->update($data);
 
         return redirect()
             ->route('varieties.show', $variety)

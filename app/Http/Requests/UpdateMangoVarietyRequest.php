@@ -29,6 +29,8 @@ class UpdateMangoVarietyRequest extends FormRequest
             'flavor' => ['required', 'string', 'max:1000'],
             'tags' => ['nullable', 'string', 'max:255'],
             'theme' => ['required', 'string', Rule::in(array_keys(MangoVariety::THEMES))],
+            'image' => ['nullable', 'image', 'mimes:jpeg,png,webp', 'max:5120'], // 5 MB
+            'remove_image' => ['nullable', 'boolean'],
         ];
     }
 

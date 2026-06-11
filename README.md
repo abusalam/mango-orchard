@@ -70,6 +70,10 @@ For the **full** setup guide (with IDE-driven test runs, headed browser debuggin
 
 ➡️ **[`docs/README.md`](docs/README.md)**
 
+Shipping to staging or production? The deploy workflow + version-stamping (footer `v0.1.0 · <short SHA>`) lives here:
+
+➡️ **[`docs/DEPLOY.md`](docs/DEPLOY.md)**
+
 ## Running the tests
 
 ```bash

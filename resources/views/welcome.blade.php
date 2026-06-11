@@ -52,12 +52,26 @@
                             @endcan
                             <x-theme-switcher />
                             <div class="relative" x-data="{ menu: false }" @click.away="menu = false">
-                                <button @click="menu = !menu" type="button" class="flex items-center gap-2 hover:text-orange-700 transition-colors">
-                                    <span>{{ auth()->user()->name }}</span>
-                                    <x-user-role-badge :user="auth()->user()" />
-                                    <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <button @click="menu = !menu" type="button"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 transition-colors"
+                                        aria-label="User menu"
+                                        :aria-expanded="menu.toString()"
+                                        data-testid="user-menu-trigger">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <circle cx="12" cy="8" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 </button>
-                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg overflow-hidden text-stone-700 dark:text-stone-200 py-1">
+                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg overflow-hidden text-stone-700 dark:text-stone-200 py-1">
+                                    {{-- Identity header inside the dropdown — keeps the name + role
+                                         badge surfaced now that they're no longer in the trigger. --}}
+                                    <div class="px-4 py-2.5 border-b border-stone-100 dark:border-stone-700">
+                                        <p class="text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">Signed in as</p>
+                                        <p class="mt-0.5 text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{{ auth()->user()->name }}</p>
+                                        <div class="mt-1.5">
+                                            <x-user-role-badge :user="auth()->user()" />
+                                        </div>
+                                    </div>
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/50">Dashboard</a>
                                     @can(\App\Permissions::LISTINGS_MANAGE)
                                         <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/50">My listings</a>
@@ -364,9 +378,15 @@
                             <article class="group relative overflow-hidden rounded-2xl bg-white dark:bg-stone-950 border border-stone-200/80 dark:border-stone-800 hover:border-stone-300 dark:hover:border-stone-600 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
                                 <a href="{{ route('varieties.show', $variety) }}" class="block">
                                     <div class="relative h-44 overflow-hidden bg-gradient-to-br {{ $variety->gradient_classes }}">
-                                        <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
-                                        <div aria-hidden="true" class="absolute -top-8 -left-6 w-32 h-32 rounded-full bg-white/20 blur-xl"></div>
-                                        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $variety->accent_classes }}">
+                                        @if ($variety->image_url)
+                                            <img src="{{ $variety->image_url }}" alt="{{ $variety->name }}"
+                                                 class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                 loading="lazy" decoding="async">
+                                        @else
+                                            <div aria-hidden="true" class="absolute -bottom-10 -right-6 w-44 h-52 rounded-[55%_45%_55%_45%/60%_55%_45%_40%] bg-white/15 rotate-12"></div>
+                                            <div aria-hidden="true" class="absolute -top-8 -left-6 w-32 h-32 rounded-full bg-white/20 blur-xl"></div>
+                                        @endif
+                                        <div class="absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium {{ $variety->accent_classes }} backdrop-blur">
                                             {{ $variety->season }}
                                         </div>
                                     </div>
@@ -471,7 +491,6 @@
                     class="text-xs underline text-stone-400 hover:text-stone-100 transition-colors"
                     data-testid="cookie-preferences-reset"
                 >Cookie preferences</a>
-                <p class="text-sm text-stone-500">v{{ app()->version() }}</p>
             </div>
             {{-- NIC credits + ownership disclaimer. Mirrored verbatim from
                  the site layout footer — keep both in lockstep when the
@@ -488,6 +507,10 @@
                         Office of the District Magistrate &amp; Collector, Malda,
                         Government of West Bengal.
                     </p>
+                </div>
+                <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
+                    <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
+                    <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
                 </div>
             </div>
         </footer>

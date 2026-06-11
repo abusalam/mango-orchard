@@ -2,6 +2,8 @@
 
 A Laravel 13 application with PostgreSQL, Redis, Tailwind CSS, Pest 4 (with Playwright-driven browser tests), spatie/laravel-permission, Breeze auth, and mews/captcha. The entire dev stack runs in Docker via Laravel Sail.
 
+> Shipping to a real environment? See **[`DEPLOY.md`](DEPLOY.md)** for the version-stamping workflow, fresh-environment setup, and routine deploy / rollback steps.
+
 ---
 
 ## 1. Prerequisites

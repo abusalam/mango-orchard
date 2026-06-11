@@ -213,6 +213,10 @@
                     Government of West Bengal.
                 </p>
             </div>
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
+                <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
+                <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
+            </div>
         </footer>
         <x-scroll-to-top />
         <x-cookie-banner />

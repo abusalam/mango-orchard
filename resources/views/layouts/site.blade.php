@@ -53,12 +53,26 @@
                             @endcan
                             <x-theme-switcher />
                             <div class="relative" x-data="{ menu: false }" @click.away="menu = false">
-                                <button @click="menu = !menu" type="button" class="flex items-center gap-2 hover:text-orange-700 transition-colors">
-                                    <span>{{ auth()->user()->name }}</span>
-                                    <x-user-role-badge :user="auth()->user()" />
-                                    <svg class="w-3 h-3" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                                <button @click="menu = !menu" type="button"
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 transition-colors"
+                                        aria-label="User menu"
+                                        :aria-expanded="menu.toString()"
+                                        data-testid="user-menu-trigger">
+                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                                        <circle cx="12" cy="8" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
                                 </button>
-                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-52 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg overflow-hidden text-stone-700 dark:text-stone-200 py-1">
+                                <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg overflow-hidden text-stone-700 dark:text-stone-200 py-1">
+                                    {{-- Identity header inside the dropdown — keeps the name + role
+                                         badge surfaced now that they're no longer in the trigger. --}}
+                                    <div class="px-4 py-2.5 border-b border-stone-100 dark:border-stone-700">
+                                        <p class="text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">Signed in as</p>
+                                        <p class="mt-0.5 text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{{ auth()->user()->name }}</p>
+                                        <div class="mt-1.5">
+                                            <x-user-role-badge :user="auth()->user()" />
+                                        </div>
+                                    </div>
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/50">Dashboard</a>
                                     @can(\App\Permissions::LISTINGS_MANAGE)
                                         <a href="{{ route('my.listings.index') }}" class="block px-4 py-2 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/50">My listings</a>
@@ -192,6 +206,10 @@
                         Office of the District Magistrate &amp; Collector, Malda,
                         Government of West Bengal.
                     </p>
+                </div>
+                <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 pb-4 -mt-2 flex items-center justify-between gap-3 text-[10px] text-stone-500">
+                    <span class="inline-flex items-center font-mono" data-testid="app-version-tag">{{ $appVersionTag ?? '' }}</span>
+                    <span data-testid="app-copyright">&copy; {{ now()->year }} District Administration, Malda. All rights reserved.</span>
                 </div>
             </div>
         </footer>

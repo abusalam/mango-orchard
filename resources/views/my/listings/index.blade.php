@@ -25,13 +25,18 @@
         @else
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach ($listings as $listing)
-                    <article class="relative overflow-hidden rounded-2xl bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:shadow-lg transition-shadow">
+                    <article class="group relative overflow-hidden rounded-2xl bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 hover:shadow-lg transition-shadow">
                         <div class="relative h-32 overflow-hidden bg-gradient-to-br {{ $listing->variety->gradient_classes }}">
+                            @if ($listing->image_url)
+                                <img src="{{ $listing->image_url }}" alt="{{ $listing->farm_name }}"
+                                     class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                     loading="lazy" decoding="async">
+                            @endif
                             <span @class([
-                                'absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-medium',
-                                'bg-emerald-100 text-emerald-900 border border-emerald-200' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_PUBLISHED,
-                                'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_DRAFT,
-                                'bg-rose-100 text-rose-900 border border-rose-200' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_SOLD_OUT,
+                                'absolute top-3 right-3 px-2.5 py-1 rounded-full text-[11px] font-semibold shadow-sm',
+                                'bg-emerald-600 text-white' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_PUBLISHED,
+                                'bg-amber-400 text-stone-900' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_DRAFT,
+                                'bg-rose-600 text-white' => $listing->status === \App\Modules\MangoOrchard\Models\Listing::STATUS_SOLD_OUT,
                             ])>{{ Str::headline($listing->status) }}</span>
                         </div>
                         <div class="p-5">

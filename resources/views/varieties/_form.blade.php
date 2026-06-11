@@ -101,6 +101,31 @@
         @error('theme') <p class="mt-1 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
     </div>
 
+    <div>
+        <label for="image" class="block text-sm font-medium text-stone-800 dark:text-stone-200">Variety photo</label>
+        @if ($variety->image_url)
+            <div class="mt-2 flex items-start gap-4">
+                <img src="{{ $variety->image_url }}" alt="{{ $variety->name }}"
+                     class="w-32 h-24 object-cover rounded-lg border border-stone-200 dark:border-stone-800" data-testid="current-variety-image">
+                <label class="inline-flex items-center gap-2 text-sm text-stone-700 dark:text-stone-300">
+                    <input type="checkbox" name="remove_image" value="1" class="rounded text-rose-500 focus:ring-rose-400" data-testid="remove-variety-image">
+                    <span>Remove current photo</span>
+                </label>
+            </div>
+        @endif
+        {{-- Form defaults to urlencoded; promote to multipart only when a
+             file is actually selected so the upload transmits. --}}
+        <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp"
+               onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
+               class="mt-2 block w-full text-sm text-stone-600 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+               data-testid="variety-image-input">
+        <x-image-upload-guide
+            dimensions="1200 × 900 px"
+            aspect="4:3"
+            note="A single ripe fruit on a clean background reads best on cards; full-tree shots work for the detail page. The color theme is used as a fallback when no photo is uploaded." />
+        @error('image') <p class="mt-1 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
+    </div>
+
     <div class="flex items-center gap-3 pt-4 border-t border-stone-100 dark:border-stone-800">
         <button type="submit" class="inline-flex items-center px-5 py-2.5 rounded-full bg-stone-900 text-amber-50 font-medium hover:bg-stone-800 transition-colors text-sm">
             {{ $slot ?? 'Save variety' }}
