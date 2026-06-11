@@ -1,89 +1,192 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  build-release.sh — run on an INTERNET-CONNECTED build machine (dev box/WSL).
-#  Produces a fully self-contained release artifact for the air-gapped VM1:
-#  application code + vendor/ (composer --no-dev) + compiled public/build (vite).
-#  VM1 never needs git/composer/npm.
+#  deploy-release.sh — run as root on the AIR-GAPPED VM1.
+#  Deploys a pre-built artifact from build-release.sh. No internet needed:
+#  vendor/ and public/build are inside the artifact; migrations run locally.
 #
-#  Versioning (per docs/DEPLOY.md): the app footer shows "v{APP_VERSION} ·
-#  {short APP_COMMIT}" via App\Support\Version. Because the artifact strips .git
-#  (the doc's own advice), this script BAKES both values into the artifact
-#  (.deploy-version) so deploy-release.sh can freeze them into the release's
-#  config cache. No .git on the server, correct footer tag.
+#  Layout (created automatically on first run from the existing flat install):
+#      /var/www/aamar-malda/releases/<timestamp>/   code (one dir per deploy)
+#      /var/www/aamar-malda/shared/.env             persistent config (secret)
+#      /var/www/aamar-malda/shared/storage/         persistent uploads/logs
+#      /var/www/aamar-malda/current -> releases/<x> atomic switch (nginx root)
 #
-#  Usage:  ./build-release.sh [git-ref]          (default: master; use a tag, e.g. v1.2.3)
-#  Env:    REPO_URL, OUT_DIR, APP_VERSION (override the derived semver).
-#  NOTE: build with a PHP compatible with production (>=8.3; prod runs 8.4).
+#  Usage:   deploy-release.sh <artifact.tar.gz>      deploy a new release
+#           deploy-release.sh --rollback             switch back one release
 # =============================================================================
 set -euo pipefail
 
-REPO_URL="${REPO_URL:-https://github.com/abusalam/mango-orchard.git}"
-REF="${1:-master}"
-OUT_DIR="${OUT_DIR:-$PWD/dist}"
+BASE="/var/www/aamar-malda"
+KEEP=5                      # releases to keep for rollback
+PHP_USER="nginx"
 
-log(){  printf '[build] %s\n' "$*"; }
-warn(){ printf '[build:WARN] %s\n' "$*"; }
-die(){  printf '[build:ERROR] %s\n' "$*" >&2; exit 1; }
-command -v git >/dev/null      || die "git missing"
-command -v composer >/dev/null || die "composer missing"
-command -v node >/dev/null     || die "node missing"
-command -v npm >/dev/null      || die "npm missing"
-PHPV="$(php -r 'echo PHP_VERSION;')"
-log "building with PHP $PHPV (production is 8.4 — keep compatible, see composer.lock)"
+ts(){ date '+%F %T'; }
+log(){  printf '%s [deploy] %s\n' "$(ts)" "$*"; }
+warn(){ printf '%s [deploy:WARN] %s\n' "$(ts)" "$*"; }
+die(){  printf '%s [deploy:ERROR] %s\n' "$(ts)" "$*" >&2; exit 1; }
+[[ $EUID -eq 0 ]] || die "run as root"
 
-TS="$(date +%Y%m%d-%H%M%S)"
-WORK="$(mktemp -d)"
-trap 'rm -rf "$WORK"' EXIT
+flip(){  # atomically point $BASE/current at $1
+  rm -f "$BASE/.current.tmp"
+  ln -s "$1" "$BASE/.current.tmp"
+  mv -T "$BASE/.current.tmp" "$BASE/current"
+}
 
-log "cloning $REPO_URL @ $REF ..."
-git clone --depth 1 --branch "$REF" "$REPO_URL" "$WORK/app"
-cd "$WORK/app"
-GITSHA="$(git rev-parse --short HEAD)"
-FULLSHA="$(git rev-parse HEAD)"
+restart_runtime(){
+  systemctl restart php-fpm                       # required: OPcache validate_timestamps=0
+  systemctl restart aamar-queue 2>/dev/null || true
+  log "php-fpm + queue worker restarted"
+}
 
-# ---- derive the footer semver (App\Support\Version / config/app.php) ----------
-# Priority: explicit APP_VERSION > semver-looking ref/tag > nearest git tag >
-# the app's own default (0.1.0). Stamping it makes support tickets quote a real
-# number instead of "v0.1.0 · dev".
-if [[ -n "${APP_VERSION:-}" ]]; then
-  VERSION="$APP_VERSION"
-elif [[ "$REF" =~ ^v?([0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.]+)?)$ ]]; then
-  VERSION="${BASH_REMATCH[1]}"
-else
-  DESC="$(git describe --tags --always 2>/dev/null || true)"
-  if [[ "$DESC" =~ ^v?([0-9]+\.[0-9]+\.[0-9]+) ]]; then
-    VERSION="${BASH_REMATCH[1]}"
+load_version(){  # export baked APP_VERSION/APP_COMMIT so they freeze into config:cache
+  local f="$1/.deploy-version"
+  if [[ -f "$f" ]]; then
+    set -a; # shellcheck disable=SC1090
+    source "$f"; set +a
+    log "footer version: v${APP_VERSION:-?} · ${APP_COMMIT:0:7}"
   else
-    VERSION="0.1.0"
-    warn "no semver tag on '$REF' — defaulting APP_VERSION=0.1.0; tag releases (git tag -a vX.Y.Z) for a meaningful footer"
+    warn "no .deploy-version in release — footer falls back to config default (v0.1.0 · dev)"
+  fi
+}
+
+# ---- rollback ---------------------------------------------------------------
+if [[ "${1:-}" == "--rollback" ]]; then
+  cur="$(readlink -f "$BASE/current" 2>/dev/null)" || die "no current release"
+  mapfile -t RELS < <(find "$BASE/releases" -mindepth 1 -maxdepth 1 -type d | sort)
+  prev=""
+  for r in "${RELS[@]}"; do
+    [[ "$r" == "$cur" ]] && break
+    prev="$r"
+  done
+  [[ -n "$prev" ]] || die "no previous release to roll back to"
+  flip "$prev"
+  restart_runtime
+  log "rolled back: $(basename "$cur") -> $(basename "$prev")"
+  log "NOTE: database migrations are NOT rolled back automatically."
+  exit 0
+fi
+
+ART="${1:?usage: deploy-release.sh <artifact.tar.gz> | --rollback}"
+[[ -f "$ART" ]] || die "artifact not found: $ART"
+
+# ---- integrity check ----------------------------------------------------------
+if [[ -f "$ART.sha256" ]]; then
+  ( cd "$(dirname "$ART")" && sha256sum --check --quiet "$(basename "$ART").sha256" ) \
+    || die "sha256 mismatch — artifact corrupted in transfer"
+  log "sha256 verified"
+else
+  warn "no $ART.sha256 alongside the artifact — skipping integrity check"
+fi
+
+# ---- one-time: migrate flat layout -> releases/shared/current ------------------
+if [[ ! -L "$BASE/current" ]]; then
+  if [[ -f "$BASE/artisan" ]]; then
+    warn "first run: converting flat layout to releases/ (brief downtime, seconds)"
+    TMP="$(mktemp -d /var/www/.aamar-migrate.XXXXXX)"
+    mv "$BASE" "$TMP/app"
+    install -d -m 0755 "$BASE/releases" "$BASE/shared"
+    mv "$TMP/app/.env"     "$BASE/shared/.env"
+    mv "$TMP/app/storage"  "$BASE/shared/storage"
+    INIT="$BASE/releases/00000000-initial"
+    mv "$TMP/app" "$INIT"; rmdir "$TMP"
+    ln -s "$BASE/shared/.env"    "$INIT/.env"
+    ln -s "$BASE/shared/storage" "$INIT/storage"
+    flip "$INIT"
+
+    # nginx now serves current/public
+    sed -i "s|root $BASE/public;|root $BASE/current/public;|" /etc/nginx/conf.d/aamar-malda.conf
+    nginx -t && systemctl reload nginx
+
+    # queue worker follows current/
+    if [[ -f /etc/systemd/system/aamar-queue.service ]]; then
+      sed -i -e "s|$BASE/artisan|$BASE/current/artisan|" \
+             -e "s|^WorkingDirectory=$BASE$|WorkingDirectory=$BASE/current|" \
+             /etc/systemd/system/aamar-queue.service
+      systemctl daemon-reload
+    fi
+
+    # backup fetch script reads .env from its new home
+    sed -i 's|APP_ENV="$APP_DIR/.env"|APP_ENV="$APP_DIR/shared/.env"|' \
+      /usr/local/sbin/vm1-fetch-backup.sh 2>/dev/null || true
+
+    # scheduler cron + logrotate follow the new layout (if installed pre-migration)
+    sed -i -e "s|cd $BASE &&|cd $BASE/current \&\&|" \
+           -e "s|$BASE/storage/logs/schedule.log|$BASE/shared/storage/logs/schedule.log|" \
+      /etc/cron.d/aamar-schedule 2>/dev/null || true
+    sed -i "s|$BASE/storage/logs/schedule.log|$BASE/shared/storage/logs/schedule.log|" \
+      /etc/logrotate.d/aamar-schedule 2>/dev/null || true
+
+    # SELinux: writable contexts for the new persistent paths
+    if command -v semanage >/dev/null; then
+      semanage fcontext -a -t httpd_sys_rw_content_t "$BASE/shared/storage(/.*)?" 2>/dev/null || true
+      semanage fcontext -a -t httpd_sys_rw_content_t "$BASE/releases/[^/]+/bootstrap/cache(/.*)?" 2>/dev/null || true
+    fi
+    command -v restorecon >/dev/null && restorecon -RF "$BASE" >/dev/null 2>&1 || true
+
+    # cached config holds absolute paths — regenerate for the moved code
+    ( cd "$INIT" && php artisan config:clear -q && php artisan config:cache -q \
+        && php artisan route:cache -q && php artisan view:cache -q \
+        && php artisan event:cache -q ) \
+      || warn "cache regeneration in the initial release failed — check manually"
+    chown -R "$PHP_USER:$PHP_USER" "$INIT" "$BASE/shared"
+    restart_runtime
+    log "migration done — existing app preserved as releases/00000000-initial"
+  else
+    install -d -m 0755 "$BASE/releases" "$BASE/shared"
   fi
 fi
-log "release version: v$VERSION · $GITSHA  (commit $FULLSHA)"
+[[ -f "$BASE/shared/.env" ]] || die "missing $BASE/shared/.env — production config must exist"
 
-log "composer install --no-dev (exact versions from composer.lock) ..."
-composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# ---- unpack + validate the new release -----------------------------------------
+STAMP="$(date +%Y%m%d-%H%M%S)"
+REL="$BASE/releases/$STAMP"
+INCOMING="$BASE/releases/.incoming-$STAMP"
+trap 'rm -rf "$INCOMING"' EXIT
+install -d "$INCOMING"
+log "unpacking $(basename "$ART") ..."
+tar xzf "$ART" -C "$INCOMING"
+[[ -f "$INCOMING/artisan" && -d "$INCOMING/vendor" && -d "$INCOMING/public/build" ]] \
+  || die "artifact incomplete — need artisan, vendor/, public/build/ (use build-release.sh)"
+mv "$INCOMING" "$REL"
+trap - EXIT
 
-log "building front-end assets (npm ci + vite build) ..."
-npm ci
-npm run build
-[[ -d public/build ]] || die "public/build missing — vite build failed"
+# shared state: .env + storage live outside the release
+rm -rf "$REL/storage"
+ln -s "$BASE/shared/storage" "$REL/storage"
+rm -f "$REL/.env"
+ln -s "$BASE/shared/.env"    "$REL/.env"
+install -d "$BASE/shared/storage/app/public" \
+           "$BASE/shared/storage/framework/cache/data" \
+           "$BASE/shared/storage/framework/sessions" \
+           "$BASE/shared/storage/framework/views" \
+           "$BASE/shared/storage/logs"
 
-# Baked version, sourced by deploy-release.sh and exported before config:cache.
-printf "APP_VERSION='%s'\nAPP_COMMIT='%s'\n" "$VERSION" "$FULLSHA" > .deploy-version
-# Human-readable manifest.
-printf 'ref=%s\nversion=%s\ncommit=%s\ncommit_full=%s\nbuilt=%s\nbuild_php=%s\n' \
-  "$REF" "$VERSION" "$GITSHA" "$FULLSHA" "$(date -Is)" "$PHPV" > RELEASE_INFO
+# ---- migrations + caches (offline; uses shared .env) ----------------------------
+cd "$REL"
+log "running database migrations ..."
+php artisan migrate --force
+load_version "$REL"            # APP_VERSION/APP_COMMIT -> frozen into this release's config cache
+log "caching config/routes/views/events ..."
+php artisan config:cache -q && php artisan route:cache -q \
+  && php artisan view:cache -q && php artisan event:cache -q
+php artisan storage:link --force >/dev/null 2>&1 || true
 
-log "packing artifact (no .git / node_modules / tests / .env) ..."
-mkdir -p "$OUT_DIR"
-NAME="aamar-app-v${VERSION}-${TS}-${GITSHA}"
-tar czf "$OUT_DIR/$NAME.tar.gz" \
-  --exclude='./.git' --exclude='./node_modules' --exclude='./tests' \
-  --exclude='./.github' --exclude='./.env' \
-  -C "$WORK/app" .
-( cd "$OUT_DIR" && sha256sum "$NAME.tar.gz" > "$NAME.tar.gz.sha256" )
+chown -R "$PHP_USER:$PHP_USER" "$REL" "$BASE/shared"
+command -v restorecon >/dev/null && restorecon -RF "$REL" "$BASE/shared" >/dev/null 2>&1 || true
 
-log "DONE -> $OUT_DIR/$NAME.tar.gz  ($(du -h "$OUT_DIR/$NAME.tar.gz" | cut -f1))"
-log "footer tag will read:  v$VERSION · $GITSHA"
-log "transfer BOTH files (tar.gz + .sha256) to VM1, then run:"
-log "    deploy-release.sh $NAME.tar.gz"
+# ---- atomic switch ---------------------------------------------------------------
+flip "$REL"
+restart_runtime
+[[ -f "$REL/RELEASE_INFO" ]] && log "live: $(tr '\n' ' ' < "$REL/RELEASE_INFO")"
+log "deployed release $STAMP"
+
+# ---- prune (keep $KEEP, never the live one) ---------------------------------------
+cur="$(readlink -f "$BASE/current")"
+mapfile -t ALL < <(find "$BASE/releases" -mindepth 1 -maxdepth 1 -type d | sort -r)
+n=0
+for r in "${ALL[@]}"; do
+  n=$((n+1))
+  (( n <= KEEP )) && continue
+  [[ "$r" == "$cur" ]] && continue
+  rm -rf "$r"; log "pruned old release $(basename "$r")"
+done
+log "done — verify the footer tag reads v${APP_VERSION:-?}, then:  curl -sI http://localhost/ | head -1   and   systemctl status aamar-queue"
