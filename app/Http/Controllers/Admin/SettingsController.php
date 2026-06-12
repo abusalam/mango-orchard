@@ -12,7 +12,10 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Intervention\Image\ImageManager;
 
 class SettingsController extends Controller implements HasMiddleware
 {
@@ -97,5 +100,48 @@ class SettingsController extends Controller implements HasMiddleware
         return redirect()
             ->route('admin.settings.edit')
             ->with('status', 'Settings saved.');
+    }
+
+    /**
+     * Upload / replace the site logo (Branding card on the settings page).
+     * Re-encoded to a 512px WebP under branding/ on the public disk.
+     */
+    public function updateLogo(Request $request, Settings $settings): RedirectResponse
+    {
+        $request->validate([
+            'logo' => ['required', 'image', 'mimes:jpeg,png,webp', 'max:2048'],
+        ]);
+
+        $old = $settings->siteLogoPath();
+
+        $image = ImageManager::gd()
+            ->read($request->file('logo')->getRealPath())
+            ->scaleDown(width: 512);
+        $path = 'branding/logo-'.Str::random(12).'.webp';
+        Storage::disk('public')->put($path, (string) $image->toWebp(quality: 90));
+
+        $settings->set(Settings::SITE_LOGO_PATH, $path);
+
+        if ($old && Storage::disk('public')->exists($old)) {
+            Storage::disk('public')->delete($old);
+        }
+
+        app(Telemetry::class)->record('settings.logo_updated');
+
+        return redirect()->route('admin.settings.edit')->with('status', 'Site logo updated.');
+    }
+
+    public function removeLogo(Settings $settings): RedirectResponse
+    {
+        if ($old = $settings->siteLogoPath()) {
+            if (Storage::disk('public')->exists($old)) {
+                Storage::disk('public')->delete($old);
+            }
+            $settings->set(Settings::SITE_LOGO_PATH, null);
+
+            app(Telemetry::class)->record('settings.logo_removed');
+        }
+
+        return redirect()->route('admin.settings.edit')->with('status', 'Site logo removed — the generated monogram is now shown.');
     }
 }

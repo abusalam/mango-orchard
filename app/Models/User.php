@@ -5,14 +5,20 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Modules\MangoOrchard\Models\Listing;
 use App\Modules\MangoOrchard\Models\MangoVariety;
+use App\Modules\SchemeMonitoring\Models\Designation;
+use App\Modules\SchemeMonitoring\Models\MonitorProfile;
+use App\Modules\SchemeMonitoring\Models\Scheme;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
@@ -25,6 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
     'notify_seasonal',
     'subscribe_newsletter',
     'onboarding_completed_at',
+    'avatar_path',
 ])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
@@ -47,7 +54,44 @@ class User extends Authenticatable
             'notify_seasonal' => 'boolean',
             'subscribe_newsletter' => 'boolean',
             'onboarding_completed_at' => 'datetime',
+            'deactivated_at' => 'datetime',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        // Hard-deleting a user (admin action) must clean owned disk state.
+        // Listings cascade at the DB level, which would BYPASS each
+        // listing's own deleting hook (the one that wipes its image blob) —
+        // so iterate them through Eloquent first. The avatar is wiped here
+        // directly.
+        static::deleting(function (User $user): void {
+            $user->listings->each->delete();
+
+            // Owned monitoring schemes would otherwise die via DB cascade,
+            // skipping the Scheme/Task hooks that wipe attachment blobs.
+            Scheme::query()
+                ->where('owner_id', $user->id)
+                ->get()
+                ->each
+                ->delete();
+
+            if ($user->avatar_path && Storage::disk('public')->exists($user->avatar_path)) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+        });
+    }
+
+    public function isDeactivated(): bool
+    {
+        return $this->deactivated_at !== null;
+    }
+
+    public function getAvatarUrlAttribute(): ?string
+    {
+        return $this->avatar_path
+            ? Storage::disk('public')->url($this->avatar_path)
+            : null;
     }
 
     public function favoriteVariety(): BelongsTo
@@ -65,17 +109,17 @@ class User extends Authenticatable
         return $this->hasMany(RoleApplication::class);
     }
 
-    public function designations(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function designations(): BelongsToMany
     {
         return $this->belongsToMany(
-            \App\Modules\SchemeMonitoring\Models\Designation::class,
+            Designation::class,
             'monitoring_user_designations',
         )->withTimestamps();
     }
 
-    public function monitoringProfile(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function monitoringProfile(): HasOne
     {
-        return $this->hasOne(\App\Modules\SchemeMonitoring\Models\MonitorProfile::class);
+        return $this->hasOne(MonitorProfile::class);
     }
 
     public function hasCompletedOnboarding(): bool

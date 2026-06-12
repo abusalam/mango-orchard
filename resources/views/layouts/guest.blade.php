@@ -15,7 +15,7 @@
 
         <title>{{ $title ? $title.' — '.config('app.name') : config('app.name') }}</title>
 
-        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
+        <link rel="icon" href="{{ app(\App\Settings\Settings::class)->siteLogoUrl() ?? asset('favicon.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -32,7 +32,7 @@
                 <header class="border-b border-amber-200/60 dark:border-stone-800 bg-amber-50/80 dark:bg-stone-900/80 backdrop-blur">
                     <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                         <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                            <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                            <x-site-logo />
                             <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }}</span>
                         </a>
                         @auth
@@ -85,7 +85,7 @@
             <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-amber-50 dark:bg-stone-900">
                 <div>
                     <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight text-stone-900 dark:text-stone-100">
-                        <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-10 h-10 rounded-full object-cover">
+                        <x-site-logo size="auth" />
                         <span class="text-lg">{{ config('app.name') }}</span>
                     </a>
                 </div>

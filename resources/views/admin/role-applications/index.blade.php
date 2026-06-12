@@ -64,22 +64,23 @@
                 <table class="w-full text-sm">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
-                            <th class="px-5 py-3 font-medium">When</th>
+                            <th class="px-5 py-3 font-medium hidden md:table-cell">When</th>
                             <th class="px-5 py-3 font-medium">Applicant</th>
                             <th class="px-5 py-3 font-medium">Role</th>
                             <th class="px-5 py-3 font-medium">Decision</th>
-                            <th class="px-5 py-3 font-medium">Reviewer</th>
+                            <th class="px-5 py-3 font-medium hidden sm:table-cell">Reviewer</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($reviewed as $application)
                             <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="reviewed-application">
-                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap" title="{{ $application->reviewed_at }}">
+                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap hidden md:table-cell" title="{{ $application->reviewed_at }}">
                                     {{ $application->reviewed_at?->diffForHumans() }}
                                 </td>
                                 <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
                                     {{ $application->user->name }}
                                     <span class="block text-xs text-stone-400">{{ $application->user->email }}</span>
+                                    <span class="md:hidden block text-xs text-stone-400">{{ $application->reviewed_at?->diffForHumans() }}<span class="sm:hidden"> · by {{ $application->reviewer?->name ?? '—' }}</span></span>
                                 </td>
                                 <td class="px-5 py-3 font-mono text-xs text-stone-800 dark:text-stone-200">{{ $application->role->name }}</td>
                                 <td class="px-5 py-3">
@@ -89,7 +90,7 @@
                                         'bg-rose-100 text-rose-900 border-rose-200' => $application->status === \App\Models\RoleApplication::STATUS_REJECTED,
                                     ])>{{ Str::headline($application->status) }}</span>
                                 </td>
-                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300 hidden sm:table-cell">
                                     {{ $application->reviewer?->name ?? '—' }}
                                 </td>
                             </tr>

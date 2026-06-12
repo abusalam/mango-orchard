@@ -41,17 +41,21 @@
                 <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                     <tr>
                         <th class="px-5 py-3 font-medium">Name</th>
-                        <th class="px-5 py-3 font-medium">Email</th>
-                        <th class="px-5 py-3 font-medium">Roles</th>
+                        <th class="px-5 py-3 font-medium hidden md:table-cell">Email</th>
+                        <th class="px-5 py-3 font-medium hidden sm:table-cell">Roles</th>
                         <th class="px-5 py-3 font-medium text-right">Action</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                     @foreach ($users as $listedUser)
                         <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors">
-                            <td class="px-5 py-3 font-medium text-stone-900 dark:text-stone-100">{{ $listedUser->name }}</td>
-                            <td class="px-5 py-3 text-stone-600 dark:text-stone-300">{{ $listedUser->email }}</td>
-                            <td class="px-5 py-3">
+                            <td class="px-5 py-3 font-medium text-stone-900 dark:text-stone-100">
+                                {{ $listedUser->name }}
+                                <span class="md:hidden block text-xs font-normal text-stone-500 dark:text-stone-400">{{ $listedUser->email }}</span>
+                                <span class="sm:hidden block text-xs font-normal text-stone-400">{{ $listedUser->roles->pluck('name')->join(' · ') ?: 'no roles' }}</span>
+                            </td>
+                            <td class="px-5 py-3 text-stone-600 dark:text-stone-300 hidden md:table-cell">{{ $listedUser->email }}</td>
+                            <td class="px-5 py-3 hidden sm:table-cell">
                                 <div class="flex flex-wrap gap-1.5">
                                     @forelse ($listedUser->roles as $role)
                                         <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800">{{ $role->name }}</span>

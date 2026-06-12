@@ -41,13 +41,15 @@
                 <span class="block text-xs text-stone-500 dark:text-stone-400 mt-0.5">Shift-click or Cmd-click to pick multiple.</span>
                 <input id="photos" name="photos[]" type="file" multiple accept="image/jpeg,image/png,image/webp,image/gif"
                        class="mt-2 block w-full text-sm text-stone-700 dark:text-stone-300 file:mr-3 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-stone-900 file:text-amber-50 file:cursor-pointer file:hover:bg-stone-800"
+                       data-max-bytes="{{ \App\Support\UploadLimits::effectiveBytes(15360) }}"
+                       data-max-total-bytes="{{ \App\Support\UploadLimits::parseIniSize((string) ini_get('post_max_size')) }}"
                        required data-testid="photo-file-input">
             </label>
             <x-image-upload-guide
                 dimensions="2000 × 1500 px or larger"
                 aspect="any (4:3 fits the grid best)"
                 formats="JPG, PNG, WebP, or GIF"
-                maxSize="15 MB per file (up to 50 files at once)"
+                :max-kb="15360"
                 note="Each upload is re-encoded as WebP at 1600px wide with a 600px thumbnail — start with a high-resolution source and the pipeline does the rest." />
             @error('photos') <p class="mt-2 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
             @error('photos.*') <p class="mt-2 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror

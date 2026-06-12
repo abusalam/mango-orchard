@@ -8,7 +8,7 @@
 
         <title>{{ $title ?? config('app.name') }}</title>
 
-        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
+        <link rel="icon" href="{{ app(\App\Settings\Settings::class)->siteLogoUrl() ?? asset('favicon.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -22,7 +22,7 @@
         <header class="sticky top-0 z-30 backdrop-blur bg-amber-50/80 dark:bg-stone-900/80 border-b border-amber-200/60 dark:border-stone-800" x-data="{ mobileOpen: false }">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                    <x-site-logo />
                     <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }}</span>
                 </a>
 
@@ -54,23 +54,23 @@
                             <x-theme-switcher />
                             <div class="relative" x-data="{ menu: false }" @click.away="menu = false">
                                 <button @click="menu = !menu" type="button"
-                                        class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-200 hover:bg-stone-200 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 transition-colors"
+                                        class="inline-flex items-center justify-center rounded-full hover:ring-2 hover:ring-amber-400 transition-shadow"
                                         aria-label="User menu"
                                         :aria-expanded="menu.toString()"
                                         data-testid="user-menu-trigger">
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                        <circle cx="12" cy="8" r="4" stroke-linecap="round" stroke-linejoin="round"/>
-                                        <path d="M4 20c0-4 4-7 8-7s8 3 8 7" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
+                                    <x-user-avatar :user="auth()->user()" size="md" />
                                 </button>
                                 <div x-show="menu" x-cloak x-transition class="absolute right-0 mt-2 w-56 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl shadow-lg overflow-hidden text-stone-700 dark:text-stone-200 py-1">
                                     {{-- Identity header inside the dropdown — keeps the name + role
                                          badge surfaced now that they're no longer in the trigger. --}}
-                                    <div class="px-4 py-2.5 border-b border-stone-100 dark:border-stone-700">
-                                        <p class="text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">Signed in as</p>
-                                        <p class="mt-0.5 text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{{ auth()->user()->name }}</p>
-                                        <div class="mt-1.5">
-                                            <x-user-role-badge :user="auth()->user()" />
+                                    <div class="px-4 py-2.5 border-b border-stone-100 dark:border-stone-700 flex items-center gap-3">
+                                        <x-user-avatar :user="auth()->user()" size="md" />
+                                        <div class="min-w-0">
+                                            <p class="text-[11px] uppercase tracking-wider text-stone-500 dark:text-stone-400">Signed in as</p>
+                                            <p class="mt-0.5 text-sm font-medium text-stone-900 dark:text-stone-100 truncate">{{ auth()->user()->name }}</p>
+                                            <div class="mt-1">
+                                                <x-user-role-badge :user="auth()->user()" />
+                                            </div>
                                         </div>
                                     </div>
                                     <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm hover:bg-stone-50 dark:hover:bg-stone-700/50">Dashboard</a>
@@ -176,7 +176,7 @@
         <footer class="bg-stone-900 text-stone-300 mt-16">
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
                 <div class="flex items-center gap-3">
-                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-40 h-40 sm:w-48 sm:h-48 rounded-full object-cover">
+                    <x-site-logo size="footer" />
                     <div>
                         <p class="text-lg font-semibold text-stone-100">{{ config('app.name') }}</p>
                         <p class="text-xs text-stone-400">an initiative by {{ config('app.owner') }}</p>

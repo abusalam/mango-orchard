@@ -25,13 +25,18 @@
         @if ($entries->isEmpty())
             <p class="px-6 py-12 text-center text-stone-500 dark:text-stone-400 text-sm">No entries yet.</p>
         @else
-            <div class="overflow-x-auto">
+            <div>
+                {{-- The column set is admin-defined (dynamic), so it can't be
+                     hand-tuned per breakpoint: below lg only the FIRST column
+                     (the entry's de-facto title) renders, with the remaining
+                     values folded beneath it as label: value lines. lg+ shows
+                     the full dynamic table. No horizontal scrolling. --}}
                 <table class="w-full text-sm">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
-                            <th class="px-3 py-2 font-medium w-12">#</th>
+                            <th class="px-3 py-2 font-medium w-12 hidden sm:table-cell">#</th>
                             @foreach ($section->columns as $col)
-                                <th class="px-3 py-2 font-medium">{{ $col['label_en'] }}</th>
+                                <th @class(['px-3 py-2 font-medium', 'hidden lg:table-cell' => ! $loop->first])>{{ $col['label_en'] }}</th>
                             @endforeach
                             <th class="px-3 py-2 font-medium text-right">Actions</th>
                         </tr>
@@ -39,18 +44,29 @@
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($entries as $entry)
                             <tr class="odd:bg-white dark:odd:bg-stone-950 even:bg-stone-50/50 dark:even:bg-stone-900" data-testid="mpcp-entry-row-{{ $entry->id }}">
-                                <td class="px-3 py-2 text-xs text-stone-500 dark:text-stone-400">{{ $entry->position }}</td>
+                                <td class="px-3 py-2 text-xs text-stone-500 dark:text-stone-400 hidden sm:table-cell">{{ $entry->position }}</td>
                                 @foreach ($section->columns as $col)
                                     @php $value = $entry->data[$col['key']] ?? ''; @endphp
-                                    <td class="px-3 py-2 text-stone-800 dark:text-stone-200 align-top max-w-md">
+                                    <td @class(['px-3 py-2 text-stone-800 dark:text-stone-200 align-top max-w-md', 'hidden lg:table-cell' => ! $loop->first])>
                                         @if ($value === '')
                                             <span class="text-stone-400">—</span>
                                         @else
                                             <span class="line-clamp-2">{{ Illuminate\Support\Str::limit($value, 120) }}</span>
                                         @endif
+                                        @if ($loop->first)
+                                            {{-- Folded-in remaining columns while hidden below lg --}}
+                                            <dl class="lg:hidden mt-1 space-y-0.5 text-xs font-normal text-stone-500 dark:text-stone-400">
+                                                @foreach ($section->columns as $sub)
+                                                    @php $subValue = $entry->data[$sub['key']] ?? ''; @endphp
+                                                    @if ($sub['key'] !== $col['key'] && $subValue !== '')
+                                                        <div><span class="text-stone-400">{{ $sub['label_en'] }}:</span> {{ Illuminate\Support\Str::limit($subValue, 80) }}</div>
+                                                    @endif
+                                                @endforeach
+                                            </dl>
+                                        @endif
                                     </td>
                                 @endforeach
-                                <td class="px-3 py-2 text-right whitespace-nowrap">
+                                <td class="px-3 py-2 text-right whitespace-nowrap align-top">
                                     <a href="{{ route('admin.mpcp.entries.edit', [$section, $entry]) }}" class="text-stone-700 dark:text-stone-100 hover:underline text-xs mr-3">Edit</a>
                                     <x-confirm-form
                                         :action="route('admin.mpcp.entries.destroy', [$section, $entry])"

@@ -1,5 +1,9 @@
 <?php
 
+use App\Models\User;
+use App\Modules\SchemeMonitoring\Models\Designation;
+use App\Modules\SchemeMonitoring\Models\MonitorProfile;
+use App\Settings\Settings;
 use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Pest\Browser\Playwright\Playwright;
@@ -43,6 +47,11 @@ $bootstrapTest = function (): void {
     $this->seed(RolePermissionSeeder::class);
     $this->withUnencryptedCookies(['cookie_consent' => 'all']);
     $this->app['request']->cookies->set('cookie_consent', 'all');
+
+    // RefreshDatabase leaves the users table empty, which would trip the
+    // first-run /setup redirect (RequireSiteSetup) on every guest request.
+    // Mark setup complete by default; setup-flow tests reset this flag.
+    app(Settings::class)->set(Settings::SITE_SETUP_COMPLETED, true);
 };
 
 pest()->extend(TestCase::class)
@@ -103,7 +112,7 @@ function something()
  *     concurrent tests don't collide on the unique index.
  *   - The user → designation pivot via monitoring_user_designations.
  *
- * @param  array<int, array{0: \App\Models\User, 1: ?\App\Models\User}>  $pairs
+ * @param  array<int, array{0: User, 1: ?User}>  $pairs
  */
 function monitorHierarchy(array $pairs): void
 {
@@ -117,14 +126,14 @@ function monitorHierarchy(array $pairs): void
                 ?? throw new RuntimeException("monitorHierarchy: parent user {$parent->id} not yet wired — list parents before their children");
         }
 
-        $designation = \App\Modules\SchemeMonitoring\Models\Designation::create([
+        $designation = Designation::create([
             'name' => "Test-{$suffix}-{$i}-{$user->id}",
             'level' => 0,
             'parent_id' => $parentDesignationId,
         ]);
 
         $user->designations()->attach($designation->id);
-        \App\Modules\SchemeMonitoring\Models\MonitorProfile::firstOrCreate(['user_id' => $user->id]);
+        MonitorProfile::firstOrCreate(['user_id' => $user->id]);
 
         $designationByUserId[$user->id] = $designation->id;
     }

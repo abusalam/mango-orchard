@@ -6,6 +6,7 @@ namespace App\Settings;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class Settings
 {
@@ -18,6 +19,17 @@ class Settings
     public const string READONLY_MODE = 'readonly_mode';
 
     public const string DEV_BANNER_ENABLED = 'dev_banner_enabled';
+
+    // Branding. The uploaded site logo lives on the public disk under
+    // branding/; when unset, <x-site-logo> renders a generated monogram
+    // (gradient circle + app-name initials) so a fresh install never shows
+    // a broken image.
+    public const string SITE_LOGO_PATH = 'site_logo_path';
+
+    // Flipped by the first-run /setup wizard (or self-healed for installs
+    // that predate it). While false AND the users table is empty, all
+    // traffic redirects to /setup.
+    public const string SITE_SETUP_COMPLETED = 'site_setup_completed';
 
     // Master switch: when off, no notification dispatches the `mail`
     // channel. Database channel still records (TaskStatusChanged /
@@ -40,6 +52,8 @@ class Settings
         self::FORM_AUTOFILL => false,
         self::READONLY_MODE => false,
         self::DEV_BANNER_ENABLED => false,
+        self::SITE_LOGO_PATH => null,
+        self::SITE_SETUP_COMPLETED => false,
         // Mail defaults to ON — flipping any of these to false is a
         // deliberate sysadmin act (incident response, staging holds, etc.).
         self::MAIL_ENABLED => true,
@@ -114,6 +128,29 @@ class Settings
     public function devBannerEnabled(): bool
     {
         return (bool) $this->get(self::DEV_BANNER_ENABLED, false);
+    }
+
+    public function siteLogoPath(): ?string
+    {
+        $path = $this->get(self::SITE_LOGO_PATH);
+
+        return is_string($path) && $path !== '' ? $path : null;
+    }
+
+    public function siteLogoUrl(): ?string
+    {
+        $path = $this->siteLogoPath();
+
+        if ($path === null || ! Storage::disk('public')->exists($path)) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($path);
+    }
+
+    public function setupCompleted(): bool
+    {
+        return (bool) $this->get(self::SITE_SETUP_COMPLETED, false);
     }
 
     /**

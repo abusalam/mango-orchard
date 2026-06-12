@@ -18,6 +18,34 @@
         @method('patch')
 
         <div>
+            <x-input-label for="avatar" :value="__('Profile photo')" />
+            <div class="mt-2 flex items-start gap-4">
+                <x-user-avatar :user="$user" size="lg" />
+                <div class="min-w-0 flex-1">
+                    {{-- Form defaults to urlencoded; promote to multipart only
+                         when a file is actually selected so the upload transmits. --}}
+                    <input type="file" name="avatar" id="avatar" accept="image/jpeg,image/png,image/webp"
+                           onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
+                           class="block w-full text-sm text-stone-600 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+                           data-max-bytes="{{ \App\Support\UploadLimits::effectiveBytes(2048) }}"
+                           data-testid="avatar-input">
+                    @if ($user->avatar_path)
+                        <label class="mt-2 inline-flex items-center gap-2 text-sm text-stone-700 dark:text-stone-300">
+                            <input type="checkbox" name="remove_avatar" value="1" class="rounded text-rose-500 focus:ring-rose-400" data-testid="remove-avatar">
+                            <span>Remove current photo</span>
+                        </label>
+                    @endif
+                    <x-image-upload-guide
+                        dimensions="400 × 400 px"
+                        aspect="1:1 (square)"
+                        :max-kb="2048"
+                        note="Shown next to your name across the site. Square images crop best." />
+                </div>
+            </div>
+            <x-input-error class="mt-2" :messages="$errors->get('avatar')" />
+        </div>
+
+        <div>
             <x-input-label for="name" :value="__('Name')" />
             <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />

@@ -20,10 +20,10 @@
                 <table class="w-full text-sm table-fixed">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-xs uppercase tracking-wider">
                         <tr>
-                            <th class="px-3 py-3 text-left w-28">Issued</th>
+                            <th class="px-3 py-3 text-left w-28 hidden md:table-cell">Issued</th>
                             <th class="px-3 py-3 text-left">Title</th>
                             <th class="px-3 py-3 text-left w-28 hidden sm:table-cell">Category</th>
-                            <th class="px-3 py-3 text-left w-24">Severity</th>
+                            <th class="px-3 py-3 text-left w-24 hidden sm:table-cell">Severity</th>
                             <th class="px-3 py-3 text-left w-40 hidden md:table-cell">Targets</th>
                             <th class="px-3 py-3 text-left w-24">State</th>
                             <th class="px-3 py-3 w-16"></th>
@@ -32,15 +32,16 @@
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($advisories as $advisory)
                             <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="admin-advisory-row">
-                                <td class="px-3 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300 text-xs">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
+                                <td class="px-3 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300 text-xs hidden md:table-cell">{{ $advisory->issued_at?->toFormattedDateString() ?? '—' }}</td>
                                 <td class="px-3 py-3 min-w-0">
                                     <a href="{{ route('admin.advisories.edit', $advisory) }}" class="font-medium text-stone-900 dark:text-stone-100 hover:text-orange-700 break-words">{{ $advisory->title }}</a>
                                     @if ($advisory->issuer)
                                         <div class="text-xs text-stone-500 dark:text-stone-400">by {{ $advisory->issuer->name }}</div>
                                     @endif
+                                    <div class="md:hidden text-xs text-stone-500 dark:text-stone-400">{{ $advisory->issued_at?->toFormattedDateString() ?? 'not issued' }}<span class="sm:hidden"> · {{ AppModulesMangoOrchardModelsAdvisory::SEVERITIES[$advisory->severity] }}</span></div>
                                 </td>
                                 <td class="px-3 py-3 text-stone-700 dark:text-stone-300 text-xs hidden sm:table-cell">{{ \App\Modules\MangoOrchard\Models\Advisory::CATEGORIES[$advisory->category] ?? $advisory->category }}</td>
-                                <td class="px-3 py-3">
+                                <td class="px-3 py-3 hidden sm:table-cell">
                                     <span @class([
                                         'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border',
                                         'bg-rose-200 text-rose-900 border-rose-300' => $advisory->severity === \App\Modules\MangoOrchard\Models\Advisory::SEVERITY_URGENT,

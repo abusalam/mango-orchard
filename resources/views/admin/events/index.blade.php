@@ -20,25 +20,26 @@
                 <table class="w-full text-sm table-fixed">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-xs uppercase tracking-wider">
                         <tr>
-                            <th class="px-4 py-3 text-left w-44">When</th>
+                            <th class="px-4 py-3 text-left w-44 hidden md:table-cell">When</th>
                             <th class="px-4 py-3 text-left">Title</th>
-                            <th class="px-4 py-3 text-left w-40">Location</th>
-                            <th class="px-4 py-3 text-left w-28">Status</th>
+                            <th class="px-4 py-3 text-left w-40 hidden lg:table-cell">Location</th>
+                            <th class="px-4 py-3 text-left w-28 hidden sm:table-cell">Status</th>
                             <th class="px-4 py-3 w-20"></th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($events as $event)
                             <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors">
-                                <td class="px-4 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300">{{ $event->start_at->format('M j, Y · g:i A') }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-stone-700 dark:text-stone-300 hidden md:table-cell">{{ $event->start_at->format('M j, Y · g:i A') }}</td>
                                 <td class="px-4 py-3">
                                     <a href="{{ route('events.show', $event) }}" class="font-medium text-stone-900 dark:text-stone-100 hover:text-orange-700">{{ $event->title }}</a>
+                                    <div class="md:hidden text-xs text-stone-500 dark:text-stone-400">{{ $event->start_at->format('M j, Y · g:i A') }}</div>
                                     @if ($event->host)
                                         <div class="text-xs text-stone-500 dark:text-stone-400">{{ $event->host }}</div>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-stone-700 dark:text-stone-300">{{ $event->location }}</td>
-                                <td class="px-4 py-3">
+                                <td class="px-4 py-3 text-stone-700 dark:text-stone-300 hidden lg:table-cell">{{ $event->location }}</td>
+                                <td class="px-4 py-3 hidden sm:table-cell">
                                     @php
                                         $badge = match ($event->status) {
                                             \App\Modules\MangoOrchard\Models\Event::STATUS_PUBLISHED => 'bg-emerald-100 text-emerald-900',

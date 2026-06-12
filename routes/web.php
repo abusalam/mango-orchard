@@ -1,27 +1,36 @@
 <?php
 
-use App\Modules\MangoOrchard\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
-use App\Modules\MangoOrchard\Http\Controllers\Admin\EventController as AdminEventController;
-use App\Modules\MangoOrchard\Http\Controllers\Admin\ModuleAccessController as MangoOrchardAccessController;
+use App\Http\Controllers\Admin\EmailTemplateController;
+use App\Http\Controllers\Admin\GalleryPhotoController;
 use App\Http\Controllers\Admin\ImpersonationController as AdminImpersonationController;
+use App\Http\Controllers\Admin\MpcpEntryController;
 use App\Http\Controllers\Admin\RoleApplicationController as AdminRoleApplicationController;
-use App\Http\Controllers\Admin\RoleDelegationController as AdminRoleDelegationController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\RoleDelegationController as AdminRoleDelegationController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\TelemetryController;
 use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\DashboardController;
-use App\Modules\MangoOrchard\Http\Controllers\AdvisoryController;
 use App\Http\Controllers\CookieConsentController;
-use App\Modules\MangoOrchard\Http\Controllers\EventController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\ImpersonationController;
-use App\Modules\MangoOrchard\Http\Controllers\ListingController;
-use App\Modules\MangoOrchard\Http\Controllers\MangoVarietyController;
-use App\Modules\MangoOrchard\Http\Controllers\My\ListingController as MyListingController;
+use App\Http\Controllers\MpcpController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleApplicationController;
 use App\Http\Controllers\RoleDelegationController;
+use App\Http\Controllers\SetupController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\AdvisoryController as AdminAdvisoryController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\EventController as AdminEventController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\ModuleAccessController as MangoOrchardAccessController;
+use App\Modules\MangoOrchard\Http\Controllers\Admin\NewsletterController;
+use App\Modules\MangoOrchard\Http\Controllers\AdvisoryController;
+use App\Modules\MangoOrchard\Http\Controllers\EventController;
+use App\Modules\MangoOrchard\Http\Controllers\ListingController;
+use App\Modules\MangoOrchard\Http\Controllers\MangoVarietyController;
+use App\Modules\MangoOrchard\Http\Controllers\My\ListingController as MyListingController;
+use App\Modules\MangoOrchard\Http\Controllers\UnsubscribeController;
 use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Permissions;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +41,12 @@ Route::get('/', function () {
         'varieties' => MangoVariety::query()->orderBy('name')->get(),
     ]);
 })->name('home');
+
+// First-run site setup wizard — only reachable while no user exists
+// (RequireSiteSetup redirects fresh installs here; SetupController guards
+// against replay once a user is present).
+Route::get('/setup', [SetupController::class, 'show'])->name('setup.show');
+Route::post('/setup', [SetupController::class, 'store'])->name('setup.store');
 
 // Friendly explainer shown when a visitor without consent hits a gated
 // feature. Lives outside the auth/onboarding middleware groups so it's
@@ -45,7 +60,7 @@ Route::get('/cookies', [CookieConsentController::class, 'policy'])->name('cookie
 // Newsletter unsubscribe. Public on purpose — the signed URL embedded
 // in each newsletter email IS the proof; no login required. The
 // `signed` middleware rejects tampered or expired URLs out of hand.
-Route::get('/preferences/unsubscribe/newsletter/{user}', [\App\Modules\MangoOrchard\Http\Controllers\UnsubscribeController::class, 'newsletter'])
+Route::get('/preferences/unsubscribe/newsletter/{user}', [UnsubscribeController::class, 'newsletter'])
     ->middleware('signed')
     ->name('preferences.unsubscribe-newsletter');
 
@@ -65,11 +80,11 @@ Route::get('/advisories', [AdvisoryController::class, 'index'])->name('advisorie
 Route::get('/advisories/{advisory}', [AdvisoryController::class, 'show'])->name('advisories.show');
 
 // Public MPCP — Mango Promotion Communication Plan directory.
-Route::get('/mpcp', [App\Http\Controllers\MpcpController::class, 'index'])->name('mpcp.index');
+Route::get('/mpcp', [MpcpController::class, 'index'])->name('mpcp.index');
 
 // Public Mango Gallery — album list + per-album photo grid.
-Route::get('/gallery', [App\Http\Controllers\GalleryController::class, 'index'])->name('gallery.index');
-Route::get('/gallery/{album:slug}', [App\Http\Controllers\GalleryController::class, 'show'])->name('gallery.show');
+Route::get('/gallery', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{album:slug}', [GalleryController::class, 'show'])->name('gallery.show');
 
 Route::get('/dashboard', [DashboardController::class, 'show'])->name('dashboard');
 
@@ -124,33 +139,38 @@ Route::middleware('auth')->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
+        Route::patch('/users/{user}/deactivate', [UserController::class, 'deactivate'])->name('users.deactivate');
+        Route::patch('/users/{user}/reactivate', [UserController::class, 'reactivate'])->name('users.reactivate');
+        Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
         Route::resource('roles', RoleController::class)
             ->parameters(['roles' => 'role'])
             ->except(['show']);
 
         Route::get('/settings', [SettingsController::class, 'edit'])->name('settings.edit');
         Route::put('/settings', [SettingsController::class, 'update'])->name('settings.update');
+        Route::post('/settings/logo', [SettingsController::class, 'updateLogo'])->name('settings.logo.update');
+        Route::delete('/settings/logo', [SettingsController::class, 'removeLogo'])->name('settings.logo.remove');
 
-        Route::get('/email-templates', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'index'])->name('email-templates.index');
-        Route::get('/email-templates/{template}/edit', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'edit'])->name('email-templates.edit');
-        Route::put('/email-templates/{template}', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'update'])->name('email-templates.update');
+        Route::get('/email-templates', [EmailTemplateController::class, 'index'])->name('email-templates.index');
+        Route::get('/email-templates/{template}/edit', [EmailTemplateController::class, 'edit'])->name('email-templates.edit');
+        Route::put('/email-templates/{template}', [EmailTemplateController::class, 'update'])->name('email-templates.update');
         // Both POST (live form values) and GET (saved version, opened
         // from the index page) hit the same preview renderer.
-        Route::match(['get', 'post'], '/email-templates/{template}/preview', [\App\Http\Controllers\Admin\EmailTemplateController::class, 'preview'])->name('email-templates.preview');
+        Route::match(['get', 'post'], '/email-templates/{template}/preview', [EmailTemplateController::class, 'preview'])->name('email-templates.preview');
 
         // Mango Orchard — newsletter compose / send. Gated by
         // `varieties.manage` inside the controller, but the URL prefix
         // groups it under the Mango Orchard admin namespace.
         Route::prefix('mango-orchard')->name('mango-orchard.')->group(function () {
-            Route::resource('newsletter', \App\Modules\MangoOrchard\Http\Controllers\Admin\NewsletterController::class)
+            Route::resource('newsletter', NewsletterController::class)
                 ->except(['show']);
-            Route::post('newsletter/{newsletter}/send', [\App\Modules\MangoOrchard\Http\Controllers\Admin\NewsletterController::class, 'send'])->name('newsletter.send');
+            Route::post('newsletter/{newsletter}/send', [NewsletterController::class, 'send'])->name('newsletter.send');
         });
 
-        Route::get('/system', [\App\Http\Controllers\Admin\SystemController::class, 'index'])->name('system.index');
-        Route::post('/system/failed/{id}/retry', [\App\Http\Controllers\Admin\SystemController::class, 'retryFailedJob'])->name('system.failed.retry');
-        Route::post('/system/failed/{id}/forget', [\App\Http\Controllers\Admin\SystemController::class, 'forgetFailedJob'])->name('system.failed.forget');
-        Route::post('/system/failed/flush', [\App\Http\Controllers\Admin\SystemController::class, 'flushFailedJobs'])->name('system.failed.flush');
+        Route::get('/system', [SystemController::class, 'index'])->name('system.index');
+        Route::post('/system/failed/{id}/retry', [SystemController::class, 'retryFailedJob'])->name('system.failed.retry');
+        Route::post('/system/failed/{id}/forget', [SystemController::class, 'forgetFailedJob'])->name('system.failed.forget');
+        Route::post('/system/failed/flush', [SystemController::class, 'flushFailedJobs'])->name('system.failed.flush');
 
         Route::get('/telemetry', [TelemetryController::class, 'index'])->name('telemetry.index');
 
@@ -182,38 +202,38 @@ Route::middleware('auth')->group(function () {
 
         // Mango Gallery — albums + photos admin.
         Route::prefix('gallery')->name('gallery.')->group(function (): void {
-            Route::get('/', [\App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('index');
-            Route::get('albums/create', [\App\Http\Controllers\Admin\GalleryController::class, 'create'])->name('albums.create');
-            Route::post('albums', [\App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('albums.store');
-            Route::get('albums/{album:slug}/edit', [\App\Http\Controllers\Admin\GalleryController::class, 'edit'])->name('albums.edit');
-            Route::put('albums/{album:slug}', [\App\Http\Controllers\Admin\GalleryController::class, 'update'])->name('albums.update');
-            Route::delete('albums/{album:slug}', [\App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('albums.destroy');
+            Route::get('/', [App\Http\Controllers\Admin\GalleryController::class, 'index'])->name('index');
+            Route::get('albums/create', [App\Http\Controllers\Admin\GalleryController::class, 'create'])->name('albums.create');
+            Route::post('albums', [App\Http\Controllers\Admin\GalleryController::class, 'store'])->name('albums.store');
+            Route::get('albums/{album:slug}/edit', [App\Http\Controllers\Admin\GalleryController::class, 'edit'])->name('albums.edit');
+            Route::put('albums/{album:slug}', [App\Http\Controllers\Admin\GalleryController::class, 'update'])->name('albums.update');
+            Route::delete('albums/{album:slug}', [App\Http\Controllers\Admin\GalleryController::class, 'destroy'])->name('albums.destroy');
 
             // Photos within an album. Multi-file POST endpoint.
-            Route::post('albums/{album:slug}/photos', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'store'])->name('photos.store');
-            Route::put('albums/{album:slug}/photos/{photo}', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'update'])->name('photos.update');
-            Route::patch('albums/{album:slug}/photos/{photo}/cover', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'setCover'])->name('photos.set-cover');
-            Route::delete('albums/{album:slug}/photos/{photo}', [\App\Http\Controllers\Admin\GalleryPhotoController::class, 'destroy'])->name('photos.destroy');
+            Route::post('albums/{album:slug}/photos', [GalleryPhotoController::class, 'store'])->name('photos.store');
+            Route::put('albums/{album:slug}/photos/{photo}', [GalleryPhotoController::class, 'update'])->name('photos.update');
+            Route::patch('albums/{album:slug}/photos/{photo}/cover', [GalleryPhotoController::class, 'setCover'])->name('photos.set-cover');
+            Route::delete('albums/{album:slug}/photos/{photo}', [GalleryPhotoController::class, 'destroy'])->name('photos.destroy');
         });
 
         // MPCP — Mango Promotion Communication Plan admin (gated per-route by
         // `permission:mpcp.manage` on each controller, not at the group level).
         Route::prefix('mpcp')->name('mpcp.')->group(function (): void {
-            Route::get('/', [\App\Http\Controllers\Admin\MpcpController::class, 'index'])->name('index');
-            Route::get('document', [\App\Http\Controllers\Admin\MpcpController::class, 'editDocument'])->name('document.edit');
-            Route::put('document', [\App\Http\Controllers\Admin\MpcpController::class, 'updateDocument'])->name('document.update');
-            Route::get('sections/create', [\App\Http\Controllers\Admin\MpcpController::class, 'create'])->name('sections.create');
-            Route::post('sections', [\App\Http\Controllers\Admin\MpcpController::class, 'store'])->name('sections.store');
-            Route::get('sections/{section:slug}/edit', [\App\Http\Controllers\Admin\MpcpController::class, 'edit'])->name('sections.edit');
-            Route::put('sections/{section:slug}', [\App\Http\Controllers\Admin\MpcpController::class, 'update'])->name('sections.update');
-            Route::delete('sections/{section:slug}', [\App\Http\Controllers\Admin\MpcpController::class, 'destroy'])->name('sections.destroy');
+            Route::get('/', [App\Http\Controllers\Admin\MpcpController::class, 'index'])->name('index');
+            Route::get('document', [App\Http\Controllers\Admin\MpcpController::class, 'editDocument'])->name('document.edit');
+            Route::put('document', [App\Http\Controllers\Admin\MpcpController::class, 'updateDocument'])->name('document.update');
+            Route::get('sections/create', [App\Http\Controllers\Admin\MpcpController::class, 'create'])->name('sections.create');
+            Route::post('sections', [App\Http\Controllers\Admin\MpcpController::class, 'store'])->name('sections.store');
+            Route::get('sections/{section:slug}/edit', [App\Http\Controllers\Admin\MpcpController::class, 'edit'])->name('sections.edit');
+            Route::put('sections/{section:slug}', [App\Http\Controllers\Admin\MpcpController::class, 'update'])->name('sections.update');
+            Route::delete('sections/{section:slug}', [App\Http\Controllers\Admin\MpcpController::class, 'destroy'])->name('sections.destroy');
 
-            Route::get('sections/{section:slug}/entries', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'index'])->name('entries.index');
-            Route::get('sections/{section:slug}/entries/create', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'create'])->name('entries.create');
-            Route::post('sections/{section:slug}/entries', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'store'])->name('entries.store');
-            Route::get('sections/{section:slug}/entries/{entry}/edit', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'edit'])->name('entries.edit');
-            Route::put('sections/{section:slug}/entries/{entry}', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'update'])->name('entries.update');
-            Route::delete('sections/{section:slug}/entries/{entry}', [\App\Http\Controllers\Admin\MpcpEntryController::class, 'destroy'])->name('entries.destroy');
+            Route::get('sections/{section:slug}/entries', [MpcpEntryController::class, 'index'])->name('entries.index');
+            Route::get('sections/{section:slug}/entries/create', [MpcpEntryController::class, 'create'])->name('entries.create');
+            Route::post('sections/{section:slug}/entries', [MpcpEntryController::class, 'store'])->name('entries.store');
+            Route::get('sections/{section:slug}/entries/{entry}/edit', [MpcpEntryController::class, 'edit'])->name('entries.edit');
+            Route::put('sections/{section:slug}/entries/{entry}', [MpcpEntryController::class, 'update'])->name('entries.update');
+            Route::delete('sections/{section:slug}/entries/{entry}', [MpcpEntryController::class, 'destroy'])->name('entries.destroy');
         });
     });
 

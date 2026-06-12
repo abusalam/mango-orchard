@@ -59,7 +59,12 @@
                     @endif
                     <div>
                         <dt class="text-stone-500 dark:text-stone-400">Listed by</dt>
-                        <dd class="font-medium text-stone-800 dark:text-stone-200">{{ $listing->user->name }}</dd>
+                        <dd class="font-medium text-stone-800 dark:text-stone-200">
+                            <span class="inline-flex items-center gap-2">
+                                <x-user-avatar :user="$listing->user" size="xs" />
+                                {{ $listing->user->name }}
+                            </span>
+                        </dd>
                     </div>
                 </dl>
 

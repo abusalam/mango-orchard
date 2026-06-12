@@ -86,9 +86,9 @@
         <table class="w-full text-sm table-fixed">
             <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                 <tr>
-                    <th class="px-4 py-3 font-medium w-24">When</th>
+                    <th class="px-4 py-3 font-medium w-24 hidden md:table-cell">When</th>
                     <th class="px-4 py-3 font-medium w-48">Event</th>
-                    <th class="px-4 py-3 font-medium w-44">Actor</th>
+                    <th class="px-4 py-3 font-medium w-44 hidden sm:table-cell">Actor</th>
                     <th class="px-4 py-3 font-medium w-28 hidden md:table-cell">Subject</th>
                     <th class="px-4 py-3 font-medium">Details</th>
                 </tr>
@@ -96,11 +96,14 @@
             <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                 @forelse ($events as $event)
                     <tr class="align-top odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="telemetry-row">
-                        <td class="px-4 py-3 text-xs text-stone-600 dark:text-stone-300" title="{{ $event->occurred_at }}">
+                        <td class="px-4 py-3 text-xs text-stone-600 dark:text-stone-300 hidden md:table-cell" title="{{ $event->occurred_at }}">
                             {{ $event->occurred_at->diffForHumans() }}
                         </td>
-                        <td class="px-4 py-3 font-mono text-xs text-stone-800 dark:text-stone-200 break-all">{{ $event->event }}</td>
-                        <td class="px-4 py-3 text-stone-700 dark:text-stone-300 min-w-0">
+                        <td class="px-4 py-3 font-mono text-xs text-stone-800 dark:text-stone-200 break-all">
+                            {{ $event->event }}
+                            <span class="md:hidden block font-sans text-[11px] text-stone-500 dark:text-stone-400 mt-0.5">{{ $event->occurred_at->diffForHumans() }}<span class="sm:hidden"> · {{ $event->user?->name ?? 'guest' }}</span></span>
+                        </td>
+                        <td class="px-4 py-3 text-stone-700 dark:text-stone-300 min-w-0 hidden sm:table-cell">
                             <div class="text-sm break-words">
                                 @if ($event->user)
                                     <strong class="font-medium">{{ $event->user->name }}</strong>

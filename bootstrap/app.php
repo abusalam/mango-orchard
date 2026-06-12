@@ -2,8 +2,11 @@
 
 use App\Http\Middleware\EnforceReadonlyMode;
 use App\Http\Middleware\EnsureOnboardingComplete;
+use App\Http\Middleware\EnsureUserIsActive;
 use App\Http\Middleware\HonorCookieConsent;
 use App\Http\Middleware\RequireCookieConsent;
+use App\Http\Middleware\RequireSiteSetup;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -40,11 +43,17 @@ return Application::configure(basePath: dirname(__DIR__))
         // Also raised in the priority list above `Authenticate` so that
         // routes which declare `auth` via HasMiddleware (e.g. DashboardController)
         // still hit the consent gate first instead of redirecting to /login.
+        // First-run gate: on a fresh install (no users), everything
+        // redirects to the /setup wizard.
+        $middleware->appendToGroup('web', RequireSiteSetup::class);
         $middleware->appendToGroup('web', RequireCookieConsent::class);
         $middleware->appendToGroup('web', EnforceReadonlyMode::class);
+        // Kick live sessions of admin-deactivated accounts before any other
+        // authed-user logic runs.
+        $middleware->appendToGroup('web', EnsureUserIsActive::class);
         $middleware->appendToGroup('web', EnsureOnboardingComplete::class);
         $middleware->prependToPriorityList(
-            \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+            AuthenticatesRequests::class,
             RequireCookieConsent::class,
         );
 

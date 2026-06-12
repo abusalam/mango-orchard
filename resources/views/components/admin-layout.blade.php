@@ -10,7 +10,7 @@
 
         <title>{{ $title }} — {{ config('app.name') }} Admin</title>
 
-        <link rel="icon" type="image/webp" href="/images/LOGO-Square.webp">
+        <link rel="icon" href="{{ app(\App\Settings\Settings::class)->siteLogoUrl() ?? asset('favicon.svg') }}">
         <link rel="preconnect" href="https://fonts.bunny.net" crossorigin>
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=optional" rel="stylesheet" />
 
@@ -24,7 +24,7 @@
         <header class="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 font-semibold tracking-tight">
-                    <img src="/images/LOGO-Square.webp" alt="{{ config('app.name') }}" class="inline-block w-7 h-7 rounded-full object-cover">
+                    <x-site-logo />
                     <span class="text-stone-900 dark:text-stone-100">{{ config('app.name') }} Admin</span>
                 </a>
                 <div class="flex items-center gap-4 text-sm">
@@ -46,9 +46,34 @@
             </div>
         @endif
 
-        <div class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-8">
-            <aside>
-                <nav class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-2 text-sm">
+        <div class="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-4 lg:gap-8">
+            <aside x-data="{ menuOpen: window.matchMedia('(min-width: 1024px)').matches }"
+                   class="lg:sticky lg:top-4 lg:self-start">
+
+                {{-- Mobile-only disclosure toggle. On lg+ the nav is always
+                     visible (lg:!block below) and this button is hidden. --}}
+                <button type="button"
+                        @click="menuOpen = !menuOpen"
+                        :aria-expanded="menuOpen.toString()"
+                        aria-controls="admin-sidebar-nav"
+                        class="lg:hidden w-full flex items-center justify-between gap-2 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl px-4 py-3 text-sm font-medium text-stone-800 dark:text-stone-200"
+                        data-testid="admin-menu-toggle">
+                    <span class="inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M3 5h14M3 10h14M3 15h14" stroke-linecap="round"/>
+                        </svg>
+                        Admin menu
+                    </span>
+                    <svg class="w-4 h-4 transition-transform" :class="menuOpen ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                {{-- x-show drives the mobile collapse; lg:!block overrides the
+                     inline display:none so desktop always shows the nav. --}}
+                <nav id="admin-sidebar-nav"
+                     x-show="menuOpen"
+                     class="mt-2 lg:mt-0 lg:!block bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-2 text-sm lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto">
                     @can(\App\Permissions::USERS_MANAGE)
                         <a href="{{ route('admin.users.index') }}"
                            @class([

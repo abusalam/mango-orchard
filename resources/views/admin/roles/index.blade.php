@@ -12,7 +12,7 @@
             <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                 <tr>
                     <th class="px-5 py-3 font-medium">Role</th>
-                    <th class="px-5 py-3 font-medium">Permissions</th>
+                    <th class="px-5 py-3 font-medium hidden md:table-cell">Permissions</th>
                     <th class="px-5 py-3 font-medium text-right">Actions</th>
                 </tr>
             </thead>
@@ -25,8 +25,9 @@
                             @if ($isSuper)
                                 <span class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-100 text-amber-900 border border-amber-200 dark:border-stone-800">protected</span>
                             @endif
+                            <p class="md:hidden mt-1 text-xs font-normal text-stone-500 dark:text-stone-400">{{ $role->permissions->pluck("name")->join(" · ") ?: "no permissions" }}</p>
                         </td>
-                        <td class="px-5 py-4">
+                        <td class="px-5 py-4 hidden md:table-cell">
                             <div class="flex flex-wrap gap-1.5">
                                 @forelse ($role->permissions as $perm)
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-stone-200 dark:border-stone-800">{{ $perm->name }}</span>
@@ -37,7 +38,7 @@
                         </td>
                         <td class="px-5 py-4 text-right">
                             @unless ($isSuper)
-                                <div class="flex justify-end gap-2 text-sm">
+                                <div class="flex flex-col items-end gap-1.5 sm:flex-row sm:justify-end sm:gap-2 text-sm">
                                     <a href="{{ route('admin.roles.edit', $role) }}" class="text-stone-700 dark:text-stone-100 hover:underline font-medium">Edit</a>
                                     <x-confirm-form
                                         :action="route('admin.roles.destroy', $role)"

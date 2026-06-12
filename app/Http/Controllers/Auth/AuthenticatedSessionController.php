@@ -29,6 +29,18 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        // Deactivated accounts can prove their credentials (no enumeration
+        // leak) but never get a session.
+        if (Auth::user()->isDeactivated()) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'This account has been deactivated. Contact an administrator if you believe this is a mistake.',
+            ]);
+        }
+
         // Read-only mode: only superusers are allowed to start a new
         // session. Anyone else who manages to authenticate gets immediately
         // logged back out so the credentials were proven valid (no

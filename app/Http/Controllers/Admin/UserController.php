@@ -80,4 +80,73 @@ class UserController extends Controller implements HasMiddleware
             ->route('admin.users.index')
             ->with('status', "Updated roles for {$user->name}.");
     }
+
+    public function deactivate(Request $request, User $user): RedirectResponse
+    {
+        if ($request->user()->is($user)) {
+            return back()->withErrors(['user' => 'You cannot deactivate your own account.']);
+        }
+
+        if ($user->isDeactivated()) {
+            return back()->with('status', "{$user->name} is already deactivated.");
+        }
+
+        $user->forceFill(['deactivated_at' => now()])->save();
+
+        app(Telemetry::class)->record(
+            'user.deactivated',
+            subject: $user,
+            context: ['target_user_id' => $user->id, 'target_email' => $user->email],
+        );
+
+        return back()->with('status', "Deactivated {$user->name}. Their session ends on their next request and they can no longer sign in.");
+    }
+
+    public function reactivate(User $user): RedirectResponse
+    {
+        if (! $user->isDeactivated()) {
+            return back()->with('status', "{$user->name} is already active.");
+        }
+
+        $user->forceFill(['deactivated_at' => null])->save();
+
+        app(Telemetry::class)->record(
+            'user.reactivated',
+            subject: $user,
+            context: ['target_user_id' => $user->id, 'target_email' => $user->email],
+        );
+
+        return back()->with('status', "Reactivated {$user->name}.");
+    }
+
+    public function destroy(Request $request, User $user): RedirectResponse
+    {
+        if ($request->user()->is($user)) {
+            return back()->withErrors(['user' => 'You cannot delete your own account from the admin panel.']);
+        }
+
+        // Never delete the last remaining superuser — that would lock
+        // everyone out of admin permanently.
+        if ($user->hasRole(Roles::SUPERUSER) && User::role(Roles::SUPERUSER)->count() <= 1) {
+            return back()->withErrors(['user' => 'Cannot delete the only superuser account.']);
+        }
+
+        $name = $user->name;
+        $email = $user->email;
+        $id = $user->id;
+
+        // Eloquent delete (not DB cascade alone) so the model's deleting
+        // hook runs: listings delete one-by-one (wiping their image blobs)
+        // and the avatar file is removed from disk.
+        $user->delete();
+
+        app(Telemetry::class)->record(
+            'user.deleted',
+            context: ['target_user_id' => $id, 'target_email' => $email],
+        );
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with('status', "Deleted {$name}. Their listings, owned schemes, and personal data are gone; curated content (varieties, advisories) is kept with the author cleared.");
+    }
 }

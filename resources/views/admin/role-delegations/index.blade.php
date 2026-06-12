@@ -16,25 +16,26 @@
                 <table class="w-full text-sm">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
-                            <th class="px-5 py-3 font-medium">When</th>
+                            <th class="px-5 py-3 font-medium hidden md:table-cell">When</th>
                             <th class="px-5 py-3 font-medium">Recipient</th>
                             <th class="px-5 py-3 font-medium">Role</th>
-                            <th class="px-5 py-3 font-medium">Delegator</th>
+                            <th class="px-5 py-3 font-medium hidden sm:table-cell">Delegator</th>
                             <th class="px-5 py-3 font-medium text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($active as $delegation)
                             <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors" data-testid="active-delegation-row">
-                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap" title="{{ $delegation->delegated_at }}">
+                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap hidden md:table-cell" title="{{ $delegation->delegated_at }}">
                                     {{ $delegation->delegated_at->diffForHumans() }}
                                 </td>
                                 <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
                                     {{ $delegation->recipient->name }}
                                     <span class="block text-xs text-stone-400">{{ $delegation->recipient->email }}</span>
+                                    <span class="sm:hidden block text-xs text-stone-400">by {{ $delegation->delegator?->name ?? '—' }} · {{ $delegation->delegated_at->diffForHumans() }}</span>
                                 </td>
                                 <td class="px-5 py-3 font-mono text-xs text-stone-800 dark:text-stone-200">{{ $delegation->role?->name }}</td>
-                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300 hidden sm:table-cell">
                                     {{ $delegation->delegator?->name ?? '—' }}
                                 </td>
                                 <td class="px-5 py-3 text-right">
@@ -66,17 +67,17 @@
                 <table class="w-full text-sm">
                     <thead class="bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 text-left">
                         <tr>
-                            <th class="px-5 py-3 font-medium">When revoked</th>
+                            <th class="px-5 py-3 font-medium hidden md:table-cell">When revoked</th>
                             <th class="px-5 py-3 font-medium">Recipient</th>
                             <th class="px-5 py-3 font-medium">Role</th>
-                            <th class="px-5 py-3 font-medium">Granted by</th>
-                            <th class="px-5 py-3 font-medium">Revoked by</th>
+                            <th class="px-5 py-3 font-medium hidden sm:table-cell">Granted by</th>
+                            <th class="px-5 py-3 font-medium hidden sm:table-cell">Revoked by</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-stone-100 dark:divide-stone-800">
                         @foreach ($revoked as $delegation)
                             <tr class="odd:bg-stone-50/60 dark:odd:bg-stone-900 hover:bg-amber-50/60 dark:hover:bg-stone-800 transition-colors">
-                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap" title="{{ $delegation->revoked_at }}">
+                                <td class="px-5 py-3 text-stone-600 dark:text-stone-300 whitespace-nowrap hidden md:table-cell" title="{{ $delegation->revoked_at }}">
                                     {{ $delegation->revoked_at?->diffForHumans() }}
                                 </td>
                                 <td class="px-5 py-3 text-stone-700 dark:text-stone-300">
@@ -84,8 +85,8 @@
                                     <span class="block text-xs text-stone-400">{{ $delegation->recipient->email }}</span>
                                 </td>
                                 <td class="px-5 py-3 font-mono text-xs text-stone-800 dark:text-stone-200">{{ $delegation->role?->name }}</td>
-                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">{{ $delegation->delegator?->name ?? '—' }}</td>
-                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300">{{ $delegation->revoker?->name ?? '—' }}</td>
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300 hidden sm:table-cell">{{ $delegation->delegator?->name ?? '—' }}</td>
+                                <td class="px-5 py-3 text-stone-700 dark:text-stone-300 hidden sm:table-cell">{{ $delegation->revoker?->name ?? '—' }}</td>
                             </tr>
                         @endforeach
                     </tbody>

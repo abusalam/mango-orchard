@@ -118,10 +118,12 @@
         <input type="file" name="image" id="image" accept="image/jpeg,image/png,image/webp"
                onchange="this.files.length && (this.form.enctype = 'multipart/form-data')"
                class="mt-2 block w-full text-sm text-stone-600 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+               data-max-bytes="{{ \App\Support\UploadLimits::effectiveBytes(5120) }}"
                data-testid="variety-image-input">
         <x-image-upload-guide
             dimensions="1200 × 900 px"
             aspect="4:3"
+            :max-kb="5120"
             note="A single ripe fruit on a clean background reads best on cards; full-tree shots work for the detail page. The color theme is used as a fallback when no photo is uploaded." />
         @error('image') <p class="mt-1 text-sm text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
     </div>

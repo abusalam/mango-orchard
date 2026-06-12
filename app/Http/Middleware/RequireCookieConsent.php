@@ -48,6 +48,11 @@ class RequireCookieConsent
         // Newsletter unsubscribe — must work even for an unconsented or
         // not-yet-onboarded user clicking the link from their inbox.
         'preferences.unsubscribe-newsletter',
+
+        // First-run setup wizard page. Viewing is open; SUBMITTING stays
+        // gated (the form needs a session for CSRF, so the admin accepts
+        // cookies via the banner before completing setup).
+        'setup.show',
     ];
 
     public function handle(Request $request, Closure $next): Response

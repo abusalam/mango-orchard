@@ -4,6 +4,47 @@
         <p class="mt-1 text-stone-600">App-wide toggles. Changes take effect immediately.</p>
     </header>
 
+    @if (session('status'))
+        <div class="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-950 dark:border-emerald-800 p-3 text-sm text-emerald-900 dark:text-emerald-100" data-testid="flash-status">{{ session('status') }}</div>
+    @endif
+
+    {{-- ============== Branding (own form — multipart upload) ============== --}}
+    <section class="mb-6 bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8" data-testid="branding-section">
+        <h2 class="text-lg font-semibold text-stone-900 dark:text-stone-100">Branding</h2>
+        <p class="mt-1 text-sm text-stone-600 dark:text-stone-300">The site logo shows in the nav, footers, welcome hero, and as the favicon. Without one, a monogram is generated from the app name's initials.</p>
+
+        <div class="mt-4 flex items-start gap-5">
+            <div class="shrink-0 text-center">
+                <x-site-logo size="auth" />
+                <p class="mt-1 text-[10px] text-stone-500 dark:text-stone-400">current</p>
+            </div>
+            <div class="min-w-0 flex-1">
+                <form method="POST" action="{{ route('admin.settings.logo.update') }}" enctype="multipart/form-data">
+                    @csrf
+                    <input type="file" name="logo" id="logo" accept="image/jpeg,image/png,image/webp" required
+                           class="block w-full text-sm text-stone-600 dark:text-stone-300 file:mr-3 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-medium file:bg-stone-900 file:text-amber-50 hover:file:bg-stone-800"
+                           data-max-bytes="{{ \App\Support\UploadLimits::effectiveBytes(2048) }}"
+                           data-testid="logo-input">
+                    <x-image-upload-guide
+                        dimensions="512 × 512 px"
+                        aspect="1:1 (square)"
+                        :max-kb="2048"
+                        note="Re-encoded to a 512px WebP under storage/branding/." />
+                    @error('logo') <p class="mt-1 text-xs text-rose-600 dark:text-rose-400">{{ $message }}</p> @enderror
+                    <button type="submit" class="mt-3 inline-flex items-center px-4 py-2 rounded-full bg-stone-900 text-amber-50 hover:bg-stone-800 text-sm font-medium" data-testid="upload-logo">Upload logo</button>
+                </form>
+
+                @if (app(\App\Settings\Settings::class)->siteLogoPath())
+                    <form method="POST" action="{{ route('admin.settings.logo.remove') }}" class="mt-2">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="text-xs text-rose-700 dark:text-rose-400 hover:underline" data-testid="remove-logo">Remove logo (use generated monogram)</button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    </section>
+
     <form method="POST" action="{{ route('admin.settings.update') }}" class="bg-white dark:bg-stone-950 rounded-2xl border border-stone-200 dark:border-stone-800 p-6 sm:p-8 space-y-6"
           x-data="{ captchaOn: {{ $captchaEnabled ? 'true' : 'false' }} }">
         @csrf

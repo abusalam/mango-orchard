@@ -14,15 +14,21 @@
             'method' => 'PUT',
         ])
 
-        <x-confirm-form
-            :action="route('admin.events.destroy', $event)"
-            method="DELETE"
-            :title="'Permanently delete '.$event->title.'?'"
-            message="The event will disappear from the public listings and from anyone's calendar links. This cannot be undone."
-            confirm-label="Delete event"
-            class="mt-10 pt-6 border-t border-stone-100 block"
-        >
-            <button type="button" class="text-sm text-rose-700 hover:text-rose-900">Delete this event</button>
-        </x-confirm-form>
+        {{-- Divider + spacing live on a wrapper div: the confirm-form
+             component defaults to display:inline, and stacking `block` on
+             top loses to `inline` in Tailwind's output order — leaving an
+             inline element whose border-t paints upward through the Save
+             button above. --}}
+        <div class="mt-10 pt-6 border-t border-stone-100 dark:border-stone-800">
+            <x-confirm-form
+                :action="route('admin.events.destroy', $event)"
+                method="DELETE"
+                :title="'Permanently delete '.$event->title.'?'"
+                message="The event will disappear from the public listings and from anyone's calendar links. This cannot be undone."
+                confirm-label="Delete event"
+            >
+                <button type="button" class="text-sm text-rose-700 dark:text-rose-400 hover:text-rose-900">Delete this event</button>
+            </x-confirm-form>
+        </div>
     </section>
 </x-site-layout>

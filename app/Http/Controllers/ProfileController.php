@@ -4,16 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
 use App\Http\Requests\UpdatePreferencesRequest;
-use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Models\RoleApplication;
 use App\Models\RoleDelegation;
 use App\Models\User;
+use App\Modules\MangoOrchard\Models\MangoVariety;
 use App\Roles;
 use App\Telemetry\Telemetry;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Spatie\Permission\Models\Role;
 
@@ -110,13 +111,28 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $user = $request->user();
+        $data = $request->validated();
+        $removeAvatar = (bool) ($data['remove_avatar'] ?? false);
+        unset($data['avatar'], $data['remove_avatar']);
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($upload = $request->file('avatar')) {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+            $data['avatar_path'] = $upload->store('avatars', 'public');
+        } elseif ($removeAvatar && $user->avatar_path) {
+            Storage::disk('public')->delete($user->avatar_path);
+            $data['avatar_path'] = null;
         }
 
-        $request->user()->save();
+        $user->fill($data);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

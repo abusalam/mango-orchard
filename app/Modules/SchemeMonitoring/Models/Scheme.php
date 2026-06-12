@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace App\Modules\SchemeMonitoring\Models;
 
 use App\Models\User;
+use Database\Factories\SchemeMonitoring\SchemeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 class Scheme extends Model
 {
@@ -60,19 +62,23 @@ class Scheme extends Model
         return strtoupper($initials !== '' ? $initials : (string) mb_substr((string) $this->name, 0, 2));
     }
 
-    protected static function newFactory(): \Database\Factories\SchemeMonitoring\SchemeFactory
+    protected static function newFactory(): SchemeFactory
     {
-        return \Database\Factories\SchemeMonitoring\SchemeFactory::new();
+        return SchemeFactory::new();
     }
 
     /**
      * Polymorphic attachments aren't FK-cascadable in MySQL/Postgres, so
      * we wipe them in app code when the parent goes away. Triggers each
      * Attachment's `deleting` hook so the blob on disk is removed too.
+     * Tasks are iterated through Eloquent (not left to the DB cascade)
+     * for the same reason — each task's own deleting hook must fire to
+     * clean ITS attachment blobs.
      */
     protected static function booted(): void
     {
         static::deleting(function (Scheme $scheme): void {
+            $scheme->tasks()->get()->each->delete();
             $scheme->attachments()->get()->each->delete();
         });
     }
@@ -87,7 +93,7 @@ class Scheme extends Model
         return $this->hasMany(Task::class);
     }
 
-    public function attachments(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function attachments(): MorphMany
     {
         return $this->morphMany(Attachment::class, 'attachable')
             ->orderByDesc('created_at');

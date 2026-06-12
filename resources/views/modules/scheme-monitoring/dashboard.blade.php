@@ -36,8 +36,49 @@
         <div class="flex flex-col md:flex-row gap-4 items-start">
 
             {{-- Sidebar form ---------------------------------------- --}}
-            <aside class="w-full md:w-60 md:shrink-0 md:sticky md:top-4" data-testid="assignee-sidebar">
-                <form method="GET" action="{{ route('monitoring.dashboard') }}" id="sidebar-filters" class="bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4">
+            @php
+                // Active selections across all four groups — shown on the
+                // mobile Filters toggle so a collapsed panel still tells
+                // the user something is narrowing the list.
+                $activeFilterCount = count($filters['windows'])
+                    + count($filters['statuses'])
+                    + count($filters['designations'])
+                    + count($filters['assignees']);
+            @endphp
+            <aside class="w-full md:w-60 md:shrink-0 md:sticky md:top-4"
+                   x-data="{ filtersOpen: window.matchMedia('(min-width: 768px)').matches }"
+                   data-testid="assignee-sidebar">
+
+                {{-- Mobile-only disclosure toggle. On md+ the panel is always
+                     visible (md:!block below) and this button is hidden. --}}
+                <button type="button"
+                        @click="filtersOpen = !filtersOpen"
+                        :aria-expanded="filtersOpen.toString()"
+                        aria-controls="sidebar-filters"
+                        class="md:hidden w-full flex items-center justify-between gap-2 bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl px-4 py-3 text-sm font-medium text-stone-800 dark:text-stone-200"
+                        data-testid="mobile-filters-toggle">
+                    <span class="inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                            <path d="M2.5 4.5h15M5 10h10M8 15.5h4" stroke-linecap="round"/>
+                        </svg>
+                        Filters
+                        @if ($activeFilterCount > 0)
+                            <span class="inline-flex items-center justify-center min-w-5 h-5 px-1.5 rounded-full bg-amber-500 text-stone-900 text-[11px] font-semibold" data-testid="mobile-filters-count">{{ $activeFilterCount }}</span>
+                        @endif
+                    </span>
+                    <svg class="w-4 h-4 transition-transform" :class="filtersOpen ? 'rotate-180' : ''" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M5 8l5 5 5-5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+
+                {{-- x-show drives mobile collapse; md:!block overrides the
+                     inline display:none so desktop is unaffected even if the
+                     panel was collapsed before a resize. The form stays in
+                     the DOM either way, so auto-submit + hidden mirrors keep
+                     working exactly as before. --}}
+                <form method="GET" action="{{ route('monitoring.dashboard') }}" id="sidebar-filters"
+                      x-show="filtersOpen"
+                      class="mt-2 md:mt-0 md:!block bg-white dark:bg-stone-950 border border-stone-200 dark:border-stone-800 rounded-2xl p-4 md:max-h-[calc(100vh-2rem)] md:overflow-y-auto">
                     {{-- Round-trip everything we don't own here — including
                          each group's mode (include / exclude). --}}
                     <x-scheme-monitoring.preserve-filters
@@ -80,7 +121,7 @@
                                 'open' => 'All open',
                             ] as $value => $label)
                                 <label
-                                    class="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-stone-50 dark:bg-stone-900 cursor-pointer text-sm"
+                                    class="flex items-center gap-2 py-2 md:py-1 px-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 cursor-pointer text-sm"
                                     title="{{ $label }}"
                                 >
                                     <input
@@ -125,7 +166,7 @@
                         <div class="mt-2 space-y-0.5" data-testid="status-list">
                             @foreach (\App\Modules\SchemeMonitoring\Models\Task::STATUSES as $value => $label)
                                 <label
-                                    class="flex items-center gap-2 py-1 px-2 rounded-lg hover:bg-stone-50 dark:bg-stone-900 cursor-pointer text-sm"
+                                    class="flex items-center gap-2 py-2 md:py-1 px-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 cursor-pointer text-sm"
                                     title="{{ $label }}"
                                 >
                                     <input
@@ -170,7 +211,7 @@
                         <div class="mt-2 max-h-44 overflow-y-auto pr-1 -mr-1 space-y-0.5" data-testid="designation-list">
                             @forelse ($designations as $designation)
                                 <label
-                                    class="flex items-center justify-between gap-2 py-1 px-2 rounded-lg hover:bg-stone-50 dark:bg-stone-900 cursor-pointer text-sm"
+                                    class="flex items-center justify-between gap-2 py-2 md:py-1 px-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 cursor-pointer text-sm"
                                     title="{{ $designation->name }}"
                                 >
                                     <span class="flex items-center gap-2 min-w-0">
@@ -220,7 +261,7 @@
                         <div class="mt-2 max-h-72 overflow-y-auto pr-1 -mr-1 space-y-0.5" data-testid="assignee-list">
                             @forelse ($assignableUsers as $user)
                                 <label
-                                    class="flex items-center justify-between gap-2 py-1 px-2 rounded-lg hover:bg-stone-50 dark:bg-stone-900 cursor-pointer text-sm"
+                                    class="flex items-center justify-between gap-2 py-2 md:py-1 px-2 rounded-lg hover:bg-stone-50 dark:hover:bg-stone-900 cursor-pointer text-sm"
                                     title="{{ $user->name }} · {{ $user->email }}"
                                 >
                                     <span class="flex items-center gap-2 min-w-0">
